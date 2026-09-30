@@ -368,7 +368,7 @@ export default function CashPage() {
             <CardContent className="pt-6">
               <form onSubmit={(e) => void addAccount(e)} className="flex flex-wrap items-end gap-3">
                 <div className="min-w-48 flex-1">
-                  <label className="text-sm font-medium text-gray-700">Name *</label>
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Name *</label>
                   <Input
                     value={accountForm.name}
                     onChange={(e) => setAccountForm({ ...accountForm, name: e.target.value })}
@@ -377,12 +377,11 @@ export default function CashPage() {
                     className="mt-1"
                   />
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700">Type</label>
+                <div className="min-w-44">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Type</label>
                   <SelectDropdown
-                    className="mt-1 w-full border border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                    isControlled
-                    defaultValue={accountForm.type}
+                    className="mt-1"
+                    value={accountForm.type}
                     onValueChange={(value) => setAccountForm({ ...accountForm, type: value })}
                     items={[
                       { label: 'Site cash', value: 'site_cash' },

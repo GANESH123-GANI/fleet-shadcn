@@ -1,5 +1,5 @@
-import { Loader } from 'lucide-react'
-import { useFormContext } from 'react-hook-form'
+import * as React from 'react'
+import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FormControl } from '@/components/ui/form'
 import {
@@ -10,56 +10,94 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-type SelectDropdownProps = {
-  onValueChange?: (value: string) => void
-  defaultValue: string | undefined
-  placeholder?: string
-  isPending?: boolean
-  items: { label: string; value: string }[] | undefined
+export interface SelectDropdownItem {
+  label: React.ReactNode
+  value: string
   disabled?: boolean
+}
+
+export interface SelectDropdownProps {
+  /** Controlled value */
+  value?: string
+  /** Uncontrolled default value */
+  defaultValue?: string
+  /** Callback fired when selection changes */
+  onValueChange?: (value: string) => void
+  /** List of selectable items */
+  items?: SelectDropdownItem[]
+  /** Placeholder text shown when no value is selected */
+  placeholder?: string
+  /** Whether the dropdown is disabled */
+  disabled?: boolean
+  /** Shows a loading spinner inside the dropdown */
+  isPending?: boolean
+  /** Custom text to show during loading */
+  loadingText?: string
+  /** Custom text to show when items list is empty */
+  emptyText?: string
+  /** Additional classes for the trigger button */
   className?: string
+  /** Additional classes for the dropdown content popup */
+  contentClassName?: string
+  /** Flag for backward compatibility with older controlled usages */
   isControlled?: boolean
+  /** Whether to wrap the trigger in Shadcn FormControl (when inside a FormItem) */
+  inFormField?: boolean
 }
 
 export function SelectDropdown({
+  value,
   defaultValue,
   onValueChange,
-  isPending,
   items,
-  placeholder,
-  disabled,
-  className = '',
+  placeholder = 'Select an option',
+  disabled = false,
+  isPending = false,
+  loadingText = 'Loading...',
+  emptyText = 'No options available',
+  className,
+  contentClassName,
   isControlled = false,
+  inFormField = false,
 }: SelectDropdownProps) {
-  const defaultState = isControlled
-    ? { value: defaultValue, onValueChange }
+  // Support standard React controlled pattern (value provided) and legacy isControlled flag
+  const isControlledMode = isControlled || value !== undefined
+  const selectState = isControlledMode
+    ? { value: value ?? defaultValue ?? '', onValueChange }
     : { defaultValue, onValueChange }
-  // FormControl requires a react-hook-form <Form> context (it wires up
-  // id/aria from the field). Outside a <Form> we render a plain trigger.
-  const form = useFormContext()
+
   const trigger = (
-    <SelectTrigger disabled={disabled} className={cn(className)}>
-      <SelectValue placeholder={placeholder ?? 'Select'} />
+    <SelectTrigger
+      disabled={disabled || isPending}
+      className={cn('w-full justify-between', className)}
+    >
+      <SelectValue placeholder={placeholder} />
     </SelectTrigger>
   )
+
   return (
-    <Select {...defaultState}>
-      {form ? <FormControl>{trigger}</FormControl> : trigger}
-      <SelectContent>
+    <Select {...selectState}>
+      {inFormField ? <FormControl>{trigger}</FormControl> : trigger}
+      <SelectContent className={cn('min-w-[8rem]', contentClassName)}>
         {isPending ? (
-          <SelectItem disabled value='loading' className='h-14'>
-            <div className='flex items-center justify-center gap-2'>
-              <Loader className='h-5 w-5 animate-spin' />
-              {'  '}
-              Loading...
-            </div>
-          </SelectItem>
-        ) : (
-          items?.map(({ label, value }) => (
-            <SelectItem key={value} value={value}>
-              {label}
+          <div className='flex items-center justify-center gap-2 py-4 px-2 text-sm text-muted-foreground'>
+            <Loader2 className='h-4 w-4 animate-spin text-muted-foreground' />
+            <span>{loadingText}</span>
+          </div>
+        ) : items && items.length > 0 ? (
+          items.map((item) => (
+            <SelectItem
+              key={item.value}
+              value={item.value}
+              disabled={item.disabled}
+            >
+              {item.label}
             </SelectItem>
           ))
+        ) : (
+          <div className='py-4 text-center text-xs text-muted-foreground'>
+            {emptyText}
+          </div>
         )}
       </SelectContent>
     </Select>
