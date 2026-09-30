@@ -115,60 +115,52 @@ export default function SitesList() {
         <div className="grid gap-4 md:grid-cols-2">
           {uniqueSites.map((s) => (
             <Link key={s.id} href={`/sites/${s.id}`}>
-              <Card className="hover:shadow-lg transition-all cursor-pointer group overflow-hidden">
-                <div className={`h-2 ${
-                  s.status === 'active' ? 'bg-gradient-to-r from-gray-900 to-gray-800' :
-                  s.status === 'planning' ? 'bg-gradient-to-r from-gray-950 to-gray-900' :
-                  'bg-gradient-to-r from-gray-400 to-gray-500'
-                }`} />
+              <Card className="hover:border-slate-400 dark:hover:border-slate-500 transition-colors cursor-pointer group overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-800 group-hover:text-gray-600 transition-colors">
+                      <h3 className="text-lg font-bold text-black dark:text-white group-hover:text-black/80 transition-colors">
                         {s.name}
                       </h3>
-                      <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                      <p className="text-sm text-black/60 dark:text-white/60 flex items-center gap-1 mt-1">
                         <Briefcase className="h-3.5 w-3.5" />
                         {s.client_name ?? s.clients?.name ?? 'Unknown Client'}
                       </p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      s.status === 'active' ? 'bg-green-100 text-green-700' :
-                      s.status === 'planning' ? 'bg-gray-100 text-gray-700' :
-                      'bg-gray-100 text-gray-600'
-                    }`}>
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white bg-transparent">
+                      <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
                       {s.status}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 mt-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <MapPin className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                      <MapPin className="h-4 w-4 text-black/50 dark:text-white/50" />
                       <span className="truncate">{s.address ?? s.location ?? 'No address'}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                      <Calendar className="h-4 w-4 text-black/50 dark:text-white/50" />
                       <span>{s.start_date ?? 'N/A'}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-solid border-slate-300 dark:border-slate-700">
                     <div className="flex items-center gap-2">
                       <div className="flex -space-x-2">
                         {[...Array(Math.min(s.machine_count ?? 0, 3))].map((_, i) => (
-                          <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold border-2 border-white">
+                          <div key={i} className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white text-xs font-bold border border-solid border-slate-300 dark:border-slate-700">
                             {i + 1}
                           </div>
                         ))}
                       </div>
                       {(s.machine_count ?? 0) > 3 && (
-                        <span className="text-xs text-gray-500">+{(s.machine_count ?? 0) - 3} more</span>
+                        <span className="text-xs text-black/60 dark:text-white/60">+{(s.machine_count ?? 0) - 3} more</span>
                       )}
                     </div>
                     <div className="flex items-center gap-1">
                       <button
                         onClick={(e) => { e.preventDefault(); router.push(`/sites/${s.id}`); }}
-                        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+                        className="p-1.5 rounded-lg text-black/60 hover:text-black hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                         title="Edit"
                       >
                         <Pencil className="h-3.5 w-3.5" />

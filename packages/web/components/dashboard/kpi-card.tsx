@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface KPICardProps {
   label: string;
@@ -50,13 +52,11 @@ export function KPICard({
     : value;
 
   return (
-    <div className="rounded-xl border border-[#E5E2DB] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+    <Card className="rounded-[20px] border border-solid border-slate-300 dark:border-slate-700 bg-card p-6 shadow-none transition-colors hover:border-slate-400 dark:hover:border-slate-600">
       <div className="flex items-start justify-between">
-        <p className="text-sm font-medium text-slate-500">{label}</p>
+        <p className="text-sm font-medium text-black dark:text-white">{label}</p>
         {statusDot && (
-          <span
-            className="relative flex h-2.5 w-2.5"
-          >
+          <span className="relative flex h-2.5 w-2.5">
             <span
               className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
               style={{ backgroundColor: statusDot }}
@@ -69,31 +69,36 @@ export function KPICard({
         )}
       </div>
 
-      <p className="mt-2 text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+      <p className="mt-2 text-xl sm:text-2xl font-bold tracking-tight text-black dark:text-white">
         {displayValue}
-        {suffix && <span className="ml-1 text-sm sm:text-base text-slate-500">{suffix}</span>}
+        {suffix && <span className="ml-1 text-sm sm:text-base font-normal text-black/70 dark:text-white/70">{suffix}</span>}
       </p>
 
       {subtitle && (
-        <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+        <div className="mt-2.5">
+          <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
+            {subtitle}
+          </span>
+        </div>
       )}
 
       {trend !== undefined && (
-        <div className="mt-3 flex items-center gap-1.5">
-          <span
+        <div className="mt-3 flex items-center gap-2">
+          <Badge
+            variant="outline"
             className={cn(
-              'flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium',
+              'px-2 py-0.5 text-xs font-semibold gap-1 border border-solid border-slate-300 dark:border-slate-700',
               trend >= 0
-                ? 'bg-emerald-50 text-emerald-600'
-                : 'bg-red-50 text-red-600'
+                ? 'text-black dark:text-white bg-transparent'
+                : 'text-black dark:text-white bg-transparent'
             )}
           >
             {trend >= 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
             {Math.abs(trend)}%
-          </span>
-          <span className="text-xs text-slate-400">{trendLabel}</span>
+          </Badge>
+          <span className="text-xs text-black/60 dark:text-white/60">{trendLabel}</span>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

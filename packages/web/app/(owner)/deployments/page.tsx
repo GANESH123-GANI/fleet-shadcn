@@ -131,49 +131,39 @@ export default function DeploymentsList() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {deployments.map((d) => (
             <Link key={d.id} href={`/deployments/${d.id}`}>
-              <Card className="hover:shadow-lg transition-all cursor-pointer group overflow-hidden h-full">
-                <div className={`h-1.5 ${
-                  d.status === 'active' ? 'bg-gradient-to-r from-gray-900 to-gray-800' :
-                  d.status === 'pending' ? 'bg-gradient-to-r from-gray-800 to-gray-700' :
-                  d.status === 'on_hold_payment' ? 'bg-gradient-to-r from-gray-600 to-gray-500' :
-                  'bg-gradient-to-r from-gray-400 to-gray-500'
-                }`} />
+              <Card className="hover:border-slate-400 dark:hover:border-slate-500 transition-colors cursor-pointer group overflow-hidden h-full rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white">
+                      <div className="w-12 h-12 rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
                         <Truck className="h-6 w-6" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-800 group-hover:text-violet-600 transition-colors">
+                        <h3 className="font-bold text-black dark:text-white group-hover:text-black/80 transition-colors">
                           {d.machine_code ?? d.machines?.code ?? d.machine_id}
                         </h3>
-                        <p className="text-xs text-gray-500">{d.machine_type ?? 'Machine'}</p>
+                        <p className="text-xs text-black/60 dark:text-white/60">{d.machine_type ?? 'Machine'}</p>
                       </div>
                     </div>
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      d.status === 'active' ? 'bg-green-100 text-green-700' :
-                      d.status === 'pending' ? 'bg-amber-100 text-amber-700' :
-                      d.status === 'on_hold_payment' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-gray-100 text-gray-600'
-                    }`}>
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white bg-transparent">
+                      <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
                       {d.status.replace(/_/g, ' ')}
                     </span>
                   </div>
 
                   <div className="space-y-2 mt-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <MapPin className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                      <MapPin className="h-4 w-4 text-black/50 dark:text-white/50" />
                       <span className="truncate">{d.site_name ?? d.sites?.name ?? d.site_id}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                      <Calendar className="h-4 w-4 text-black/50 dark:text-white/50" />
                       <span>Since {d.start_date}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                    <div className="text-xs text-gray-400">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-solid border-slate-300 dark:border-slate-700">
+                    <div className="text-xs text-black/60 dark:text-white/60 font-medium">
                       {d.end_date ? `Until ${d.end_date}` : 'Ongoing'}
                     </div>
                     <div className="flex items-center gap-1">

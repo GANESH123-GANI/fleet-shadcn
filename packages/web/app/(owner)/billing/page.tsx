@@ -217,42 +217,67 @@ export default function BillingPage() {
       {formError && <p className="text-sm text-red-600">{formError}</p>}
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-            <div className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{money(totalBilled)}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Billed</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <CreditCard className="h-4 w-4" />
             </div>
-            <p className="text-blue-100 text-xs mt-1">Total Billed</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <IndianRupee className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{money(totalReceived)}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{money(totalBilled)}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Invoiced
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Received</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <IndianRupee className="h-4 w-4" />
             </div>
-            <p className="text-green-100 text-xs mt-1">Total Received</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{money(totalOutstanding)}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{money(totalReceived)}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Collected
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Outstanding</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <AlertCircle className="h-4 w-4" />
             </div>
-            <p className="text-amber-100 text-xs mt-1">Outstanding</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <Receipt className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{extras.length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{money(totalOutstanding)}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Pending
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Extra Charges</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Receipt className="h-4 w-4" />
             </div>
-            <p className="text-violet-100 text-xs mt-1">Extra Charges</p>
           </div>
-        </Card>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{extras.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Incidental
+            </span>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -268,10 +293,11 @@ export default function BillingPage() {
         </div>
       ) : (
         <>
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-4">
-              <CardTitle className="text-white flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" /> Deployments & Billing Runs
+          <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+            <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+              <TrendingUp className="h-5 w-5 text-black dark:text-white" />
+              <CardTitle className="text-base font-bold text-black dark:text-white">
+                Deployments & Billing Runs
               </CardTitle>
             </div>
             <CardContent className="pt-6">
@@ -332,10 +358,11 @@ export default function BillingPage() {
           </Card>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Plus className="h-5 w-5" /> New Rate Card
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Plus className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  New Rate Card
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -449,10 +476,11 @@ export default function BillingPage() {
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" /> Machine Contribution
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <TrendingUp className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Machine Contribution
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -487,10 +515,11 @@ export default function BillingPage() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5" /> Receivables
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <AlertCircle className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Receivables
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -512,10 +541,11 @@ export default function BillingPage() {
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Receipt className="h-5 w-5" /> Extra Charges ({extras.length})
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Receipt className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Extra Charges ({extras.length})
                 </CardTitle>
               </div>
               <CardContent className="pt-6 space-y-5">

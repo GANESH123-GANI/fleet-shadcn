@@ -8,8 +8,9 @@ import {
 } from 'recharts';
 import {
   Download, RefreshCw, TrendingUp, AlertTriangle,
-  ArrowUpRight, MoreHorizontal, ChevronRight,
+  ArrowUpRight, MoreHorizontal, ChevronRight, ChevronUp, ChevronDown,
   Tractor, MapPin, Building2, Users, Play,
+  Ticket, ShoppingCart, DollarSign, Bookmark,
 } from 'lucide-react';
 import { authFetch } from '@/lib/api/auth-fetch';
 import { fetchListStrict, ApiError } from '@/lib/api/fetch-list';
@@ -370,34 +371,33 @@ function DashboardInner() {
                 Here&apos;s what&apos;s happening with your fleet · {todayStr}
               </p>
             </div>
-            <div className="flex shrink-0 items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2">
               {/* Period toggle */}
-              <ButtonGroup className="rounded-lg border border-white/20 bg-white/40 p-1 shadow-none backdrop-blur-md dark:bg-white/5">
+              <div className="flex items-center gap-1.5">
                 {(['today', 'month', 'year'] as const).map((p) => (
-                  <Button
+                  <button
                     key={p}
-                    size="sm"
-                    variant={period === p ? 'default' : 'ghost'}
                     onClick={() => setPeriod(p)}
                     className={cn(
-                      'px-3',
-                      period !== p &&
-                        'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
+                      'rounded-lg border border-solid border-slate-300 dark:border-slate-700 px-3 py-1.5 text-xs font-medium transition-colors',
+                      period === p
+                        ? 'bg-black text-white dark:bg-white dark:text-black font-semibold'
+                        : 'bg-transparent text-black dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800',
                     )}
                   >
                     {p === 'today' ? 'Today' : p === 'month' ? 'Month' : 'Year'}
-                  </Button>
+                  </button>
                 ))}
-              </ButtonGroup>
+              </div>
               <button
                 onClick={() => setNonce((n) => n + 1)}
                 aria-label="Refresh"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-white/40 dark:bg-white/5 text-gray-500 backdrop-blur-md transition-all hover:bg-white/60 dark:hover:bg-white/10 hover:text-gray-700"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent text-black dark:text-white transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               >
-                <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+                <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
               </button>
-              <button className="flex h-9 items-center gap-2 rounded-lg bg-gray-900 dark:bg-gray-100 px-4 text-sm font-medium text-white dark:text-gray-900 shadow-sm transition-all hover:bg-gray-800 dark:hover:bg-gray-200">
-                <Download className="h-4 w-4" />
+              <button className="flex h-8 items-center gap-1.5 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-3 text-xs font-medium text-black dark:text-white transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
+                <Download className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Export</span>
               </button>
             </div>
@@ -407,136 +407,133 @@ function DashboardInner() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Working now */}
+        {/* Total Sales / Working now */}
         <Reveal delay={0}>
-          <GlareCard className="h-full">
-            <div className="rounded-2xl border border-white/18 bg-white/72 dark:bg-white/5 backdrop-blur-xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] transition-all duration-300 hover:bg-white/82 dark:hover:bg-white/8 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 h-full">
+          <div className="flex h-full flex-col justify-between rounded-2xl border border-solid border-slate-300 bg-white p-5 shadow-none transition-colors hover:border-slate-400 dark:border-slate-700 dark:bg-card">
+            <div>
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Working now</p>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20">
-                  <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#FFF7ED] text-[#EA580C] dark:bg-orange-500/15 dark:text-orange-400">
+                  <Ticket className="h-5 w-5" />
+                </div>
+                <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                  <span>+38%</span>
+                  <ChevronUp className="h-3.5 w-3.5 stroke-[2.5]" />
                 </div>
               </div>
-              <div className="mt-3">
-                {loading ? (
-                  <div className="flex items-center">
-                    <AnimatedKPI value={0} className="animate-pulse" />
-                    <span className="text-lg font-normal text-gray-400 animate-pulse">/—</span>
-                  </div>
-                ) : (
-                  <>
-                    <AnimatedKPI value={workingNow} />
-                    <span className="text-lg font-normal text-gray-400">/{totalMachines}</span>
-                  </>
-                )}
-              </div>
-              <div className="mt-3 flex items-center gap-3">
-                <ProgressRing value={utilisation} />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                    <span>Fleet utilisation</span>
-                    <span className="font-medium text-gray-700 dark:text-gray-200">{utilisation}%</span>
-                  </div>
-                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
-                    <div
-                      className="h-full rounded-full bg-emerald-500 transition-all duration-1000 ease-out"
-                      style={{ width: `${utilisation}%` }}
-                    />
-                  </div>
-                </div>
+
+              <div className="mt-4">
+                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                  {loading ? '—' : `${workingNow} `}
+                  <span className="text-base font-normal text-slate-400">/ {totalMachines}</span>
+                </p>
+                <p className="mt-1 text-sm font-medium text-black dark:text-white">
+                  Total Sales
+                </p>
               </div>
             </div>
-          </GlareCard>
+
+            <div className="mt-4">
+              <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
+                Last 6 months
+              </span>
+            </div>
+          </div>
         </Reveal>
 
-        {/* Revenue */}
+        {/* Total Orders / Revenue */}
         <Reveal delay={1}>
-          <GlareCard className="h-full">
-            <div className="rounded-2xl border border-white/18 bg-white/72 dark:bg-white/5 backdrop-blur-xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] transition-all duration-300 hover:bg-white/82 dark:hover:bg-white/8 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 h-full">
+          <div className="flex h-full flex-col justify-between rounded-2xl border border-solid border-slate-300 bg-white p-5 shadow-none transition-colors hover:border-slate-400 dark:border-slate-700 dark:bg-card">
+            <div>
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Revenue</p>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20">
-                  <ArrowUpRight className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F0FDFA] text-[#0D9488] dark:bg-teal-500/15 dark:text-teal-400">
+                  <ShoppingCart className="h-5 w-5" />
+                </div>
+                <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                  <span>+22%</span>
+                  <ChevronUp className="h-3.5 w-3.5 stroke-[2.5]" />
                 </div>
               </div>
-              <div className="mt-3">
-                {loading ? (
-                  <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 animate-pulse">
-                    ₹0
-                  </p>
-                ) : (
-                  <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
-                    {minorToMoney(totalBilled)}
-                  </p>
-                )}
-              </div>
-              <div className="mt-3">
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Billed this {period === 'today' ? 'day' : period === 'month' ? 'month' : 'year'}
+
+              <div className="mt-4">
+                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                  {loading ? '—' : minorToMoney(totalBilled)}
+                </p>
+                <p className="mt-1 text-sm font-medium text-black dark:text-white">
+                  Total Orders
                 </p>
               </div>
             </div>
-          </GlareCard>
+
+            <div className="mt-4">
+              <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
+                Last 4 months
+              </span>
+            </div>
+          </div>
         </Reveal>
 
-        {/* Expenses */}
+        {/* Total Profit / Expenses */}
         <Reveal delay={2}>
-          <GlareCard className="h-full">
-            <div className="rounded-2xl border border-white/18 bg-white/72 dark:bg-white/5 backdrop-blur-xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] transition-all duration-300 hover:bg-white/82 dark:hover:bg-white/8 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 h-full">
+          <div className="flex h-full flex-col justify-between rounded-2xl border border-solid border-slate-300 bg-white p-5 shadow-none transition-colors hover:border-slate-400 dark:border-slate-700 dark:bg-card">
+            <div>
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Expenses</p>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/20">
-                  <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F0F9FF] text-[#0284C7] dark:bg-sky-500/15 dark:text-sky-400">
+                  <DollarSign className="h-5 w-5" />
+                </div>
+                <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                  <span>-16%</span>
+                  <ChevronDown className="h-3.5 w-3.5 stroke-[2.5]" />
                 </div>
               </div>
-              <div className="mt-3">
-                {loading ? (
-                  <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 animate-pulse">
-                    ₹0
-                  </p>
-                ) : (
-                  <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
-                    {minorToMoney(totalExpenses)}
-                  </p>
-                )}
-              </div>
-              <div className="mt-3">
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Expenses this {period === 'today' ? 'day' : period === 'month' ? 'month' : 'year'}
+
+              <div className="mt-4">
+                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                  {loading ? '—' : minorToMoney(totalExpenses)}
+                </p>
+                <p className="mt-1 text-sm font-medium text-black dark:text-white">
+                  Total Profit
                 </p>
               </div>
             </div>
-          </GlareCard>
+
+            <div className="mt-4">
+              <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
+                Last One year
+              </span>
+            </div>
+          </div>
         </Reveal>
 
-        {/* Outstanding */}
+        {/* Bookmarks / Outstanding */}
         <Reveal delay={2}>
-          <GlareCard className="h-full">
-            <div className="rounded-2xl border border-white/18 bg-white/72 dark:bg-white/5 backdrop-blur-xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] transition-all duration-300 hover:bg-white/82 dark:hover:bg-white/8 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 h-full">
+          <div className="flex h-full flex-col justify-between rounded-2xl border border-solid border-slate-300 bg-white p-5 shadow-none transition-colors hover:border-slate-400 dark:border-slate-700 dark:bg-card">
+            <div>
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Outstanding</p>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 dark:bg-violet-500/20">
-                  <TrendingUp className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#FEFCE8] text-[#CA8A04] dark:bg-amber-500/15 dark:text-amber-400">
+                  <Bookmark className="h-5 w-5" />
+                </div>
+                <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                  <span>+38%</span>
+                  <ChevronUp className="h-3.5 w-3.5 stroke-[2.5]" />
                 </div>
               </div>
-              <div className="mt-3">
-                {loading ? (
-                  <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 animate-pulse">
-                    ₹0
-                  </p>
-                ) : (
-                  <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
-                    {minorToMoney(receivables.reduce((a, r) => a + num(r.amount_minor), 0))}
-                  </p>
-                )}
-              </div>
-              <div className="mt-3">
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {receivables.length} client{receivables.length === 1 ? '' : 's'} with pending balance
+
+              <div className="mt-4">
+                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                  {loading ? '—' : minorToMoney(receivables.reduce((a, r) => a + num(r.amount_minor), 0))}
+                </p>
+                <p className="mt-1 text-sm font-medium text-black dark:text-white">
+                  Bookmarks
                 </p>
               </div>
             </div>
-          </GlareCard>
+
+            <div className="mt-4">
+              <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
+                Last 6 months
+              </span>
+            </div>
+          </div>
         </Reveal>
       </div>
 
@@ -694,23 +691,28 @@ function DashboardInner() {
           <Reveal delay={0}>
             <GlassCard hover={false}>
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-base font-semibold text-gray-900 dark:text-gray-50">Fleet status</h3>
-                <span className="text-sm text-gray-500 dark:text-gray-400">{totalMachines} machines</span>
+                <h3 className="text-base font-semibold text-black dark:text-white">Fleet status</h3>
+                <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
+                  {totalMachines} machines
+                </span>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {[
-                  { label: 'Working', count: statusCounts.working || 0, color: 'bg-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10' },
-                  { label: 'Idle', count: statusCounts.log_pending || 0, color: 'bg-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10' },
-                  { label: 'Stopped', count: statusCounts.stopped || 0, color: 'bg-red-500', bg: 'bg-red-50 dark:bg-red-500/10' },
-                  { label: 'In transit', count: statusCounts.transit || 0, color: 'bg-violet-500', bg: 'bg-violet-50 dark:bg-violet-500/10' },
-                  { label: 'In service', count: statusCounts.service || 0, color: 'bg-gray-500', bg: 'bg-gray-50 dark:bg-gray-500/10' },
+                  { label: 'Working', count: statusCounts.working || 0 },
+                  { label: 'Idle', count: statusCounts.log_pending || 0 },
+                  { label: 'Stopped', count: statusCounts.stopped || 0 },
+                  { label: 'In transit', count: statusCounts.transit || 0 },
+                  { label: 'In service', count: statusCounts.service || 0 },
                 ].map((s) => (
-                  <div key={s.label} className={cn('flex items-center justify-between rounded-xl p-3', s.bg)}>
+                  <div
+                    key={s.label}
+                    className="flex items-center justify-between rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-3.5 py-2.5"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className={cn('h-2.5 w-2.5 rounded-full', s.color)} />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{s.label}</span>
+                      <div className="h-2.5 w-2.5 rounded-full shrink-0 bg-black dark:bg-white" />
+                      <span className="text-sm font-medium text-black dark:text-white">{s.label}</span>
                     </div>
-                    <span className="text-lg font-bold text-gray-900 dark:text-gray-50">{s.count}</span>
+                    <span className="text-sm font-bold text-black dark:text-white">{s.count}</span>
                   </div>
                 ))}
               </div>
@@ -730,18 +732,18 @@ function DashboardInner() {
               </div>
               <div className="space-y-3">
                 {loading ? (
-                  <div className="rounded-xl border border-emerald-200/30 bg-emerald-500/10 p-4">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-50 animate-pulse">
+                  <div className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-transparent p-4">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-50 animate-pulse">
                       Loading alerts...
                     </p>
-                    <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400 animate-pulse">
+                    <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 animate-pulse">
                       Fetching latest alerts...
                     </p>
                   </div>
                 ) : alerts.length === 0 ? (
-                  <div className="rounded-xl border border-emerald-200/30 bg-emerald-500/10 p-4">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-50">All clear</p>
-                    <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Nothing needs attention right now</p>
+                  <div className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-transparent p-4">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-50">All clear</p>
+                    <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Nothing needs attention right now</p>
                   </div>
                 ) : (
                 alerts.map((a) => ({
@@ -756,23 +758,16 @@ function DashboardInner() {
                   return (
                     <div
                       key={alert.id}
-                      className={cn(
-                        'rounded-xl border p-3 transition-all duration-200 hover:shadow-sm',
-                        isCritical
-                          ? 'border-red-200/30 bg-red-500/10 dark:bg-red-500/15'
-                          : isWarning
-                          ? 'border-amber-200/30 bg-amber-500/10 dark:bg-amber-500/15'
-                          : 'border-white/10 bg-white/30 dark:bg-white/5',
-                      )}
+                      className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-transparent p-3 transition-colors duration-200"
                     >
                       <div className="flex items-start gap-3">
                         <div className={cn(
-                          'mt-0.5 h-2 w-2 rounded-full shrink-0',
-                          isCritical ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-gray-400',
+                          'mt-1 h-2 w-2 rounded-full shrink-0',
+                          isCritical ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-slate-400',
                         )} />
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-gray-900 dark:text-gray-50 truncate">{alert.message}</p>
-                          <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{alert.subtitle}</p>
+                          <p className="text-sm font-medium text-slate-900 dark:text-slate-50 truncate">{alert.message}</p>
+                          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{alert.subtitle}</p>
                         </div>
                       </div>
                     </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { Card } from '@/components/ui/card';
+
 interface StatusItem {
   label: string;
   count: number;
@@ -13,10 +15,12 @@ interface FleetStatusProps {
 
 export function FleetStatus({ statuses, total }: FleetStatusProps) {
   return (
-    <div className="rounded-xl border border-[#E5E2DB] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+    <Card className="rounded-[20px] border border-solid border-slate-300 dark:border-slate-700 bg-card p-6 shadow-none">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-slate-900">Fleet status</h3>
-        <span className="text-sm text-slate-500">{total} machines</span>
+        <h3 className="text-lg font-semibold tracking-tight text-black dark:text-white">Fleet status</h3>
+        <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
+          {total} machines
+        </span>
       </div>
 
       <div className="space-y-4">
@@ -30,11 +34,11 @@ export function FleetStatus({ statuses, total }: FleetStatusProps) {
                     className="h-2.5 w-2.5 rounded-full"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-sm font-medium text-slate-700">{item.label}</span>
+                  <span className="text-sm font-medium text-black dark:text-white">{item.label}</span>
                 </div>
-                <span className="text-sm font-semibold text-slate-900">{item.count}</span>
+                <span className="text-sm font-semibold text-black dark:text-white">{item.count}</span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+              <div className="h-2 overflow-hidden rounded-full bg-secondary">
                 <div
                   className="h-full rounded-full transition-all duration-700"
                   style={{ width: `${pct}%`, backgroundColor: item.color }}
@@ -44,6 +48,6 @@ export function FleetStatus({ statuses, total }: FleetStatusProps) {
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }

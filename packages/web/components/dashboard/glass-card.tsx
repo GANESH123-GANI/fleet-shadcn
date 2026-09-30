@@ -1,25 +1,26 @@
 'use client';
 
+import * as React from 'react';
 import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
 
-interface GlassCardProps {
-  children: React.ReactNode;
+interface GlassCardProps extends React.ComponentProps<typeof Card> {
+  children?: React.ReactNode;
   className?: string;
   hover?: boolean;
 }
 
-export function GlassCard({ children, className, hover = true }: GlassCardProps) {
+export function GlassCard({ children, className, hover = true, ...props }: GlassCardProps) {
   return (
-    <div
+    <Card
       className={cn(
-        'rounded-2xl border border-white/18 bg-white/72 dark:bg-white/5 dark:border-white/8 p-5',
-        'shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] backdrop-blur-xl',
-        'transition-all duration-300',
-        hover && 'hover:bg-white/82 dark:hover:bg-white/8 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_12px_40px_rgba(0,0,0,0.25)] hover:-translate-y-0.5',
+        'rounded-[20px] border border-solid border-slate-300 dark:border-slate-700 bg-card p-6 shadow-none transition-colors duration-200',
+        hover && 'hover:border-slate-400 dark:hover:border-slate-600',
         className
       )}
+      {...props}
     >
       {children}
-    </div>
+    </Card>
   );
 }

@@ -3,20 +3,50 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
-interface User {
+export interface User {
   id: string;
   email: string;
   role: 'owner' | 'ops' | 'admin' | 'platform';
   tenant_id: string;
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginAsDemo: (role?: 'owner' | 'ops') => void;
   register: (email: string, password: string, tenantName: string) => Promise<void>;
   acceptInvite: (token: string, password: string) => Promise<void>;
   logout: () => void;
+}
+
+export const DEMO_USERS: Record<'owner' | 'ops', User> = {
+  owner: {
+    id: 'demo-owner-001',
+    email: 'demo.owner@fleetos.com',
+    role: 'owner',
+    tenant_id: 'demo-tenant-001',
+  },
+  ops: {
+    id: 'demo-ops-001',
+    email: 'demo.ops@fleetos.com',
+    role: 'ops',
+    tenant_id: 'demo-tenant-001',
+  },
+};
+
+export function createDemoToken(user: User): string {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const payload = btoa(
+    JSON.stringify({
+      sub: user.id,
+      email: user.email,
+      'custom:role': user.role,
+      'custom:tenant_id': user.tenant_id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365,
+    })
+  );
+  return `${header}.${payload}.demo_signature`;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,6 +75,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setLoading(false);
   }, []);
+
+  const loginAsDemo = (role: 'owner' | 'ops' = 'owner') => {
+    const demoUser = DEMO_USERS[role];
+    const token = createDemoToken(demoUser);
+    localStorage.setItem('fleetos_token', token);
+    setUser(demoUser);
+    router.push(role === 'ops' ? '/today' : '/home');
+  };
 
   const login = async (email: string, password: string) => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -125,7 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, acceptInvite, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, loginAsDemo, register, acceptInvite, logout }}>
       {children}
     </AuthContext.Provider>
   );

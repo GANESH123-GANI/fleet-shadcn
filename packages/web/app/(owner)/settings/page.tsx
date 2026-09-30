@@ -329,33 +329,50 @@ export default function Settings() {
       {saveError && <p className="text-sm text-red-600">{saveError}</p>}
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{users.length}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Users</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Users className="h-4 w-4" />
             </div>
-            <p className="text-blue-100 text-xs mt-1">Users</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <Truck className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{machines.length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{users.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Team members
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Machines</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Truck className="h-4 w-4" />
             </div>
-            <p className="text-green-100 text-xs mt-1">Machines</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <SettingsIcon className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{periodCloses.length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{machines.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Registered
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Closed Periods</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <SettingsIcon className="h-4 w-4" />
             </div>
-            <p className="text-violet-100 text-xs mt-1">Closed Periods</p>
           </div>
-        </Card>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{periodCloses.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Financial
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2">
@@ -364,10 +381,10 @@ export default function Settings() {
           return (
             <button
               key={tabConfig.id}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium whitespace-nowrap transition-all shadow-none ${
                 tab === tabConfig.id 
-                  ? `bg-gradient-to-r ${tabConfig.color} text-white shadow-md` 
-                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-slate-100 dark:bg-slate-800 text-black dark:text-white border-2 border-solid border-slate-900 dark:border-slate-100 font-bold' 
+                  : 'bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 border border-solid border-slate-300 dark:border-slate-700'
               }`}
               onClick={() => setTab(tabConfig.id)}
             >
@@ -392,10 +409,11 @@ export default function Settings() {
       ) : (
         <>
           {tab === 'users' && (
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Users className="h-5 w-5" /> User Management
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Users className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  User Management
                 </CardTitle>
               </div>
               <CardContent className="pt-6 space-y-6">
@@ -468,7 +486,7 @@ export default function Settings() {
                 <ItemGroup className="gap-3">
                   {users.map((u: Record<string, unknown>) => (
                     <Item key={u.id as string} variant="outline">
-                      <ItemMedia className={`size-10 rounded-lg text-white ${u.is_active ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-gradient-to-br from-gray-400 to-gray-500'} [&_svg]:size-5`}>
+                      <ItemMedia className="size-10 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-black dark:text-white [&_svg]:size-5">
                         <Users />
                       </ItemMedia>
                       <ItemContent>
@@ -494,17 +512,18 @@ export default function Settings() {
 
           {tab === 'machines' && (
             <div className="space-y-6">
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Truck className="h-5 w-5" /> Machine Configuration
+              <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+                <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                  <Truck className="h-5 w-5 text-black dark:text-white" />
+                  <CardTitle className="text-base font-bold text-black dark:text-white">
+                    Machine Configuration
                   </CardTitle>
                 </div>
                 <CardContent className="pt-6">
                   <ItemGroup className="gap-3">
                     {machines.map((m: Record<string, unknown>) => (
                       <Item key={m.id as string} variant="outline">
-                        <ItemMedia className="size-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white [&_svg]:size-5">
+                        <ItemMedia className="size-10 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-black dark:text-white [&_svg]:size-5">
                           <Truck />
                         </ItemMedia>
                         <ItemContent>
@@ -531,10 +550,11 @@ export default function Settings() {
                 </CardContent>
               </Card>
 
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Wrench className="h-5 w-5" /> Maintenance Tasks
+              <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+                <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                  <Wrench className="h-5 w-5 text-black dark:text-white" />
+                  <CardTitle className="text-base font-bold text-black dark:text-white">
+                    Maintenance Tasks
                   </CardTitle>
                 </div>
                 <CardContent className="pt-6">
@@ -658,10 +678,11 @@ export default function Settings() {
           )}
 
           {tab === 'categories' && (
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Tag className="h-5 w-5" /> Expense Categories
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Tag className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Expense Categories
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -686,7 +707,7 @@ export default function Settings() {
                 <ItemGroup className="gap-3">
                   {categories.map((c: Record<string, unknown>) => (
                     <Item key={c.id as string} variant="outline">
-                      <ItemMedia className="size-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 text-white [&_svg]:size-5">
+                      <ItemMedia className="size-10 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-black dark:text-white [&_svg]:size-5">
                         <Tag />
                       </ItemMedia>
                       <ItemContent>
@@ -723,10 +744,11 @@ export default function Settings() {
           )}
 
           {tab === 'fx' && (
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" /> FX Defaults
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <DollarSign className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  FX Defaults
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -755,7 +777,7 @@ export default function Settings() {
                     fxDefaults[currency] = { currency, rate: parseFloat(rate) || 1 };
                   });
                   void saveSettings({ fx_defaults: fxDefaults });
-                }} disabled={saving} className="mt-4 bg-gradient-to-r from-gray-800 to-gray-700 hover:from-amber-600 hover:to-orange-600">
+                }} disabled={saving} className="mt-4">
                   {saving ? (
                     <>
                       <Spinner /> Saving…
@@ -769,10 +791,11 @@ export default function Settings() {
           )}
 
           {tab === 'evidence' && settings && (
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Camera className="h-5 w-5" /> Evidence Policy
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Camera className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Evidence Policy
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -802,10 +825,11 @@ export default function Settings() {
 
           {tab === 'thresholds' && settings && (
             <>
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Shield className="h-5 w-5" /> Thresholds & Working Hours
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Shield className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Thresholds & Working Hours
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -835,10 +859,11 @@ export default function Settings() {
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Bell className="h-5 w-5" /> Alert Rules
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Bell className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Alert Rules
                 </CardTitle>
               </div>
               <CardContent className="pt-6 space-y-5">
@@ -925,10 +950,11 @@ export default function Settings() {
           )}
 
           {tab === 'notifications' && (
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Bell className="h-5 w-5" /> Notification Preferences
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Bell className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Notification Preferences
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -939,7 +965,7 @@ export default function Settings() {
                     return (
                       <div key={u.id as string} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white">
+                          <div className="w-10 h-10 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
                             <Users className="h-5 w-5" />
                           </div>
                           <div>
@@ -976,10 +1002,11 @@ export default function Settings() {
 
           {tab === 'periodClose' && (
             <div className="space-y-6">
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-slate-600 to-slate-700 p-4">
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Clock className="h-5 w-5" /> Close Period
+              <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+                <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                  <Clock className="h-5 w-5 text-black dark:text-white" />
+                  <CardTitle className="text-base font-bold text-black dark:text-white">
+                    Close Period
                   </CardTitle>
                 </div>
                 <CardContent className="pt-6">
@@ -1004,7 +1031,7 @@ export default function Settings() {
                           setPeriodClosePeriod('');
                           setPeriodCloseNote('');
                         });
-                      }} className="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800">
+                      }}>
                         Close Period
                       </Button>
                     </div>
@@ -1012,10 +1039,11 @@ export default function Settings() {
                 </CardContent>
               </Card>
 
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-gray-500 to-gray-600 p-4">
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5" /> Closed Periods
+              <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+                <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                  <CheckCircle className="h-5 w-5 text-black dark:text-white" />
+                  <CardTitle className="text-base font-bold text-black dark:text-white">
+                    Closed Periods
                   </CardTitle>
                 </div>
                 <CardContent className="pt-6">
@@ -1042,10 +1070,11 @@ export default function Settings() {
           )}
 
           {tab === 'language' && (
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Globe className="h-5 w-5" /> Language Settings
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Globe className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Language Settings
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -1071,7 +1100,7 @@ export default function Settings() {
                       key={l}
                       variant={locale === l ? 'default' : 'outline'}
                       onClick={() => setLocale(l)}
-                      className={locale === l ? 'bg-gradient-to-r from-purple-500 to-pink-500' : ''}
+                      className={locale === l ? 'bg-slate-100 dark:bg-slate-800 border-2 border-solid border-black dark:border-white font-bold text-black dark:text-white' : ''}
                     >
                       {label}
                     </Button>

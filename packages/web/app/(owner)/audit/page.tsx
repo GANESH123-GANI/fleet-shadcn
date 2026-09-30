@@ -149,33 +149,52 @@ export default function AuditPage() {
       {voidError && <p className="text-sm text-red-600">{voidError}</p>}
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-            <div className="flex items-center gap-2">
-              <History className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{allRows.length}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Entries</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <History className="h-4 w-4" />
             </div>
-            <p className="text-blue-100 text-xs mt-1">Total Entries</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{allRows.filter(r => r.operation === 'INSERT').length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{allRows.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              All events
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Inserts</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <CheckCircle className="h-4 w-4" />
             </div>
-            <p className="text-green-100 text-xs mt-1">Inserts</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{allRows.filter(r => r.operation === 'UPDATE').length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{allRows.filter(r => r.operation === 'INSERT').length}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Created
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Updates</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Clock className="h-4 w-4" />
             </div>
-            <p className="text-amber-100 text-xs mt-1">Updates</p>
           </div>
-        </Card>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{allRows.filter(r => r.operation === 'UPDATE').length}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Modified
+            </span>
+          </div>
+        </div>
       </div>
 
       <ResizablePanelGroup
@@ -183,10 +202,11 @@ export default function AuditPage() {
         className="h-[calc(100vh-14rem)] min-h-[520px] gap-4"
       >
         <ResizablePanel defaultSize="35" minSize="25" className="min-h-0 overflow-y-auto">
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-4">
-              <CardTitle className="text-white flex items-center gap-2">
-                <Filter className="h-5 w-5" /> Filters
+          <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+            <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+              <Filter className="h-5 w-5 text-black dark:text-white" />
+              <CardTitle className="text-base font-bold text-black dark:text-white">
+                Filters
               </CardTitle>
             </div>
             <CardContent className="pt-6">
@@ -236,10 +256,11 @@ export default function AuditPage() {
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize="65" minSize="40" className="min-h-0 overflow-y-auto">
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-              <CardTitle className="text-white flex items-center gap-2">
-                <FileText className="h-5 w-5" /> Entries ({rows.length})
+          <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+            <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+              <FileText className="h-5 w-5 text-black dark:text-white" />
+              <CardTitle className="text-base font-bold text-black dark:text-white">
+                Entries ({rows.length})
               </CardTitle>
             </div>
             <CardContent className="pt-6">
@@ -268,7 +289,7 @@ export default function AuditPage() {
                     const tableColor = TABLE_COLORS[String(r.table_name)] || 'bg-gray-100 text-gray-700';
                 
                     return (
-                      <div key={String(r.id)} className="rounded-xl border border-gray-100 bg-gray-50 p-4 hover:shadow-md transition-all">
+                      <div key={String(r.id)} className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 hover:border-slate-400 dark:hover:border-slate-500 transition-colors shadow-none">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div className="flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${tableColor.split(' ')[0]}`}>

@@ -34,16 +34,16 @@ export default function OpsWorkSession() {
     <div className="space-y-6">
       {apiError && <ApiErrorBanner onRetry={loadSessions} />}
       {/* Header */}
-      <div className="rounded-xl bg-gradient-to-r from-gray-800 to-gray-700 p-6 shadow-lg">
+      <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-none">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Work Sessions</h1>
-            <p className="text-sm text-amber-100">Track machine operating hours and activity</p>
+            <h1 className="text-2xl font-bold text-black dark:text-white tracking-tight">Work Sessions</h1>
+            <p className="text-sm text-black/70 dark:text-white/70">Track machine operating hours and activity</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="text-3xl font-bold text-white">{activeSessions.length}</p>
-              <p className="text-xs text-amber-100">Active Now</p>
+              <p className="text-3xl font-bold text-black dark:text-white">{activeSessions.length}</p>
+              <p className="text-xs text-black/60 dark:text-white/60">Active Now</p>
             </div>
           </div>
         </div>
@@ -53,30 +53,30 @@ export default function OpsWorkSession() {
       {!isReadOnly && (
         <div className="grid gap-4 md:grid-cols-2">
           <Link href="/work-session/new">
-            <div className="group rounded-xl border border-[#E5E2DB] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-md transition-all cursor-pointer">
+            <div className="group rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none hover:border-slate-400 dark:hover:border-slate-500 transition-all cursor-pointer">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-gray-800 to-gray-700 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <Play className="h-6 w-6 text-white" />
+                <div className="h-12 w-12 rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
+                  <Play className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Start New Session</h3>
-                  <p className="text-sm text-slate-500">Begin tracking a new machine session</p>
+                  <h3 className="font-semibold text-black dark:text-white">Start New Session</h3>
+                  <p className="text-sm text-black/60 dark:text-white/60">Begin tracking a new machine session</p>
                 </div>
-                <ArrowRight className="h-5 w-5 text-slate-400 ml-auto group-hover:text-gray-600 transition-colors" />
+                <ArrowRight className="h-5 w-5 text-black/50 ml-auto group-hover:text-black dark:group-hover:text-white transition-colors" />
               </div>
             </div>
           </Link>
           <Link href="/today">
-            <div className="group rounded-xl border border-[#E5E2DB] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-md transition-all cursor-pointer">
+            <div className="group rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none hover:border-slate-400 dark:hover:border-slate-500 transition-all cursor-pointer">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <Clock className="h-6 w-6 text-white" />
+                <div className="h-12 w-12 rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
+                  <Clock className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Back to Today</h3>
-                  <p className="text-sm text-slate-500">View fleet dashboard</p>
+                  <h3 className="font-semibold text-black dark:text-white">Back to Today</h3>
+                  <p className="text-sm text-black/60 dark:text-white/60">View fleet dashboard</p>
                 </div>
-                <ArrowRight className="h-5 w-5 text-slate-400 ml-auto group-hover:text-gray-600 transition-colors" />
+                <ArrowRight className="h-5 w-5 text-black/50 ml-auto group-hover:text-black dark:group-hover:text-white transition-colors" />
               </div>
             </div>
           </Link>
@@ -85,22 +85,23 @@ export default function OpsWorkSession() {
 
       {/* Active Sessions */}
       {activeSessions.length > 0 && (
-        <div className="rounded-xl border border-[#E5E2DB] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
-              <Play className="h-5 w-5" /> Active Sessions ({activeSessions.length})
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-none overflow-hidden">
+          <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+            <Play className="h-5 w-5 text-black dark:text-white" />
+            <h2 className="text-base font-bold text-black dark:text-white">
+              Active Sessions ({activeSessions.length})
             </h2>
           </div>
-          <div className="divide-y divide-[#E5E2DB]">
+          <div className="divide-y divide-slate-200 dark:divide-slate-800">
             {activeSessions.map((session: Record<string, unknown>) => (
-              <div key={session.id as string} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
+              <div key={session.id as string} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-gray-700 to-gray-600 flex items-center justify-center">
-                    <Gauge className="h-5 w-5 text-white" />
+                  <div className="h-10 w-10 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
+                    <Gauge className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">{session.machine_code as string || 'Machine'}</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="font-semibold text-black dark:text-white">{session.machine_code as string || 'Machine'}</p>
+                    <p className="text-sm text-black/60 dark:text-white/60">
                       Started {new Date(session.start_at as string).toLocaleTimeString()} · Meter: {session.start_meter as number}
                     </p>
                   </div>
@@ -118,18 +119,19 @@ export default function OpsWorkSession() {
 
       {/* Recent Completed Sessions */}
       {completedSessions.length > 0 && (
-        <div className="rounded-xl border border-[#E5E2DB] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
-              <CheckCircle className="h-5 w-5" /> Recent Sessions
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-none overflow-hidden">
+          <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+            <CheckCircle className="h-5 w-5 text-black dark:text-white" />
+            <h2 className="text-base font-bold text-black dark:text-white">
+              Recent Sessions
             </h2>
           </div>
-          <div className="divide-y divide-[#E5E2DB]">
+          <div className="divide-y divide-slate-200 dark:divide-slate-800">
             {completedSessions.map((session: Record<string, unknown>) => (
-              <div key={session.id as string} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
+              <div key={session.id as string} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-slate-500 to-gray-600 flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-white" />
+                  <div className="h-10 w-10 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
+                    <CheckCircle className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="font-semibold text-slate-900">{session.machine_code as string || 'Machine'}</p>

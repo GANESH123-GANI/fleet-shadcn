@@ -152,54 +152,57 @@ export default function SiteDetail() {
       ) : (
         <>
           <div className="grid gap-6 md:grid-cols-2">
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <span className="text-2xl">📍</span> Site Information
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <span className="text-xl">📍</span>
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Site Information
                 </CardTitle>
               </div>
               <CardContent className="space-y-4 pt-6">
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-600">Client</span>
-                  <span className="font-semibold text-gray-800">
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">Client</span>
+                  <span className="font-semibold text-black dark:text-white">
                     {site.client_name as string ?? 'N/A'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-600">Location</span>
-                  <span className="font-medium text-gray-800">{site.location as string ?? 'N/A'}</span>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">Location</span>
+                  <span className="font-medium text-black dark:text-white">{site.location as string ?? 'N/A'}</span>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <span className="text-2xl">📅</span> Timeline
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <span className="text-xl">📅</span>
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Timeline
                 </CardTitle>
               </div>
               <CardContent className="space-y-4 pt-6">
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-600">Start Date</span>
-                  <span className="font-medium text-gray-800">{site.start_date as string ?? 'N/A'}</span>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">Start Date</span>
+                  <span className="font-medium text-black dark:text-white">{site.start_date as string ?? 'N/A'}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-600">End Date</span>
-                  <span className="font-medium text-gray-800">{site.end_date as string ?? 'N/A'}</span>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">End Date</span>
+                  <span className="font-medium text-black dark:text-white">{site.end_date as string ?? 'N/A'}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-600">Machines Deployed</span>
-                  <span className="text-2xl font-bold text-emerald-600">{deployments.length}</span>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">Machines Deployed</span>
+                  <span className="text-2xl font-bold text-black dark:text-white">{deployments.length}</span>
                 </div>
               </CardContent>
             </Card>
           </div>
 
           {deployments.length > 0 && (
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <span className="text-2xl">🚜</span> Deployed Machines ({deployments.length})
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <span className="text-xl">🚜</span>
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Deployed Machines ({deployments.length})
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -209,19 +212,17 @@ export default function SiteDetail() {
                     const machineCode = (d.machine_code as string) ?? (mach?.code as string) ?? 'Unknown';
                     const machineType = (mach?.type as string) ?? '';
                     return (
-                      <div key={d.id as string} className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200">
+                      <div key={d.id as string} className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                            <span className="text-gray-700 font-bold">🔧</span>
+                          <div className="w-10 h-10 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
+                            <span className="text-black dark:text-white font-bold">🔧</span>
                           </div>
                           <div>
-                            <p className="font-semibold text-gray-800">{machineCode}</p>
-                            <p className="text-xs text-gray-500">{machineType}</p>
+                            <p className="font-semibold text-black dark:text-white">{machineCode}</p>
+                            <p className="text-xs text-black/60 dark:text-white/60">{machineType}</p>
                           </div>
                         </div>
-                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-                          d.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                        }`}>
+                        <span className="text-xs px-3 py-1 rounded-full font-medium border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
                           {(d.status as string).replace(/_/g, ' ')}
                         </span>
                       </div>

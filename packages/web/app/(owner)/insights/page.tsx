@@ -43,10 +43,10 @@ function fmtMoney(amount: number, currency = 'INR'): string {
 }
 
 function healthColor(score: number): string {
-  if (score >= 90) return 'text-white bg-gradient-to-r from-emerald-500 to-green-500';
-  if (score >= 70) return 'text-white bg-gradient-to-r from-gray-950 to-gray-900';
-  if (score >= 50) return 'text-white bg-gradient-to-r from-gray-800 to-gray-700';
-  return 'text-white bg-gradient-to-r from-gray-800 to-gray-700';
+  if (score >= 90) return 'text-black dark:text-white bg-slate-100 dark:bg-slate-800';
+  if (score >= 70) return 'text-black dark:text-white bg-slate-100 dark:bg-slate-800';
+  if (score >= 50) return 'text-black dark:text-white bg-slate-100 dark:bg-slate-800';
+  return 'text-black dark:text-white bg-slate-100 dark:bg-slate-800';
 }
 
 interface MachineInsight {
@@ -216,76 +216,76 @@ export default function Insights() {
 
       {/* ── Fleet Overview ── */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3">
-            <div className="flex items-center gap-2">
-              <Gauge className="h-5 w-5 text-white/90" />
-              <p className="text-white font-bold text-xl">{machines.length}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-black dark:text-white">Total Machines</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Gauge className="h-4 w-4" />
             </div>
-            <p className="text-blue-100 text-[10px] mt-1">Total Machines</p>
           </div>
-        </Card>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{machines.length}</p>
+        </div>
 
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-3">
-            <div className="flex items-center gap-2">
-              <Power className="h-5 w-5 text-white/90" />
-              <p className="text-white font-bold text-xl">{activeMachines.length}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-black dark:text-white">Active Machines</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Power className="h-4 w-4" />
             </div>
-            <p className="text-green-100 text-[10px] mt-1">Active Machines</p>
           </div>
-        </Card>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{activeMachines.length}</p>
+        </div>
 
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-br from-violet-500 to-purple-600 p-3">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-white/90" />
-              <p className="text-white font-bold text-xl">{fmtHours(totalHours)}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-black dark:text-white">Total Hours Run</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Clock className="h-4 w-4" />
             </div>
-            <p className="text-violet-100 text-[10px] mt-1">Total Hours Run</p>
           </div>
-        </Card>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{fmtHours(totalHours)}</p>
+        </div>
 
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-br from-gray-700 to-gray-600 p-3">
-            <div className="flex items-center gap-2">
-              <Wrench className="h-5 w-5 text-white/90" />
-              <p className="text-white font-bold text-xl">{fmtHours(totalDowntime)}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-black dark:text-white">Downtime Hours</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Wrench className="h-4 w-4" />
             </div>
-            <p className="text-amber-100 text-[10px] mt-1">Downtime Hours</p>
           </div>
-        </Card>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{fmtHours(totalDowntime)}</p>
+        </div>
 
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-700 p-3">
-            <div className="flex items-center gap-2">
-              <Coins className="h-5 w-5 text-white/90" />
-              <p className="text-white font-bold text-base truncate">{fmtMoney(fleetMonthlyEarnings)}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-black dark:text-white">Est. Monthly Revenue</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Coins className="h-4 w-4" />
             </div>
-            <p className="text-emerald-100 text-[10px] mt-1">Est. Monthly Revenue</p>
           </div>
-        </Card>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white truncate">{fmtMoney(fleetMonthlyEarnings)}</p>
+        </div>
 
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-br from-cyan-500 to-blue-500 p-3">
-            <div className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-white/90" />
-              <p className="text-white font-bold text-xl">{avgHealth}%</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-black dark:text-white">Fleet Health Score</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Brain className="h-4 w-4" />
             </div>
-            <p className="text-cyan-100 text-[10px] mt-1">Fleet Health Score</p>
           </div>
-        </Card>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{avgHealth}%</p>
+        </div>
       </div>
 
       {/* ── Charts Row ── */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2 overflow-hidden">
-          <div className="bg-gradient-to-r from-violet-500 to-purple-600 p-4">
+        <Card className="lg:col-span-2 overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+          <div className="flex flex-col gap-1 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
             <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-white" />
-              <CardTitle className="text-white">Hours per Machine</CardTitle>
+              <Clock className="h-5 w-5 text-black dark:text-white" />
+              <CardTitle className="text-base font-bold text-black dark:text-white">Hours per Machine</CardTitle>
             </div>
-            <p className="text-violet-100 text-sm mt-1">
+            <p className="text-xs text-black/70 dark:text-white/70">
               Total operating hours vs billable hours for each machine.
             </p>
           </div>
@@ -338,12 +338,10 @@ export default function Insights() {
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-4">
-            <div className="flex items-center gap-2">
-              <Power className="h-5 w-5 text-white" />
-              <CardTitle className="text-white">Machine Status Today</CardTitle>
-            </div>
+        <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+          <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+            <Power className="h-5 w-5 text-black dark:text-white" />
+            <CardTitle className="text-base font-bold text-black dark:text-white">Machine Status Today</CardTitle>
           </div>
           <CardContent className="pt-6">
             {utilPieData.length === 0 ? (
@@ -497,34 +495,34 @@ export default function Insights() {
         {!insightsLoading && insights.length > 0 && (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {insights.map((ins) => (
-              <Card key={ins.machine_code} className="overflow-hidden hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
+              <Card key={ins.machine_code} className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none hover:border-slate-400 dark:hover:border-slate-500 transition-colors">
+                <CardContent className="p-5">
                   {/* Header */}
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <h3 className="font-bold text-lg">{ins.machine_code}</h3>
-                      <p className="text-xs text-muted-foreground">
+                      <h3 className="font-bold text-lg text-black dark:text-white">{ins.machine_code}</h3>
+                      <p className="text-xs text-black/60 dark:text-white/60">
                         {ins.type.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                       </p>
                     </div>
-                    <span className={`rounded-lg px-2.5 py-1 text-xs font-bold shadow-sm ${healthColor(ins.health_score)}`}>
+                    <span className={`rounded-lg px-2.5 py-1 text-xs font-bold border border-solid border-slate-300 dark:border-slate-700 ${healthColor(ins.health_score)}`}>
                       {ins.health_score}%
                     </span>
                   </div>
 
                   {/* Key Stats - One Line */}
-                  <div className="flex items-center gap-3 text-sm mb-3 border-b pb-3">
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5 text-blue-500" />
+                  <div className="flex items-center gap-3 text-sm mb-3 border-b border-solid border-slate-300 dark:border-slate-700 pb-3">
+                    <span className="flex items-center gap-1 text-black/80 dark:text-white/80">
+                      <Clock className="h-3.5 w-3.5 text-black dark:text-white" />
                       {ins.stats.total_hours}h
                     </span>
-                    <span className="flex items-center gap-1">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                    <span className="flex items-center gap-1 text-black/80 dark:text-white/80">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-black dark:text-white" />
                       {ins.stats.billable_ratio}%
                     </span>
                     {ins.stats.downtime_hours > 0 && (
-                      <span className="flex items-center gap-1 text-amber-600">
-                        <Wrench className="h-3.5 w-3.5" />
+                      <span className="flex items-center gap-1 text-black/80 dark:text-white/80">
+                        <Wrench className="h-3.5 w-3.5 text-black dark:text-white" />
                         {ins.stats.downtime_hours}h down
                       </span>
                     )}
@@ -533,22 +531,22 @@ export default function Insights() {
                   {/* Earnings - Compact */}
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="text-xs text-muted-foreground">Monthly Est.</p>
-                      <p className="text-lg font-bold text-green-600">
+                      <p className="text-xs text-black/60 dark:text-white/60">Monthly Est.</p>
+                      <p className="text-lg font-bold text-black dark:text-white">
                         {fmtMoney(ins.earnings_total.monthly_estimate)}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Daily Avg</p>
-                      <p className="font-semibold">{fmtMoney(ins.earnings_total.daily_average)}</p>
+                      <p className="text-xs text-black/60 dark:text-white/60">Daily Avg</p>
+                      <p className="font-semibold text-black dark:text-white">{fmtMoney(ins.earnings_total.daily_average)}</p>
                     </div>
                   </div>
 
                   {/* Issues - Only if any */}
                   {ins.issues.length > 0 && (
-                    <div className="bg-slate-400 dark:bg-slate-600 rounded-lg p-2 mb-3">
+                    <div className="rounded-lg border border-solid border-slate-300 dark:border-slate-700 p-2 mb-3 bg-slate-50 dark:bg-slate-800">
                       {ins.issues.map((issue, i) => (
-                        <p key={i} className="text-xs text-white flex items-center gap-1">
+                        <p key={i} className="text-xs text-black dark:text-white flex items-center gap-1">
                           <AlertTriangle className="h-3 w-3" />
                           {issue}
                         </p>
@@ -559,7 +557,7 @@ export default function Insights() {
                   {/* Action */}
                   <a
                     href={`/machines/${ins.machine_id}`}
-                    className="block text-center text-xs text-primary hover:underline py-2 border-t"
+                    className="block text-center text-xs font-medium text-black dark:text-white hover:underline py-2 border-t border-solid border-slate-300 dark:border-slate-700"
                   >
                     View Details →
                   </a>

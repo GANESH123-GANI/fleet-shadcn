@@ -25,10 +25,11 @@ export function ProfileDropdown() {
     <>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
+          <Button variant='ghost' className='relative h-8 w-8 rounded-full p-0 focus-visible:ring-1 focus-visible:ring-slate-300'>
             <Avatar className='h-8 w-8'>
-              <AvatarFallback>{initials}</AvatarFallback>
+              <AvatarFallback className="bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 text-xs font-semibold">{initials}</AvatarFallback>
             </Avatar>
+            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-56' align='end' forceMount>

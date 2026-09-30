@@ -115,71 +115,67 @@ export default function OwnerOperators() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {uniqueOperators.map((o) => (
-            <Card key={o.id} className={`hover:shadow-lg transition-all overflow-hidden ${!o.is_active ? 'opacity-75' : ''}`}>
-              <div className={`h-1.5 ${o.is_active ? 'bg-gradient-to-r from-gray-900 to-gray-800' : 'bg-gradient-to-r from-gray-400 to-gray-500'}`} />
+            <Card key={o.id} className={`hover:border-slate-400 dark:hover:border-slate-500 transition-colors overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none ${!o.is_active ? 'opacity-75' : ''}`}>
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white ${
-                      o.is_active ? 'bg-gradient-to-br from-blue-500 to-blue-600' : 'bg-gradient-to-br from-gray-400 to-gray-500'
-                    }`}>
+                    <div className="w-12 h-12 rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
                       <User className="h-6 w-6" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-800">{o.name}</h3>
-                      <p className="text-xs text-gray-500">{o.specialization ?? 'Operator'}</p>
+                      <h3 className="font-bold text-black dark:text-white">{o.name}</h3>
+                      <p className="text-xs text-black/60 dark:text-white/60">{o.specialization ?? 'Operator'}</p>
                     </div>
                   </div>
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                    o.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                  }`}>
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white bg-transparent">
+                    <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
                     {o.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </div>
 
                 <div className="space-y-2 mt-4">
                   {o.phone && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Phone className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                      <Phone className="h-4 w-4 text-black/50 dark:text-white/50" />
                       <span>{o.phone}</span>
                     </div>
                   )}
                   {o.license && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Award className="h-4 w-4 text-gray-400" />
+                    <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                      <Award className="h-4 w-4 text-black/50 dark:text-white/50" />
                       <span>{o.license}</span>
                     </div>
                   )}
                   {o.experience_years && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <span className="text-gray-400">⏱️</span>
+                    <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                      <span className="text-black/50 dark:text-white/50">⏱️</span>
                       <span>{o.experience_years} years experience</span>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="mt-4 pt-4 border-t border-solid border-slate-300 dark:border-slate-700">
                   {o.assigned_machine ? (
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Truck className="h-4 w-4 text-blue-500" />
-                        <span className="text-sm font-medium text-gray-700">{o.assigned_machine}</span>
+                        <Truck className="h-4 w-4 text-black dark:text-white" />
+                        <span className="text-sm font-medium text-black dark:text-white">{o.assigned_machine}</span>
                       </div>
                       {o.site && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <div className="flex items-center gap-1 text-xs text-black/60 dark:text-white/60">
                           <MapPin className="h-3 w-3" />
                           <span className="truncate max-w-[100px]">{o.site}</span>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-400 text-center">No assignment</p>
+                    <p className="text-sm text-black/50 dark:text-white/50 text-center">No assignment</p>
                   )}
                 </div>
-                <div className="flex items-center gap-1 mt-3 pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-1 mt-3 pt-3 border-t border-solid border-slate-300 dark:border-slate-700">
                   <button
                     onClick={() => router.push(`/operators/${o.id}`)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+                    className="p-1.5 rounded-lg text-black/60 hover:text-black hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                     title="Edit"
                   >
                     <Pencil className="h-3.5 w-3.5" />

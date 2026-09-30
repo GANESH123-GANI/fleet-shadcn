@@ -112,40 +112,58 @@ export default function ProjectionsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{money(totalBilling)}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Projected Billing</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <DollarSign className="h-4 w-4" />
             </div>
-            <p className="text-blue-100 text-xs mt-1">Total Projected Billing</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{money(totalContribution)}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{money(totalBilling)}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Projected
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Contribution</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <TrendingUp className="h-4 w-4" />
             </div>
-            <p className="text-green-100 text-xs mt-1">Total Contribution</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{savedProjections.length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{money(totalContribution)}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Estimated margin
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Saved Projections</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <BarChart3 className="h-4 w-4" />
             </div>
-            <p className="text-violet-100 text-xs mt-1">Saved Projections</p>
           </div>
-        </Card>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{savedProjections.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Records
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <CardTitle className="text-white flex items-center gap-2">
-              <Calculator className="h-5 w-5" /> Projection Inputs
+        <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+          <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+            <Calculator className="h-5 w-5 text-black dark:text-white" />
+            <CardTitle className="text-base font-bold text-black dark:text-white">
+              Projection Inputs
             </CardTitle>
           </div>
           <CardContent className="pt-6">
@@ -177,50 +195,52 @@ export default function ProjectionsPage() {
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-            <CardTitle className="text-white flex items-center gap-2">
-              <Target className="h-5 w-5" /> Projection Result
+        <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+          <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+            <Target className="h-5 w-5 text-black dark:text-white" />
+            <CardTitle className="text-base font-bold text-black dark:text-white">
+              Projection Result
             </CardTitle>
           </div>
           <CardContent className="pt-6">
             {!result ? (
               <div className="text-center py-8">
                 <div className="text-6xl mb-4">📊</div>
-                <p className="text-gray-500">Enter inputs and click Calculate</p>
-                <p className="text-gray-400 text-sm mt-2">See projected billing and contribution</p>
+                <p className="text-black dark:text-white font-medium">Enter inputs and click Calculate</p>
+                <p className="text-black/60 dark:text-white/60 text-sm mt-2">See projected billing and contribution</p>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 p-4 border border-gray-100">
+                <div className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Projected Billing</span>
-                    <span className="text-xl font-bold text-gray-700">{money(result.projected_billing_minor)}</span>
+                    <span className="text-black/70 dark:text-white/70">Projected Billing</span>
+                    <span className="text-xl font-bold text-black dark:text-white">{money(result.projected_billing_minor)}</span>
                   </div>
                 </div>
-                <div className="rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 p-4 border border-amber-100">
+                <div className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Projected Costs ({result.expense_ratio}%)</span>
-                    <span className="text-xl font-bold text-amber-600">{money(result.projected_costs_minor)}</span>
+                    <span className="text-black/70 dark:text-white/70">Projected Costs ({result.expense_ratio}%)</span>
+                    <span className="text-xl font-bold text-black dark:text-white">{money(result.projected_costs_minor)}</span>
                   </div>
                 </div>
-                <div className="rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 p-4 border border-green-100">
+                <div className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Projected Contribution</span>
-                    <span className="text-xl font-bold text-green-600">{money(result.projected_contribution_minor)}</span>
+                    <span className="text-black/70 dark:text-white/70">Projected Contribution</span>
+                    <span className="text-xl font-bold text-black dark:text-white">{money(result.projected_contribution_minor)}</span>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">{result.note}</p>
+                <p className="text-xs text-black/60 dark:text-white/60 border border-solid border-slate-300 dark:border-slate-700 p-3 rounded-lg">{result.note}</p>
               </div>
             )}
           </CardContent>
         </Card>
       </div>
 
-      <Card className="overflow-hidden">
-        <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-4">
-          <CardTitle className="text-white flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" /> Saved Projections
+      <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+        <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+          <BarChart3 className="h-5 w-5 text-black dark:text-white" />
+          <CardTitle className="text-base font-bold text-black dark:text-white">
+            Saved Projections
           </CardTitle>
         </div>
         <CardContent className="pt-6">

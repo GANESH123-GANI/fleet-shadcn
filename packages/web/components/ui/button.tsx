@@ -11,16 +11,16 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 hover:border-neutral-900 dark:hover:border-neutral-100',
+          'border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-neutral-900 text-black dark:text-white hover:border-black dark:hover:border-white shadow-none',
         destructive:
-          'border border-red-300 dark:border-red-600 bg-white dark:bg-neutral-900 text-red-700 dark:text-red-400 hover:border-red-600 dark:hover:border-red-400',
+          'border border-solid border-red-300 dark:border-red-600 bg-white dark:bg-neutral-900 text-red-700 dark:text-red-400 hover:border-red-600 dark:hover:border-red-400 shadow-none',
         outline:
-          'border border-neutral-300 dark:border-neutral-600 bg-transparent text-neutral-700 dark:text-neutral-300 hover:border-neutral-900 dark:hover:border-neutral-100',
+          'border border-solid border-slate-300 dark:border-slate-700 bg-transparent text-black dark:text-white hover:border-black dark:hover:border-white shadow-none',
         secondary:
-          'border border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-900 dark:hover:border-neutral-100',
+          'border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-neutral-800 text-black dark:text-white hover:border-black dark:hover:border-white shadow-none',
         ghost:
-          'border border-transparent text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800',
-        link: 'text-neutral-900 dark:text-neutral-100 underline-offset-4 hover:underline bg-transparent border-none p-0 h-auto',
+          'border border-transparent text-black dark:text-white hover:bg-slate-100 dark:hover:bg-neutral-800',
+        link: 'text-black dark:text-white underline-offset-4 hover:underline bg-transparent border-none p-0 h-auto',
       },
       size: {
         default: 'h-10 px-5 py-2.5',

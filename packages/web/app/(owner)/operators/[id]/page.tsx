@@ -164,65 +164,65 @@ export default function OperatorDetail() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-              <CardTitle className="text-white flex items-center gap-2">
-                <span className="text-2xl">👷</span> Operator Information
-              </CardTitle>
-            </div>
-            <CardContent className="space-y-4 pt-6">
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">Name</span>
-                <span className="font-semibold text-gray-800">{operator.name as string}</span>
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <span className="text-xl">👷</span>
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Operator Information
+                </CardTitle>
               </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">Phone</span>
-                <span className="font-medium text-gray-800">{(operator.phone as string) ?? 'N/A'}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">License</span>
-                <span className="font-medium text-gray-800">{(operator.license as string) ?? 'N/A'}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">Experience</span>
-                <span className="font-medium text-gray-800">
-                  {operator.experience_years ? `${operator.experience_years} years` : 'N/A'}
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">Specialization</span>
-                <span className="font-medium text-gray-800">{(operator.specialization as string) ?? 'N/A'}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-600">Status</span>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                  operator.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                }`}>
-                  {operator.is_active ? 'Active' : 'Inactive'}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+              <CardContent className="space-y-4 pt-6">
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">Name</span>
+                  <span className="font-semibold text-black dark:text-white">{operator.name as string}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">Phone</span>
+                  <span className="font-medium text-black dark:text-white">{(operator.phone as string) ?? 'N/A'}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">License</span>
+                  <span className="font-medium text-black dark:text-white">{(operator.license as string) ?? 'N/A'}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">Experience</span>
+                  <span className="font-medium text-black dark:text-white">
+                    {operator.experience_years ? `${operator.experience_years} years` : 'N/A'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">Specialization</span>
+                  <span className="font-medium text-black dark:text-white">{(operator.specialization as string) ?? 'N/A'}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700">
+                  <span className="text-black/70 dark:text-white/70">Status</span>
+                  <span className="px-2.5 py-1 rounded-full text-xs font-semibold border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+                    {operator.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-              <CardTitle className="text-white flex items-center gap-2">
-                <span className="text-2xl">📋</span> Assignment
-              </CardTitle>
-            </div>
-            <CardContent className="pt-6">
-              <div className="p-3 bg-gray-50 rounded-lg text-center">
-                <p className="text-gray-600 mb-2">Current Assignment</p>
-                <p className="font-medium text-gray-800">
-                  {(operator.assigned_machine as string) ?? 'No current assignment'}
-                </p>
-                {(operator.site as string) && (
-                  <p className="text-sm text-gray-500 mt-1">{operator.site as string}</p>
-                )}
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <span className="text-xl">📋</span>
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Assignment
+                </CardTitle>
               </div>
-            </CardContent>
-          </Card>
+              <CardContent className="pt-6">
+                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-center">
+                  <p className="text-black/70 dark:text-white/70 mb-2 text-sm font-medium">Current Assignment</p>
+                  <p className="font-bold text-black dark:text-white text-base">
+                    {(operator.assigned_machine as string) ?? 'No current assignment'}
+                  </p>
+                  {(operator.site as string) && (
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">{operator.site as string}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
         </div>
       )}
     </div>

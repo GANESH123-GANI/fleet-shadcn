@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -8,6 +9,10 @@
  * Fleet OS — Enterprise Design System
  * Tailwind CSS v4 + shadcn compat
  */
+
+html, body {
+  font-family: var(--font-geist-sans), 'Geist', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
 /* ---- FleetOS design tokens ---- */
 :root {
@@ -97,7 +102,7 @@
   --fleet-topbar-height: 64px;
 
   /* shadcn compat (HSL without hsl()) */
-  --background: 0 0% 98%;
+  --background: 0 0% 100%;
   --foreground: 220 14% 10%;
   --card: 0 0% 100%;
   --card-foreground: 220 14% 10%;
@@ -113,8 +118,8 @@
   --accent-foreground: 220 14% 10%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
+  --border: 215 25% 82%;
+  --input: 215 25% 82%;
   --ring: 174 62% 26%;
   --chart-1: 174 62% 26%;
   --chart-2: 220 70% 50%;
@@ -194,8 +199,8 @@
   --accent-foreground: 210 40% 96%;
   --destructive: 0 63% 50%;
   --destructive-foreground: 0 0% 100%;
-  --border: 220 18% 18%;
-  --input: 220 18% 18%;
+  --border: 215 28% 27%;
+  --input: 215 28% 27%;
   --ring: 174 62% 45%;
   --chart-1: 174 62% 45%;
   --chart-2: 220 70% 60%;
@@ -206,8 +211,8 @@
 
 /* ---- Tailwind v4 theme mapping ---- */
 @theme inline {
-  --font-sans: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  --font-sans: var(--font-geist-sans), 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono', monospace;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -1193,3 +1198,78 @@
   .orbital-spin,
   .orbital-link-flow { animation: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Universal FleetOS UI Consistency: Crisp Borders, Solid Black Type, No Shadows
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Universal Card Styling */
+[data-slot="card"], .card {
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
+}
+.dark [data-slot="card"], .dark .card {
+  border: 1px solid #334155 !important;
+  box-shadow: none !important;
+}
+
+[data-slot="card-title"] {
+  color: #000000;
+  font-family: var(--font-geist-sans), 'Geist', sans-serif;
+  font-weight: 700;
+}
+.dark [data-slot="card-title"] {
+  color: #ffffff;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: #000000;
+  font-family: var(--font-geist-sans), 'Geist', sans-serif;
+}
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #ffffff;
+}
+
+/* Remove all drop shadows universally */
+.shadow-xs, .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl,
+.hover\:shadow-xs:hover, .hover\:shadow-sm:hover, .hover\:shadow-md:hover, 
+.hover\:shadow-lg:hover, .hover\:shadow-xl:hover, .hover\:shadow-2xl:hover {
+  box-shadow: none !important;
+}
+
+/* Universal Table Styling */
+[data-slot="table-container"], .table-container {
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+.dark [data-slot="table-container"], .dark .table-container {
+  border: 1px solid #334155;
+}
+
+[data-slot="table-row"], tr {
+  border-bottom: 1px solid #cbd5e1 !important;
+}
+.dark [data-slot="table-row"], .dark tr {
+  border-bottom: 1px solid #334155 !important;
+}
+
+[data-slot="table-head"] {
+  color: #000000 !important;
+  font-weight: 600;
+}
+.dark [data-slot="table-head"] {
+  color: #ffffff !important;
+}
+
+/* Universal Badge Styling */
+[data-slot="badge"] {
+  border: 1px solid #cbd5e1;
+  box-shadow: none !important;
+}
+.dark [data-slot="badge"] {
+  border: 1px solid #334155;
+}
+

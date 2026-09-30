@@ -53,14 +53,14 @@ export default function CashCount() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <div className="rounded-xl bg-gradient-to-r from-gray-900 to-gray-800 p-6 text-white">
+      <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-none">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-white/20 p-2">
+          <div className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-2 text-black dark:text-white">
             <Calculator className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Cash Count</h1>
-            <p className="text-white/80">Perform a blind cash count for reconciliation.</p>
+            <h1 className="text-2xl font-bold text-black dark:text-white">Cash Count</h1>
+            <p className="text-sm text-black/70 dark:text-white/70">Perform a blind cash count for reconciliation.</p>
           </div>
         </div>
       </div>

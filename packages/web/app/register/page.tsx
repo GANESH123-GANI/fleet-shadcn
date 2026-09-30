@@ -16,7 +16,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
   const [tab, setTab] = useState<'login' | 'signup'>('signup');
-  const { login, register } = useAuth();
+  const { login, loginAsDemo, register } = useAuth();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>, field: string) => {
     if (field === 'email') setEmail(e.target.value);
@@ -183,7 +183,39 @@ export default function RegisterPage() {
           onTabChange={setTab}
           onConsentChange={setConsentGiven}
         />
-        <p className="mt-8 text-center text-sm text-white/60 max-w-[380px]">
+
+        {/* Demo Account Bypass */}
+        <div className="mt-6 w-full max-w-[380px] rounded-xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-md">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-teal-400">
+              Demo Account Bypass
+            </span>
+            <span className="rounded-full bg-teal-500/10 px-2 py-0.5 text-[10px] font-medium text-teal-300 border border-teal-500/20">
+              One-Click
+            </span>
+          </div>
+          <p className="text-xs text-white/60 mb-3">
+            Instantly bypass authentication with mock credentials:
+          </p>
+          <div className="grid grid-cols-2 gap-2.5">
+            <button
+              type="button"
+              onClick={() => loginAsDemo('owner')}
+              className="flex items-center justify-center gap-1.5 rounded-lg border border-teal-500/30 bg-teal-500/15 px-3 py-2 text-xs font-medium text-teal-300 transition-all hover:bg-teal-500/25 active:scale-[0.98]"
+            >
+              Demo Owner
+            </button>
+            <button
+              type="button"
+              onClick={() => loginAsDemo('ops')}
+              className="flex items-center justify-center gap-1.5 rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-xs font-medium text-white transition-all hover:bg-white/20 active:scale-[0.98]"
+            >
+              Demo Operator
+            </button>
+          </div>
+        </div>
+
+        <p className="mt-6 text-center text-sm text-white/60 max-w-[380px]">
           Already have an account?{' '}
           <Link href="/login" className="font-semibold text-teal-400 hover:text-teal-300 transition-colors">
             Sign in

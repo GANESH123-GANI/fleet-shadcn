@@ -222,33 +222,51 @@ export default function CashPage() {
       )}
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <Wallet className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{money(totalBalance)}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Cash Balance</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Wallet className="h-4 w-4" />
             </div>
-            <p className="text-emerald-100 text-xs mt-1">Total Cash Balance</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-            <div className="flex items-center gap-2">
-              <ArrowRightLeft className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{transfers.length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{money(totalBalance)}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Liquid funds
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Transfers</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <ArrowRightLeft className="h-4 w-4" />
             </div>
-            <p className="text-blue-100 text-xs mt-1">Total Transfers</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <Banknote className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{accounts.length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{transfers.length}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Remittances
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Cash Accounts</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Banknote className="h-4 w-4" />
             </div>
-            <p className="text-violet-100 text-xs mt-1">Cash Accounts</p>
           </div>
-        </Card>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{accounts.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Active accounts
+            </span>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -271,30 +289,21 @@ export default function CashPage() {
               return (
                 <Card 
                   key={String(a.id)} 
-                  className={`cursor-pointer transition-all hover:shadow-lg overflow-hidden ${isSelected ? 'ring-2 ring-emerald-500' : ''}`}
+                  className={`cursor-pointer transition-all hover:border-slate-400 dark:hover:border-slate-500 overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none ${isSelected ? 'ring-2 ring-black dark:ring-white' : ''}`}
                   onClick={() => setAccountId(String(a.id))}
                 >
-                  <div className={`h-1.5 ${
-                    num(a.balance_minor) > 1000000 ? 'bg-gradient-to-r from-gray-900 to-gray-800' :
-                    num(a.balance_minor) > 500000 ? 'bg-gradient-to-r from-gray-950 to-gray-900' :
-                    'bg-gradient-to-r from-gray-800 to-gray-700'
-                  }`} />
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white ${
-                          String(a.type) === 'bank' ? 'bg-gradient-to-br from-blue-500 to-blue-600' :
-                          String(a.type) === 'petty' ? 'bg-gradient-to-br from-gray-700 to-gray-600' :
-                          'bg-gradient-to-br from-emerald-500 to-teal-600'
-                        }`}>
+                        <div className="w-10 h-10 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
                           <Wallet className="h-5 w-5" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-gray-800 text-sm">{String(a.name)}</h3>
-                          <p className="text-[10px] text-gray-500">{String(a.type ?? 'operational')}</p>
+                          <h3 className="font-bold text-black dark:text-white text-sm">{String(a.name)}</h3>
+                          <p className="text-[10px] text-black/60 dark:text-white/60">{String(a.type ?? 'operational')}</p>
                         </div>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 text-green-700">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white bg-transparent">
                         {String(a.currency ?? 'INR')}
                       </span>
                     </div>
@@ -349,10 +358,11 @@ export default function CashPage() {
             })}
           </div>
 
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-4">
-              <CardTitle className="text-white flex items-center gap-2">
-                <Wallet className="h-5 w-5" /> New Cash Account
+          <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+            <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+              <Wallet className="h-5 w-5 text-black dark:text-white" />
+              <CardTitle className="text-base font-bold text-black dark:text-white">
+                New Cash Account
               </CardTitle>
             </div>
             <CardContent className="pt-6">
@@ -387,10 +397,11 @@ export default function CashPage() {
           </Card>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <ArrowRightLeft className="h-5 w-5" /> New Remittance
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <ArrowRightLeft className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  New Remittance
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -432,10 +443,11 @@ export default function CashPage() {
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden">
-              <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Clock className="h-5 w-5" /> Recent Transfers
+            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+                <Clock className="h-5 w-5 text-black dark:text-white" />
+                <CardTitle className="text-base font-bold text-black dark:text-white">
+                  Recent Transfers
                 </CardTitle>
               </div>
               <CardContent className="pt-6">
@@ -446,7 +458,7 @@ export default function CashPage() {
                     {transfers.slice(0, 5).map((t) => (
                       <div key={String(t.id)} className="flex items-center justify-between rounded-lg bg-gray-50 p-4 border border-gray-100">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white">
+                          <div className="w-10 h-10 rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
                             <ArrowRightLeft className="h-5 w-5" />
                           </div>
                           <div>
@@ -466,10 +478,11 @@ export default function CashPage() {
             </Card>
           </div>
 
-          <Card className="overflow-hidden">
-            <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-              <CardTitle className="text-white flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" /> Physical Counts {accountId ? `(${counts.length})` : ''}
+          <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+            <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+              <CheckCircle className="h-5 w-5 text-black dark:text-white" />
+              <CardTitle className="text-base font-bold text-black dark:text-white">
+                Physical Counts {accountId ? `(${counts.length})` : ''}
               </CardTitle>
             </div>
             <CardContent className="pt-6">

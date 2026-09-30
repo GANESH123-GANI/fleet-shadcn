@@ -98,14 +98,14 @@ export default function MaintenanceVisitPage() {
   return (
     <div className="space-y-6">
       {apiError && <ApiErrorBanner />}
-      <div className="rounded-xl bg-gradient-to-r from-gray-950 to-gray-900 p-6 text-white">
+      <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-none">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-white/20 p-2">
+          <div className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-2 text-black dark:text-white">
             <Wrench className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Maintenance Visit</h1>
-            <p className="text-white/80">{isReadOnly ? 'View service visits and task history.' : 'Log service visits — ticked tasks advance the next-due values.'}</p>
+            <h1 className="text-2xl font-bold text-black dark:text-white">Maintenance Visit</h1>
+            <p className="text-sm text-black/70 dark:text-white/70">{isReadOnly ? 'View service visits and task history.' : 'Log service visits — ticked tasks advance the next-due values.'}</p>
           </div>
         </div>
       </div>

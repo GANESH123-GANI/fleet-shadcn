@@ -55,8 +55,8 @@ export default function OpsLayout({ children }: { children: React.ReactNode }) {
           {/* Logo */}
           <div className="flex h-16 items-center border-b border-gray-100 px-5">
             <Link href="/today" className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gray-900 to-gray-800 shadow-sm shadow-gray-900/20">
-                <Truck className="h-4 w-4 text-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-black dark:text-white">
+                <Truck className="h-4 w-4" />
               </div>
               <span className="text-base font-bold tracking-tight text-gray-900">
                 Fleet<span className="text-gray-700">OS</span>
@@ -117,8 +117,8 @@ export default function OpsLayout({ children }: { children: React.ReactNode }) {
             <Menu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-gray-900 to-gray-800">
-              <Truck className="h-3.5 w-3.5 text-white" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-black dark:text-white">
+              <Truck className="h-3.5 w-3.5" />
             </div>
             <span className="text-sm font-bold text-gray-900">FleetOS</span>
           </div>

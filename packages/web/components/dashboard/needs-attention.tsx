@@ -1,6 +1,8 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Clock, CreditCard } from 'lucide-react';
 
 interface AlertItem {
@@ -16,9 +18,24 @@ interface NeedsAttentionProps {
 }
 
 const URGENCY_CONFIG = {
-  action: { label: 'Action', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
-  urgent: { label: 'Urgent', bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200' },
-  soon: { label: 'Soon', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
+  action: {
+    label: 'Action',
+    bg: 'bg-destructive/10',
+    text: 'text-destructive',
+    border: 'border-destructive/20',
+  },
+  urgent: {
+    label: 'Urgent',
+    bg: 'bg-amber-500/10',
+    text: 'text-amber-600 dark:text-amber-400',
+    border: 'border-amber-500/20',
+  },
+  soon: {
+    label: 'Soon',
+    bg: 'bg-blue-500/10',
+    text: 'text-blue-600 dark:text-blue-400',
+    border: 'border-blue-500/20',
+  },
 };
 
 const TYPE_ICONS = {
@@ -29,9 +46,9 @@ const TYPE_ICONS = {
 
 export function NeedsAttention({ alerts }: NeedsAttentionProps) {
   return (
-    <div className="rounded-xl border border-[#E5E2DB] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">Needs attention</h3>
-      
+    <Card className="rounded-[20px] border border-solid border-slate-300 dark:border-slate-700 bg-card p-6 shadow-none">
+      <h3 className="mb-4 text-lg font-semibold tracking-tight text-black dark:text-white">Needs attention</h3>
+
       <div className="space-y-3">
         {alerts.map((alert) => {
           const config = URGENCY_CONFIG[alert.urgency];
@@ -39,26 +56,25 @@ export function NeedsAttention({ alerts }: NeedsAttentionProps) {
           return (
             <div
               key={alert.id}
-              className={cn(
-                'flex items-start gap-3 rounded-lg border p-3',
-                config.border, config.bg
-              )}
+              className="flex items-start gap-3 rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-3.5 transition-colors"
             >
-              <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', config.text)} />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-slate-900">{alert.message}</p>
-                <p className="text-xs text-slate-500">{alert.subtitle}</p>
+              <div className="mt-0.5 rounded-lg border border-solid border-slate-300 dark:border-slate-700 p-1.5 bg-slate-50 dark:bg-slate-800">
+                <Icon className={cn('h-4 w-4 shrink-0', config.text)} />
               </div>
-              <span className={cn(
-                'shrink-0 rounded-full px-2 py-0.5 text-xs font-medium',
-                config.bg, config.text
-              )}>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-black dark:text-white">{alert.message}</p>
+                <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">{alert.subtitle}</p>
+              </div>
+              <Badge
+                variant="outline"
+                className="shrink-0 border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white bg-transparent text-xs font-semibold"
+              >
                 {config.label}
-              </span>
+              </Badge>
             </div>
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -40,7 +40,7 @@ export function ThemeSwitch() {
 
   return (
     <div className='flex justify-between items-center w-full'>
-      <span className='text-base font-medium text-gray-500 dark:text-gray-400'>
+      <span className='text-sm font-medium text-slate-500 dark:text-slate-400'>
         Theme
       </span>
       <Button

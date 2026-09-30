@@ -91,33 +91,50 @@ export default function OwnerClients() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-            <div className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{uniqueClients.length}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Clients</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Building2 className="h-4 w-4" />
             </div>
-            <p className="text-blue-100 text-xs mt-1">Total Clients</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{activeClients}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{uniqueClients.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Registered
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Active Clients</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Briefcase className="h-4 w-4" />
             </div>
-            <p className="text-green-100 text-xs mt-1">Active Clients</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <IndianRupee className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">₹{(totalRevenue / 100000).toFixed(1)}L</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{activeClients}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Active
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Revenue</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <IndianRupee className="h-4 w-4" />
             </div>
-            <p className="text-emerald-100 text-xs mt-1">Total Revenue</p>
           </div>
-        </Card>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">₹{(totalRevenue / 100000).toFixed(1)}L</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              Lifetime
+            </span>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -152,65 +169,59 @@ export default function OwnerClients() {
         <div className="grid gap-4 md:grid-cols-2">
           {uniqueClients.map((c) => (
             <Link key={c.id} href={`/clients/${c.id}`}>
-              <Card className="hover:shadow-lg transition-all cursor-pointer group overflow-hidden h-full">
-                <div className={`h-1.5 ${
-                  c.status === 'active' ? 'bg-gradient-to-r from-gray-900 to-gray-800' : 'bg-gradient-to-r from-gray-400 to-gray-500'
-                }`} />
+              <Card className="hover:border-slate-400 dark:hover:border-slate-500 transition-colors cursor-pointer group overflow-hidden h-full rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white ${
-                        c.status === 'active' ? 'bg-gradient-to-br from-emerald-500 to-teal-600' : 'bg-gradient-to-br from-gray-400 to-gray-500'
-                      }`}>
+                      <div className="w-12 h-12 rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
                         <Building2 className="h-6 w-6" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-800 group-hover:text-emerald-600 transition-colors">
+                        <h3 className="font-bold text-black dark:text-white group-hover:text-black/80 transition-colors">
                           {c.name}
                         </h3>
-                        <p className="text-xs text-gray-500">{c.contact_person ?? 'Contact'}</p>
+                        <p className="text-xs text-black/60 dark:text-white/60">{c.contact_person ?? 'Contact'}</p>
                       </div>
                     </div>
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      c.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                    }`}>
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white bg-transparent">
+                      <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
                       {c.status}
                     </span>
                   </div>
 
                   <div className="space-y-2 mt-4">
                     {c.phone && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Phone className="h-4 w-4 text-gray-400" />
+                      <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                        <Phone className="h-4 w-4 text-black/50 dark:text-white/50" />
                         <span>{c.phone}</span>
                       </div>
                     )}
                     {c.email && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Mail className="h-4 w-4 shrink-0 text-gray-400" />
+                      <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                        <Mail className="h-4 w-4 shrink-0 text-black/50 dark:text-white/50" />
                         <LongText className="min-w-0 flex-1">{c.email}</LongText>
                       </div>
                     )}
                     {c.address && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <MapPin className="h-4 w-4 shrink-0 text-gray-400" />
+                      <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                        <MapPin className="h-4 w-4 shrink-0 text-black/50 dark:text-white/50" />
                         <LongText className="min-w-0 flex-1">{c.address}</LongText>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-solid border-slate-300 dark:border-slate-700">
                     <div className="flex items-center gap-4">
                       <div className="text-center">
-                        <p className="text-lg font-bold text-gray-800">{c.total_projects ?? 0}</p>
-                        <p className="text-[10px] text-gray-500">Projects</p>
+                        <p className="text-lg font-bold text-black dark:text-white">{c.total_projects ?? 0}</p>
+                        <p className="text-[10px] text-black/60 dark:text-white/60">Projects</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-lg font-bold text-emerald-600">₹{((c.total_revenue ?? 0) / 100000).toFixed(1)}L</p>
-                        <p className="text-[10px] text-gray-500">Revenue</p>
+                        <p className="text-lg font-bold text-black dark:text-white">₹{((c.total_revenue ?? 0) / 100000).toFixed(1)}L</p>
+                        <p className="text-[10px] text-black/60 dark:text-white/60">Revenue</p>
                       </div>
                     </div>
-                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+                    <ArrowRight className="h-4 w-4 text-black/50 group-hover:text-black group-hover:translate-x-1 transition-all" />
                   </div>
                   <div className="flex items-center gap-1 mt-2">
                     <button

@@ -330,11 +330,11 @@ export default function OpsToday() {
     <div className="space-y-6">
       {apiError && <ApiErrorBanner onRetry={() => setNonce((n) => n + 1)} />}
       {/* Title + quick actions */}
-      <div className="rounded-xl bg-gradient-to-r from-gray-950 to-gray-900 p-6 shadow-lg">
+      <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-none">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Fleet OS Today</h1>
-            <p className="text-sm text-blue-100">Operations overview · {rangeSpan}</p>
+            <h1 className="text-2xl font-bold text-black dark:text-white tracking-tight">Fleet OS Today</h1>
+            <p className="text-sm text-black/70 dark:text-white/70">Operations overview · {rangeSpan}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {!isReadOnly && (
@@ -364,12 +364,16 @@ export default function OpsToday() {
             <Button size="sm" variant="outline" onClick={() => setNonce((n) => n + 1)}>
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             </Button>
-            <div className="inline-flex items-center rounded-lg bg-white/20 p-0.5">
+            <div className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-0.5">
               {RANGES.map((r) => (
                 <button
                   key={r.key}
                   onClick={() => setRange(r.key)}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${range === r.key ? 'bg-white text-gray-700 shadow-sm' : 'text-white/80 hover:text-white'}`}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    range === r.key 
+                      ? 'bg-white dark:bg-slate-900 text-black dark:text-white border border-solid border-slate-300 dark:border-slate-700 font-bold' 
+                      : 'text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white'
+                  }`}
                 >
                   {r.label}
                 </button>
@@ -387,29 +391,21 @@ export default function OpsToday() {
         <>
           {/* KPI cards — operational only, no money */}
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
-            {kpiCards.map((k, i) => {
-              const gradients = [
-                'from-gray-800 to-gray-700',
-                'from-gray-700 to-gray-600',
-                'from-gray-900 to-gray-800',
-                'from-cyan-500 to-blue-500',
-                'from-slate-500 to-gray-600',
-                'from-gray-700 to-gray-600',
-              ];
+            {kpiCards.map((k) => {
               return (
-                <div key={k.title} className={`overflow-hidden rounded-xl bg-gradient-to-br ${gradients[i]} p-4 shadow-lg`}>
-                  <p className="text-sm font-medium text-white/80">{k.title}</p>
-                  <p className="mt-2 text-3xl font-bold text-white">
+                <div key={k.title} className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+                  <p className="text-xs font-medium text-black/70 dark:text-white/70">{k.title}</p>
+                  <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">
                     {k.value}
-                    {k.unit && <span className="ml-1 text-sm font-normal text-white/70">{k.unit}</span>}
+                    {k.unit && <span className="ml-1 text-sm font-normal text-black/60 dark:text-white/60">{k.unit}</span>}
                   </p>
                   {k.prev !== '' ? (
                     <div className="mt-2 flex items-center gap-2">
-                      <span className="text-sm text-white/70">vs {k.prev}</span>
+                      <span className="text-xs text-black/60 dark:text-white/60">vs {k.prev}</span>
                       <Delta value={k.delta} format={k.deltaFmt} invert={k.invert} />
                     </div>
                   ) : (
-                    <p className="mt-2 text-sm text-white/70">
+                    <p className="mt-2 text-xs text-black/60 dark:text-white/60">
                       {dueTasks.filter((t) => String(t.status).toLowerCase() === 'overdue').length} overdue
                     </p>
                   )}

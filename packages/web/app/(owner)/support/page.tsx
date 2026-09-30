@@ -89,40 +89,60 @@ export default function SupportPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-            <div className="flex items-center gap-2">
-              <Headphones className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{tickets.length}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Tickets</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Headphones className="h-4 w-4" />
             </div>
-            <p className="text-blue-100 text-xs mt-1">Total Tickets</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{tickets.filter(t => String(t.status) === 'open' || String(t.status) === 'pending').length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{tickets.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              All requests
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Open Tickets</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Clock className="h-4 w-4" />
             </div>
-            <p className="text-amber-100 text-xs mt-1">Open Tickets</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{tickets.filter(t => String(t.status) === 'resolved' || String(t.status) === 'closed').length}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{tickets.filter(t => String(t.status) === 'open' || String(t.status) === 'pending').length}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Pending
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Resolved</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <CheckCircle className="h-4 w-4" />
             </div>
-            <p className="text-green-100 text-xs mt-1">Resolved</p>
           </div>
-        </Card>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{tickets.filter(t => String(t.status) === 'resolved' || String(t.status) === 'closed').length}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Completed
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <CardTitle className="text-white flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" /> Report a Problem
+        <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+          <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+            <MessageCircle className="h-5 w-5 text-black dark:text-white" />
+            <CardTitle className="text-base font-bold text-black dark:text-white">
+              Report a Problem
             </CardTitle>
           </div>
           <CardContent className="pt-6">
@@ -151,7 +171,7 @@ export default function SupportPage() {
               <Button 
                 type="submit" 
                 disabled={sending}
-                className="w-full bg-gradient-to-r from-gray-900 to-gray-800 hover:from-emerald-600 hover:to-teal-600 gap-2"
+                className="w-full gap-2 border border-solid border-slate-300 dark:border-slate-700 shadow-none"
               >
                 {sending ? (
                   <>
@@ -196,10 +216,11 @@ export default function SupportPage() {
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <CardTitle className="text-white flex items-center gap-2">
-              <Headphones className="h-5 w-5" /> My Tickets ({tickets.length})
+        <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+          <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+            <Headphones className="h-5 w-5 text-black dark:text-white" />
+            <CardTitle className="text-base font-bold text-black dark:text-white">
+              My Tickets ({tickets.length})
             </CardTitle>
           </div>
           <CardContent className="pt-6">

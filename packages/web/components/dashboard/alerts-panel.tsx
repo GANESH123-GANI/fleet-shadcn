@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { GlassCard } from './glass-card';
+import { Badge } from '@/components/ui/badge';
 import { Clock, DollarSign, Wrench } from 'lucide-react';
 
 interface Alert {
@@ -18,9 +19,24 @@ interface AlertsPanelProps {
 }
 
 const SEVERITY_CONFIG = {
-  action: { label: 'Action', bg: 'bg-red-500/10', text: 'text-red-600', border: 'border-red-200' },
-  urgent: { label: 'Urgent', bg: 'bg-amber-500/10', text: 'text-amber-600', border: 'border-amber-200' },
-  soon: { label: 'Soon', bg: 'bg-blue-500/10', text: 'text-blue-600', border: 'border-blue-200' },
+  action: {
+    label: 'Action',
+    bg: 'bg-destructive/10',
+    text: 'text-destructive',
+    border: 'border-destructive/20',
+  },
+  urgent: {
+    label: 'Urgent',
+    bg: 'bg-amber-500/10',
+    text: 'text-amber-600 dark:text-amber-400',
+    border: 'border-amber-500/20',
+  },
+  soon: {
+    label: 'Soon',
+    bg: 'bg-blue-500/10',
+    text: 'text-blue-600 dark:text-blue-400',
+    border: 'border-blue-500/20',
+  },
 };
 
 const ICON_MAP = {
@@ -32,7 +48,7 @@ const ICON_MAP = {
 export function AlertsPanel({ alerts }: AlertsPanelProps) {
   return (
     <GlassCard className="h-full">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">Needs Attention</h3>
+      <h3 className="mb-4 text-lg font-semibold tracking-tight text-foreground">Needs Attention</h3>
 
       <div className="space-y-3">
         {alerts.map((alert) => {
@@ -45,8 +61,9 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
               className={cn(
                 'flex items-start gap-3 rounded-xl p-3',
                 'border transition-all duration-200',
-                'hover:shadow-sm',
-                severity.border, severity.bg
+                'hover:shadow-xs',
+                severity.border,
+                severity.bg
               )}
             >
               <div className={cn('mt-0.5 rounded-lg p-1.5', severity.bg)}>
@@ -54,16 +71,16 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900">{alert.message}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{alert.detail}</p>
+                <p className="text-sm font-medium text-foreground">{alert.message}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{alert.detail}</p>
               </div>
 
-              <span className={cn(
-                'shrink-0 rounded-full px-2 py-0.5 text-xs font-medium',
-                severity.bg, severity.text
-              )}>
+              <Badge
+                variant="outline"
+                className={cn('shrink-0 border-transparent text-xs font-semibold', severity.bg, severity.text)}
+              >
                 {severity.label}
-              </span>
+              </Badge>
             </div>
           );
         })}

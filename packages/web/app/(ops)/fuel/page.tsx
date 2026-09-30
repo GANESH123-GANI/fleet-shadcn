@@ -45,15 +45,15 @@ export default function OpsFuel() {
   return (
     <div className="space-y-6">
       {apiError && <ApiErrorBanner onRetry={loadLogs} />}
-      <div className="rounded-xl bg-gradient-to-r from-gray-800 to-gray-700 p-6 text-white">
+      <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-none">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-white/20 p-2">
+            <div className="rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-2 text-black dark:text-white">
               <Droplets className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Fuel Logs</h1>
-              <p className="text-white/80">Track fuel consumption and costs per machine.</p>
+              <h1 className="text-2xl font-bold text-black dark:text-white">Fuel Logs</h1>
+              <p className="text-sm text-black/70 dark:text-white/70">Track fuel consumption and costs per machine.</p>
             </div>
           </div>
           {!isReadOnly && (

@@ -85,42 +85,68 @@ export default function OwnerMachines() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
-            <div className="flex items-center gap-2">
-              <Truck className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{machines.length}</p>
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Total Fleet</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Truck className="h-4 w-4" />
             </div>
-            <p className="text-blue-100 text-xs mt-1">Total Fleet</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{workingCount}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{machines.length}</span>
+            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              All machines
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Working</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <CheckCircle className="h-4 w-4" />
             </div>
-            <p className="text-green-100 text-xs mt-1">Working</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{serviceCount}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{workingCount}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Operational
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">In Service</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <Clock className="h-4 w-4" />
             </div>
-            <p className="text-amber-100 text-xs mt-1">In Service</p>
           </div>
-        </Card>
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-white" />
-              <p className="text-white font-bold text-2xl">{stoppedCount}</p>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{serviceCount}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Maintenance
+            </span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-black dark:text-white">Stopped</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
+              <AlertCircle className="h-4 w-4" />
             </div>
-            <p className="text-red-100 text-xs mt-1">Stopped</p>
           </div>
-        </Card>
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{stoppedCount}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
+              Inactive
+            </span>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -155,45 +181,38 @@ export default function OwnerMachines() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {machines.map((m) => {
             const status = STATUS_CONFIG[String(m.status_flag)] || STATUS_CONFIG.working;
-            const StatusIcon = status.icon;
             
             return (
               <Link key={m.id as string} href={`/machines/${m.id}`}>
-                <Card className="hover:shadow-lg transition-all cursor-pointer group overflow-hidden h-full">
-                  <div className={`h-1.5 ${
-                    m.status_flag === 'working' ? 'bg-gradient-to-r from-gray-900 to-gray-800' :
-                    m.status_flag === 'service' ? 'bg-gradient-to-r from-gray-800 to-gray-700' :
-                    m.status_flag === 'stopped' ? 'bg-gradient-to-r from-gray-800 to-gray-700' :
-                    'bg-gradient-to-r from-gray-950 to-gray-900'
-                  }`} />
+                <Card className="hover:border-slate-400 dark:hover:border-slate-500 transition-colors cursor-pointer group overflow-hidden h-full rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-white">
+                        <div className="w-12 h-12 rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-black dark:text-white">
                           <Truck className="h-6 w-6" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-gray-800 group-hover:text-gray-600 transition-colors text-lg">
+                          <h3 className="font-bold text-black dark:text-white group-hover:text-black/80 transition-colors text-lg">
                             {m.code as string}
                           </h3>
-                          <p className="text-xs text-gray-500">{m.type as string}</p>
+                          <p className="text-xs text-black/60 dark:text-white/60">{m.type as string}</p>
                         </div>
                       </div>
-                      <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${status.bg} ${status.color}`}>
-                        <StatusIcon className="h-3 w-3" />
+                      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white bg-transparent">
+                        <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
                         {status.label}
                       </span>
                     </div>
 
                     <div className="space-y-2 mt-4">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <MapPin className="h-4 w-4 text-gray-400" />
+                      <div className="flex items-center gap-2 text-sm text-black/70 dark:text-white/70">
+                        <MapPin className="h-4 w-4 text-black/50 dark:text-white/50" />
                         <span>{(m).site as string || 'No site assigned'}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                      <div className="text-xs text-gray-400">
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-solid border-slate-300 dark:border-slate-700">
+                      <div className="text-xs text-black/60 dark:text-white/60 font-medium">
                         {m.status_flag === 'working' ? 'Active deployment' : 
                          m.status_flag === 'service' ? 'Under maintenance' :
                          m.status_flag === 'stopped' ? 'Out of service' : 'Moving to site'}
@@ -201,7 +220,7 @@ export default function OwnerMachines() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={(e) => { e.preventDefault(); router.push(`/machines/${m.id}`); }}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+                          className="p-1.5 rounded-lg text-black/60 hover:text-black hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                           title="Edit"
                         >
                           <Pencil className="h-3.5 w-3.5" />
