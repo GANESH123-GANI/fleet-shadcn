@@ -157,6 +157,39 @@ async function seedDemo() {
       `, [id, TENANT_ID, mchId, siteId]);
     }
 
+    // 8. Insert Cash Accounts
+    console.log('💵 Seeding cash accounts...');
+    const cashRows = [
+      ['00000000-0000-0000-0006-000000000001', 'Site Cash — Metro Block A', 'site_cash', 'INR'],
+      ['00000000-0000-0000-0006-000000000002', 'HDFC Corporate Operating A/c', 'bank', 'INR'],
+      ['00000000-0000-0000-0006-000000000003', 'SBI Capex & Fleet Treasury', 'bank', 'INR'],
+      ['00000000-0000-0000-0006-000000000004', 'Petty Cash — HQ Workshop', 'petty', 'INR'],
+    ];
+
+    for (const [id, name, type, currency] of cashRows) {
+      await client.query(`
+        INSERT INTO tenant.cash_accounts (id, tenant_id, name, type, currency, client_uuid)
+        VALUES ($1, $2, $3, $4, $5, gen_random_uuid())
+        ON CONFLICT (id) DO NOTHING;
+      `, [id, TENANT_ID, name, type, currency]);
+    }
+
+    // 9. Insert Rate Cards
+    console.log('💳 Seeding rate cards...');
+    const rateRows = [
+      ['00000000-0000-0000-0007-000000000001', '00000000-0000-0000-0005-000000000001', 'hourly', 260000, 8],
+      ['00000000-0000-0000-0007-000000000002', '00000000-0000-0000-0005-000000000002', 'hourly', 250000, 8],
+      ['00000000-0000-0000-0007-000000000003', '00000000-0000-0000-0005-000000000003', 'hourly', 340000, 8],
+    ];
+
+    for (const [id, depId, strategy, rateMinor, minUnits] of rateRows) {
+      await client.query(`
+        INSERT INTO tenant.rate_cards (id, tenant_id, deployment_id, strategy, rate_minor, currency, min_units_per_day, effective_from, client_uuid)
+        VALUES ($1, $2, $3, $4, $5, 'INR', $6, CURRENT_DATE - INTERVAL '90 days', gen_random_uuid())
+        ON CONFLICT (id) DO NOTHING;
+      `, [id, TENANT_ID, depId, strategy, rateMinor, minUnits]);
+    }
+
     console.log('✅ Demo fleet dataset seeded successfully into PostgreSQL!');
   } catch (error) {
     console.error('❌ Demo seed encountered error:', error);

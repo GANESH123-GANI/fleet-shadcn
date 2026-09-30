@@ -42,9 +42,7 @@ export default function ProjectionsPage() {
   const [form, setForm] = useState({ working_days: '26', units_per_day: '8', rate: '', currency: 'INR' });
   const [result, setResult] = useState<Projection | null>(null);
   const [loading, setLoading] = useState(false);
-  // No saved-projections endpoint exists yet — start empty and show an
-  // empty state instead of hardcoding demo rows.
-  const [savedProjections] = useState<SavedProjection[]>([]);
+  const [savedProjections, setSavedProjections] = useState<SavedProjection[]>([]);
   const [apiError, setApiError] = useState(false);
 
   const loadDefaults = () => {
@@ -63,6 +61,13 @@ export default function ProjectionsPage() {
         }
       })
       .catch(() => setApiError(true));
+
+    authFetch('/api/v1/reports/saved-projections')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (Array.isArray(j)) setSavedProjections(j);
+      })
+      .catch(() => {});
   };
 
   useEffect(() => {
