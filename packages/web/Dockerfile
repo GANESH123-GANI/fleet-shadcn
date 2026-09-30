@@ -1,0 +1,42 @@
+FROM node:22-alpine
+
+WORKDIR /app
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copy package files
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/web/package.json packages/web/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source and configs
+COPY packages/web/ packages/web/
+COPY tsconfig.base.json ./
+
+# API URLs - use build args so render.yaml can override
+ARG NEXT_PUBLIC_API_URL=https://fleetos-api-seven.vercel.app
+ARG API_URL=https://fleetos-api-seven.vercel.app
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV API_URL=${API_URL}
+
+# Build
+RUN pnpm --filter @fleetos/web build
+
+# Copy standalone to a clean location
+RUN mkdir -p /app/run
+RUN cp -r packages/web/.next/standalone/* /app/run/
+RUN mkdir -p /app/run/packages/web/.next/static
+RUN cp -r packages/web/.next/static/* /app/run/packages/web/.next/static/
+RUN cp -r packages/web/public /app/run/packages/web/public 2>/dev/null || true
+
+WORKDIR /app/run/packages/web
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

@@ -1,0 +1,41 @@
+{
+  "name": "fleetos",
+  "private": true,
+  "scripts": {
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx",
+    "lint:boundaries": "ESLINT_USE_FLAT_CONFIG=false eslint . --rule 'import/no-restricted-paths: error' --quiet",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:isolation": "node scripts/run-with-env.js node packages/db/generators/test-isolation.js",
+    "test:finance-denial": "node scripts/run-with-env.js node packages/db/generators/test-finance-denial.js",
+    "test:append-only": "node scripts/run-with-env.js node packages/db/generators/test-append-only.js",
+    "test:e2e": "playwright test",
+    "pipeline": "node scripts/pipeline.js",
+    "test:e2e-api": "node scripts/e2e-pipeline.js",
+    "db:migrate": "node scripts/run-with-env.js pnpm --filter @fleetos/db exec node-pg-migrate up --migrations-dir migrations --database-url-env-var DATABASE_URL",
+    "db:seed": "node scripts/run-with-env.js node packages/db/seed.js",
+    "db:lint": "node scripts/run-with-env.js node packages/db/linters/migration-linter.js",
+    "verify:launch": "node --input-type=module -e \"import('pg').catch(()=>null)\" 2>/dev/null; NODE_PATH=\"./packages/db/node_modules:./node_modules\" node scripts/run-with-env.js node scripts/verify-launch-acceptance.js",
+    "openapi:dump": "pnpm --filter @fleetos/api exec nest build && node packages/api/dist/dump-openapi",
+    "dev": "concurrently \"pnpm dev:api\" \"pnpm dev:web\"",
+    "dev:api": "cd packages/api && pnpm dev",
+    "dev:web": "cd packages/web && pnpm dev",
+    "setup": "cp .env.example .env && pnpm db:migrate && pnpm db:seed"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "concurrently": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.4.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  }
+}

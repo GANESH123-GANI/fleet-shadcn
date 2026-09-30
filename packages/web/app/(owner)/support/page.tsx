@@ -1,0 +1,282 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Spinner } from '@/components/ui/spinner';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
+import {
+  MessageScrollerProvider, MessageScroller, MessageScrollerViewport,
+  MessageScrollerContent, MessageScrollerItem, MessageScrollerButton,
+} from '@/components/ui/message-scroller';
+import { Message, MessageContent, MessageFooter } from '@/components/ui/message';
+import { Bubble, BubbleContent } from '@/components/ui/bubble';
+import { Headphones, MessageCircle, Send, CheckCircle, Clock, AlertCircle, HelpCircle } from 'lucide-react';
+import { authFetch } from '@/lib/api/auth-fetch';
+import { fetchListStrict } from '@/lib/api/fetch-list';
+import { ApiErrorBanner } from '@/components/api-error-banner';
+import { ConfigActions } from '@/components/records/config-actions';
+
+interface Row extends Record<string, unknown> {
+  id?: string;
+}
+
+const STATUS_STYLES: Record<string, { bg: string; text: string; icon: typeof Clock }> = {
+  open: { bg: 'bg-blue-100', text: 'text-gray-700', icon: Clock },
+  pending: { bg: 'bg-amber-100', text: 'text-amber-700', icon: AlertCircle },
+  resolved: { bg: 'bg-green-100', text: 'text-green-700', icon: CheckCircle },
+  closed: { bg: 'bg-gray-100', text: 'text-gray-700', icon: CheckCircle },
+};
+
+export default function SupportPage() {
+  const [tickets, setTickets] = useState<Row[]>([]);
+  const [subject, setSubject] = useState('');
+  const [description, setDescription] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [apiError, setApiError] = useState(false);
+  const [sendError, setSendError] = useState(false);
+
+  const load = async () => {
+    setApiError(false);
+    try {
+      setTickets(await fetchListStrict<Row>('/api/v1/support/tickets'));
+    } catch {
+      setApiError(true);
+    }
+  };
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  const submit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    setSending(true);
+    setSendError(false);
+    try {
+      const res = await authFetch('/api/v1/support/tickets', {
+        method: 'POST',
+        body: JSON.stringify({ subject, description: description || undefined }),
+      });
+      if (!res.ok) {
+        setSendError(true);
+        return;
+      }
+      setSubject('');
+      setDescription('');
+      setSent(true);
+      void load();
+      setTimeout(() => setSent(false), 4000);
+    } catch {
+      // Never fabricate a ticket locally — surface the failure instead.
+      setSendError(true);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {apiError && <ApiErrorBanner onRetry={() => void load()} />}
+      <div>
+        <h1 className="text-3xl font-bold">Support</h1>
+        <p className="text-muted-foreground mt-1">Report a problem to the Perceptiqx support team</p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="overflow-hidden">
+          <div className="bg-gradient-to-r from-gray-950 to-gray-900 p-4">
+            <div className="flex items-center gap-2">
+              <Headphones className="h-5 w-5 text-white" />
+              <p className="text-white font-bold text-2xl">{tickets.length}</p>
+            </div>
+            <p className="text-blue-100 text-xs mt-1">Total Tickets</p>
+          </div>
+        </Card>
+        <Card className="overflow-hidden">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-white" />
+              <p className="text-white font-bold text-2xl">{tickets.filter(t => String(t.status) === 'open' || String(t.status) === 'pending').length}</p>
+            </div>
+            <p className="text-amber-100 text-xs mt-1">Open Tickets</p>
+          </div>
+        </Card>
+        <Card className="overflow-hidden">
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-white" />
+              <p className="text-white font-bold text-2xl">{tickets.filter(t => String(t.status) === 'resolved' || String(t.status) === 'closed').length}</p>
+            </div>
+            <p className="text-green-100 text-xs mt-1">Resolved</p>
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="overflow-hidden">
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
+            <CardTitle className="text-white flex items-center gap-2">
+              <MessageCircle className="h-5 w-5" /> Report a Problem
+            </CardTitle>
+          </div>
+          <CardContent className="pt-6">
+            <form onSubmit={(e) => void submit(e)} className="space-y-4">
+              <Field>
+                <FieldLabel htmlFor="ticket-subject">Subject *</FieldLabel>
+                <Input
+                  id="ticket-subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="e.g. Billing total looks off"
+                  required
+                />
+                <FieldDescription>One line that summarises the problem.</FieldDescription>
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="ticket-description">Description</FieldLabel>
+                <Textarea
+                  id="ticket-description"
+                  className="min-h-[120px]"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="What happened, which machine/client, when…"
+                />
+              </Field>
+              <Button 
+                type="submit" 
+                disabled={sending}
+                className="w-full bg-gradient-to-r from-gray-900 to-gray-800 hover:from-emerald-600 hover:to-teal-600 gap-2"
+              >
+                {sending ? (
+                  <>
+                    <Spinner /> Sending…
+                  </>
+                ) : (
+                  <><Send className="h-4 w-4" /> Send Ticket</>
+                )}
+              </Button>
+              {sendError && (
+                <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
+                  <p className="text-sm text-red-700">Could not send ticket — check that the API server is running and try again.</p>
+                </div>
+              )}
+              {sent && (
+                <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <p className="text-sm text-green-700">Ticket sent — our team will reply on this ticket.</p>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                We only store the subject and description you type here. See the{' '}
+                <Link href="/legal/privacy" className="underline underline-offset-2">Privacy Policy</Link>{' '}
+                for how support data is handled.
+              </p>
+            </form>
+            
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <div className="flex items-start gap-3">
+                <HelpCircle className="h-5 w-5 text-blue-500 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-blue-800">How it works</p>
+                  <p className="text-xs text-gray-700 mt-1">
+                    Your ticket is saved to this workspace and reviewed by the Perceptiqx support
+                    team during business hours. They reply on the ticket — keep this page open or
+                    check back later.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="overflow-hidden">
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4">
+            <CardTitle className="text-white flex items-center gap-2">
+              <Headphones className="h-5 w-5" /> My Tickets ({tickets.length})
+            </CardTitle>
+          </div>
+          <CardContent className="pt-6">
+            {tickets.length === 0 ? (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia variant="icon"><Headphones /></EmptyMedia>
+                  <EmptyTitle>No tickets yet</EmptyTitle>
+                  <EmptyDescription>Submit a problem above to get started</EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            ) : (
+              <MessageScrollerProvider defaultScrollPosition="start">
+                <MessageScroller className="h-[26rem]">
+                  <MessageScrollerViewport>
+                    <MessageScrollerContent className="gap-4">
+                      {tickets.map((t) => {
+                        const statusStyle = STATUS_STYLES[String(t.status)] || STATUS_STYLES.open;
+                        const StatusIcon = statusStyle.icon;
+                        const descriptionText =
+                          typeof t.description === 'string' ? t.description : '';
+
+                        return (
+                          <MessageScrollerItem
+                            key={String(t.id)}
+                            messageId={String(t.id)}
+                            scrollAnchor
+                          >
+                            <Message align="end">
+                              <MessageContent>
+                                <Bubble variant="tinted">
+                                  <BubbleContent className="px-3.5 py-2.5 text-sm">
+                                    <p className="font-semibold">{String(t.subject)}</p>
+                                    {descriptionText && (
+                                      <p className="mt-1 whitespace-pre-wrap">
+                                        {descriptionText}
+                                      </p>
+                                    )}
+                                  </BubbleContent>
+                                </Bubble>
+                                <MessageFooter className="px-0">
+                                  <span className="inline-flex items-center gap-1.5">
+                                    <StatusIcon className={`h-3.5 w-3.5 ${statusStyle.text}`} />
+                                    <span className={statusStyle.text}>{String(t.status)}</span>
+                                    <span aria-hidden="true">·</span>
+                                    <span>{new Date(String(t.created_at)).toLocaleString()}</span>
+                                  </span>
+                                  <ConfigActions
+                                    path="support/tickets"
+                                    row={t}
+                                    label="support ticket"
+                                    fields={['status', 'subject', 'description']}
+                                    options={{
+                                      status: [
+                                        { value: 'open', label: 'Open' },
+                                        { value: 'pending', label: 'Pending' },
+                                        { value: 'resolved', label: 'Resolved' },
+                                        { value: 'closed', label: 'Closed' },
+                                      ],
+                                    }}
+                                    onChanged={() => void load()}
+                                  />
+                                </MessageFooter>
+                              </MessageContent>
+                            </Message>
+                          </MessageScrollerItem>
+                        );
+                      })}
+                    </MessageScrollerContent>
+                  </MessageScrollerViewport>
+                  <MessageScrollerButton direction="start" />
+                </MessageScroller>
+              </MessageScrollerProvider>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

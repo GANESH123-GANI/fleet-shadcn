@@ -1,0 +1,91 @@
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
+import { HealthModule } from './modules/health/health.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { TenantsModule } from './modules/tenants/tenants.module';
+import { MachinesModule } from './modules/machines/machines.module';
+import { ClientsModule } from './modules/clients/clients.module';
+import { DeploymentsModule } from './modules/deployments/deployments.module';
+import { OperatorsModule } from './modules/operators/operators.module';
+import { UsersModule } from './modules/users/users.module';
+import { SitesModule } from './modules/sites/sites.module';
+import { WorkSessionsModule } from './modules/work-sessions/work-sessions.module';
+import { FuelDowntimeModule } from './modules/fuel-downtime/fuel-downtime.module';
+import { MaintenanceModule } from './modules/maintenance/maintenance.module';
+import { ExpensesModule } from './modules/expenses/expenses.module';
+import { CashModule } from './modules/cash/cash.module';
+import { ClientMoneyModule } from './modules/client-money/client-money.module';
+import { BillingModule } from './modules/billing/billing.module';
+import { BillingEngineModule } from './modules/billing/billing-engine.module';
+import { AlertsModule } from './modules/alerts/alerts.module';
+import { PhotosModule } from './modules/photos/photos.module';
+import { ImportModule } from './modules/import/import.module';
+import { ExportModule } from './modules/export/export.module';
+import { NotifyModule } from './modules/notify/notify.module';
+import { AuditModule } from './modules/audit/audit.module';
+import { ReportsModule } from './modules/reports/reports.module';
+import { InsightsModule } from './modules/insights/insights.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { SupportModule } from './modules/support/support.module';
+import { WorkersModule } from './workers/workers.module';
+import { DatabaseModule } from './common/database/database.module';
+import { TenantJwtStrategy } from './common/strategies/tenant-jwt.strategy';
+import { PlatformJwtStrategy } from './common/strategies/platform-jwt.strategy';
+import { TenantContextMiddleware } from './common/middleware/tenant-context.middleware';
+import { SecurityMiddleware } from './common/middleware/security.middleware';
+import { RateLimitMiddleware } from './common/middleware/rate-limit.middleware';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { RolesGuard } from './common/guards/roles.guard';
+
+@Module({
+  imports: [
+    PassportModule.register({ defaultStrategy: 'tenant-jwt' }),
+    HealthModule,
+    AuthModule,
+    TenantsModule,
+    MachinesModule,
+    ClientsModule,
+    DeploymentsModule,
+    OperatorsModule,
+    UsersModule,
+    SitesModule,
+    WorkSessionsModule,
+    FuelDowntimeModule,
+    MaintenanceModule,
+    ExpensesModule,
+    CashModule,
+    ClientMoneyModule,
+    BillingModule,
+    BillingEngineModule,
+    AlertsModule,
+    PhotosModule,
+    ImportModule,
+    ExportModule,
+    NotifyModule,
+    AuditModule,
+    ReportsModule,
+    InsightsModule,
+    ChatModule,
+    SupportModule,
+    WorkersModule,
+    DatabaseModule,
+  ],
+  providers: [
+    TenantJwtStrategy,
+    PlatformJwtStrategy,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+  ],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(SecurityMiddleware, RateLimitMiddleware)
+      .forRoutes('*');
+    consumer
+      .apply(TenantContextMiddleware)
+      .exclude('auth/(.*)', 'health(.*)')
+      .forRoutes('*');
+  }
+}

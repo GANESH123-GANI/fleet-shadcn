@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.next/
+out/
+*.tsbuildinfo
+.env
+.env.local
+coverage/
+test-results/
+playwright-report/
+.DS_Store
+*.log
+packages/api/exports/
+.pipeline-api.log
+
+# Vercel project links
+.vercel/
+
+# third-party gateway clone (contains local secrets)
+freellmapi/
+
+# stray export sitting in the repo root (82MB, not referenced by the app)
+video/

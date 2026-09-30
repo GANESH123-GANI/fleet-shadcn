@@ -1,0 +1,1195 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Fleet OS — Enterprise Design System
+ * Tailwind CSS v4 + shadcn compat
+ */
+
+/* ---- FleetOS design tokens ---- */
+:root {
+  /* Brand */
+  --fleet-brand: #0f766e;
+  --fleet-brand-light: #14b8a6;
+  --fleet-brand-dark: #0d5c56;
+  --fleet-brand-50: #f0fdfa;
+  --fleet-brand-100: #ccfbf1;
+  --fleet-brand-500: #14b8a6;
+  --fleet-brand-600: #0d9488;
+  --fleet-brand-700: #0f766e;
+  --fleet-brand-900: #134e4a;
+
+  /* Neutral palette */
+  --fleet-gray-25: #fcfcfd;
+  --fleet-gray-50: #f9fafb;
+  --fleet-gray-100: #f2f4f7;
+  --fleet-gray-200: #eaecf0;
+  --fleet-gray-300: #d0d5dd;
+  --fleet-gray-400: #98a2b3;
+  --fleet-gray-500: #667085;
+  --fleet-gray-600: #475467;
+  --fleet-gray-700: #344054;
+  --fleet-gray-800: #1d2939;
+  --fleet-gray-900: #101828;
+  --fleet-gray-950: #0c111d;
+
+  /* Semantic tokens */
+  --fleet-text-primary: var(--fleet-gray-900);
+  --fleet-text-secondary: var(--fleet-gray-600);
+  --fleet-text-tertiary: var(--fleet-gray-400);
+  --fleet-text-inverse: #ffffff;
+
+  --fleet-surface-base: var(--fleet-gray-50);
+  --fleet-surface-raised: #ffffff;
+  --fleet-surface-muted: var(--fleet-gray-100);
+  --fleet-surface-sunken: var(--fleet-gray-25);
+
+  --fleet-border: var(--fleet-gray-200);
+  --fleet-border-strong: var(--fleet-gray-300);
+  --fleet-border-focus: var(--fleet-brand);
+
+  /* Status */
+  --status-success: #12b76a;
+  --status-success-bg: #d1fadf;
+  --status-success-text: #067647;
+  --status-warning: #f79009;
+  --status-warning-bg: #fef0c7;
+  --status-warning-text: #b54708;
+  --status-error: #f04438;
+  --status-error-bg: #fecdca;
+  --status-error-text: #b42318;
+  --status-info: #3b82f6;
+  --status-info-bg: #d1e9ff;
+  --status-info-text: #175cd3;
+
+  /* Type */
+  --fleet-font-sans: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --fleet-font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+  /* Radius */
+  --fleet-radius-xs: 4px;
+  --fleet-radius-sm: 6px;
+  --fleet-radius-md: 8px;
+  --fleet-radius-lg: 12px;
+  --fleet-radius-xl: 16px;
+  --fleet-radius-2xl: 20px;
+  --fleet-radius-pill: 9999px;
+
+  /* Shadows */
+  --fleet-shadow-xs: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  --fleet-shadow-sm: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
+  --fleet-shadow-md: 0px 4px 8px -2px rgba(16, 24, 40, 0.1), 0px 2px 4px -2px rgba(16, 24, 40, 0.06);
+  --fleet-shadow-lg: 0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03);
+  --fleet-shadow-xl: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03);
+
+  /* Motion */
+  --fleet-duration-fast: 150ms;
+  --fleet-duration-normal: 200ms;
+  --fleet-duration-slow: 300ms;
+  --fleet-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* Sidebar */
+  --fleet-sidebar-width: 260px;
+  --fleet-sidebar-collapsed: 72px;
+  --fleet-topbar-height: 64px;
+
+  /* shadcn compat (HSL without hsl()) */
+  --background: 0 0% 98%;
+  --foreground: 220 14% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 14% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 14% 10%;
+  --primary: 174 62% 26%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 220 14% 10%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 220 9% 40%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 220 14% 10%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 174 62% 26%;
+  --chart-1: 174 62% 26%;
+  --chart-2: 220 70% 50%;
+  --chart-3: 262 83% 58%;
+  --chart-4: 38 92% 50%;
+  --chart-5: 0 84% 60%;
+  --radius: 8px;
+
+  /* Sidebar tokens */
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+}
+
+/* ---- Dark mode ---- */
+.dark {
+  /* Reverse the gray palette so Tailwind utilities auto-invert */
+  --fleet-gray-25: #0c111d;
+  --fleet-gray-50: #101828;
+  --fleet-gray-100: #1d2939;
+  --fleet-gray-200: #344054;
+  --fleet-gray-300: #475467;
+  --fleet-gray-400: #667085;
+  --fleet-gray-500: #98a2b3;
+  --fleet-gray-600: #d0d5dd;
+  --fleet-gray-700: #eaecf0;
+  --fleet-gray-800: #f2f4f7;
+  --fleet-gray-900: #f9fafb;
+  --fleet-gray-950: #fcfcfd;
+
+  --fleet-text-primary: #f2f4f7;
+  --fleet-text-secondary: #98a2b3;
+  --fleet-text-tertiary: #667085;
+
+  --fleet-surface-base: #101828;
+  --fleet-surface-raised: #1d2939;
+  --fleet-surface-muted: #344054;
+  --fleet-surface-sunken: #0c111d;
+
+  --fleet-border: #344054;
+  --fleet-border-strong: #475467;
+  --fleet-border-focus: var(--fleet-brand-light);
+
+  --status-success-bg: rgba(18, 183, 106, 0.15);
+  --status-success-text: #34d399;
+  --status-warning-bg: rgba(247, 144, 9, 0.15);
+  --status-warning-text: #fbbf24;
+  --status-error-bg: rgba(240, 68, 56, 0.15);
+  --status-error-text: #f87171;
+  --status-info-bg: rgba(59, 130, 246, 0.15);
+  --status-info-text: #60a5fa;
+
+  --fleet-shadow-xs: 0px 1px 2px rgba(0, 0, 0, 0.3);
+  --fleet-shadow-sm: 0px 1px 3px rgba(0, 0, 0, 0.4), 0px 1px 2px rgba(0, 0, 0, 0.3);
+  --fleet-shadow-md: 0px 4px 8px -2px rgba(0, 0, 0, 0.4), 0px 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --fleet-shadow-lg: 0px 12px 16px -4px rgba(0, 0, 0, 0.3), 0px 4px 6px -2px rgba(0, 0, 0, 0.2);
+
+  /* shadcn compat */
+  --background: 222 47% 7%;
+  --foreground: 210 40% 96%;
+  --card: 222 47% 11%;
+  --card-foreground: 210 40% 96%;
+  --popover: 222 47% 11%;
+  --popover-foreground: 210 40% 96%;
+  --primary: 174 62% 45%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 18% 16%;
+  --secondary-foreground: 210 40% 96%;
+  --muted: 220 18% 16%;
+  --muted-foreground: 215 18% 55%;
+  --accent: 220 18% 16%;
+  --accent-foreground: 210 40% 96%;
+  --destructive: 0 63% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 18% 18%;
+  --input: 220 18% 18%;
+  --ring: 174 62% 45%;
+  --chart-1: 174 62% 45%;
+  --chart-2: 220 70% 60%;
+  --chart-3: 262 83% 65%;
+  --chart-4: 38 92% 55%;
+  --chart-5: 0 84% 60%;
+}
+
+/* ---- Tailwind v4 theme mapping ---- */
+@theme inline {
+  --font-sans: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* FleetOS brand colors */
+  --color-brand-50: var(--fleet-brand-50);
+  --color-brand-100: var(--fleet-brand-100);
+  --color-brand-500: var(--fleet-brand-500);
+  --color-brand-600: var(--fleet-brand-600);
+  --color-brand-700: var(--fleet-brand-700);
+  --color-brand-900: var(--fleet-brand-900);
+
+  /* Custom animations */
+  --animate-fade-in: fade-in 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  --animate-slide-in-right: slide-in-right 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  --animate-scale-in: scale-in 0.2s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ---- Base layer ---- */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100svh;
+    width: 100%;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--fleet-font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    overflow-x: clip;
+  }
+
+  /* Override Radix scroll locking for sticky headers */
+  body[data-scroll-locked] {
+    overflow: unset !important;
+  }
+
+  /* Cursor pointer for buttons */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* Prevent focus zoom on mobile devices */
+  @media screen and (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+
+  ::selection {
+    background: rgba(15, 118, 110, 0.2);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--fleet-gray-300);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--fleet-gray-400);
+  }
+}
+
+/* ---- Collapsible animations (shadcn) ---- */
+.CollapsibleContent {
+  overflow: hidden;
+}
+.CollapsibleContent[data-state='open'] {
+  animation: slideDown 300ms ease-out;
+}
+.CollapsibleContent[data-state='closed'] {
+  animation: slideUp 300ms ease-out;
+}
+
+@keyframes slideDown {
+  from { height: 0; }
+  to { height: var(--radix-collapsible-content-height); }
+}
+
+@keyframes slideUp {
+  from { height: var(--radix-collapsible-content-height); }
+  to { height: 0; }
+}
+
+/* ---- Elegant Dark Pattern Background ---- */
+.fleet-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(180deg, #09090b 0%, #0a0a0c 25%, #0d0d10 50%, #0a0a0c 75%, #09090b 100%);
+}
+
+/* Sophisticated mesh gradient orbs */
+.fleet-ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  animation: fleet-orb-drift 20s ease-in-out infinite alternate;
+}
+
+.fleet-ambient-orb-a {
+  width: 600px;
+  height: 600px;
+  top: -15%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
+  filter: blur(100px);
+  animation-duration: 25s;
+}
+
+.fleet-ambient-orb-b {
+  width: 500px;
+  height: 500px;
+  top: 50%;
+  right: -10%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 60%);
+  filter: blur(90px);
+  animation-duration: 30s;
+  animation-delay: -5s;
+}
+
+.fleet-ambient-orb-c {
+  width: 400px;
+  height: 400px;
+  bottom: -10%;
+  left: 20%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
+  filter: blur(80px);
+  animation-duration: 22s;
+  animation-delay: -10s;
+}
+
+/* Additional mesh gradient blobs for depth */
+.fleet-ambient::before {
+  content: '';
+  position: absolute;
+  top: 30%;
+  left: 20%;
+  width: 60%;
+  height: 40%;
+  background: radial-gradient(ellipse, rgba(99, 102, 241, 0.04) 0%, transparent 50%);
+  filter: blur(100px);
+}
+
+.fleet-ambient::after {
+  content: '';
+  position: absolute;
+  bottom: -5%;
+  right: -5%;
+  width: 45%;
+  height: 45%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.06) 0%, transparent 60%);
+  filter: blur(80px);
+}
+
+/* Subtle dot pattern texture */
+.fleet-ambient-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.5;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 70%);
+}
+
+/* Refined top highlight */
+.fleet-ambient-topglare {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: radial-gradient(ellipse 70% 80% at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+}
+
+/* Subtle diagonal beam */
+.fleet-ambient-beam {
+  position: absolute;
+  top: -20%;
+  left: 45%;
+  width: 200px;
+  height: 140%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 30%);
+  transform: rotate(15deg);
+  transform-origin: top center;
+}
+
+/* Noise texture */
+.fleet-ambient-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Elegant vignette */
+.fleet-ambient-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+@keyframes fleet-orb-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 30px) scale(0.95); }
+  100% { transform: translate(10px, -10px) scale(1.02); }
+}
+
+@keyframes ripple-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.08; }
+  50% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.15; }
+}
+
+/* ---- Glare Card ---- */
+.fleet-glare {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--fleet-radius-xl);
+}
+
+.fleet-glare::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    600px circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.12),
+    transparent 40%
+  );
+  transition: opacity 0.3s ease;
+}
+
+.fleet-glare:hover::before,
+.fleet-glare[data-hot='true']::before,
+.fleet-glare:focus-visible::before {
+  opacity: 1;
+}
+
+/* ---- Reveal (scroll-in) ---- */
+.fleet-reveal {
+  --fleet-reveal-y: 24px;
+  opacity: 0;
+  transform: translateY(var(--fleet-reveal-y));
+  transition:
+    opacity var(--fleet-duration-slow) var(--fleet-ease),
+    transform var(--fleet-duration-slow) var(--fleet-ease);
+}
+
+.fleet-reveal[data-in='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .fleet-ambient-orb { animation: none !important; }
+  .fleet-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
+/* ---- Component layer ---- */
+@layer components {
+  .fleet-card {
+    background: var(--fleet-surface-raised);
+    border: 1px solid var(--fleet-border);
+    border-radius: var(--fleet-radius-lg);
+    box-shadow: var(--fleet-shadow-xs);
+    transition: box-shadow var(--fleet-duration-normal) var(--fleet-ease),
+                border-color var(--fleet-duration-normal) var(--fleet-ease);
+  }
+  .fleet-card:hover {
+    box-shadow: var(--fleet-shadow-sm);
+    border-color: var(--fleet-border-strong);
+  }
+
+  .fleet-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    border-radius: var(--fleet-radius-md);
+    transition: all var(--fleet-duration-fast) var(--fleet-ease);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .fleet-btn:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .fleet-input {
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--fleet-border);
+    border-radius: var(--fleet-radius-md);
+    background: var(--fleet-surface-raised);
+    color: var(--fleet-text-primary);
+    font-size: 14px;
+    line-height: 20px;
+    transition: border-color var(--fleet-duration-fast) var(--fleet-ease),
+                box-shadow var(--fleet-duration-fast) var(--fleet-ease);
+    width: 100%;
+  }
+  .fleet-input::placeholder {
+    color: var(--fleet-text-tertiary);
+  }
+  .fleet-input:focus {
+    outline: none;
+    border-color: var(--fleet-border-focus);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.3);
+  }
+
+  .fleet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    border-radius: var(--fleet-radius-pill);
+  }
+  .fleet-badge-success { background: var(--status-success-bg); color: var(--status-success-text); }
+  .fleet-badge-warning { background: var(--status-warning-bg); color: var(--status-warning-text); }
+  .fleet-badge-error { background: var(--status-error-bg); color: var(--status-error-text); }
+  .fleet-badge-info { background: var(--status-info-bg); color: var(--status-info-text); }
+  .fleet-badge-neutral { background: var(--fleet-gray-100); color: var(--fleet-gray-700); }
+
+  .fleet-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .fleet-table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--fleet-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--fleet-border);
+    background: var(--fleet-surface-sunken);
+  }
+  .fleet-table tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--fleet-border);
+    color: var(--fleet-text-primary);
+  }
+  .fleet-table tbody tr:last-child td { border-bottom: none; }
+  .fleet-table tbody tr:hover { background: var(--fleet-gray-50); }
+
+  .fleet-page-enter {
+    animation: fade-in var(--fleet-duration-slow) var(--fleet-ease) both;
+  }
+
+  .fleet-skeleton {
+    background: linear-gradient(90deg, var(--fleet-gray-100) 25%, var(--fleet-gray-200) 50%, var(--fleet-gray-100) 75%);
+    background-size: 200% 100%;
+    animation: fleet-shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--fleet-radius-sm);
+  }
+}
+
+@keyframes fleet-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   DARK MODE — Glass morphism surfaces
+   Ambient orbs show through translucent layers
+   ============================================ */
+
+/* Backgrounds — translucent glass, not solid gray */
+.dark .bg-white { background-color: rgba(255, 255, 255, 0.06) !important; }
+.dark .bg-white\/80 { background-color: rgba(255, 255, 255, 0.05) !important; }
+.dark .bg-white\/82 { background-color: rgba(255, 255, 255, 0.06) !important; }
+.dark .bg-white\/90 { background-color: rgba(255, 255, 255, 0.06) !important; }
+.dark .bg-white\/95 { background-color: rgba(255, 255, 255, 0.08) !important; }
+.dark .bg-white\/40 { background-color: rgba(255, 255, 255, 0.04) !important; }
+.dark .bg-white\/60 { background-color: rgba(255, 255, 255, 0.06) !important; }
+.dark .bg-gray-50 { background-color: rgba(255, 255, 255, 0.04) !important; }
+.dark .bg-gray-50\/50 { background-color: rgba(255, 255, 255, 0.03) !important; }
+.dark .bg-gray-50\/60 { background-color: rgba(255, 255, 255, 0.04) !important; }
+.dark .bg-gray-100 { background-color: rgba(255, 255, 255, 0.06) !important; }
+.dark .bg-gray-200 { background-color: rgba(255, 255, 255, 0.08) !important; }
+.dark .bg-gray-300 { background-color: rgba(255, 255, 255, 0.12) !important; }
+
+/* Text — brighten for dark backgrounds */
+.dark .text-gray-900 { color: hsl(210 40% 96%) !important; }
+/* Landing nav sits on a light glass bar — keep its labels dark */
+.dark .landing-nav .text-gray-900 { color: #111827 !important; }
+.dark .landing-nav .text-gray-900:hover { color: #0f766e !important; }
+.dark .text-gray-800 { color: hsl(210 38% 92%) !important; }
+.dark .text-gray-700 { color: hsl(210 30% 82%) !important; }
+.dark .text-gray-600 { color: hsl(215 20% 60%) !important; }
+.dark .text-gray-500 { color: hsl(215 18% 52%) !important; }
+.dark .text-gray-400 { color: hsl(215 14% 42%) !important; }
+
+/* Borders — subtle translucent lines */
+.dark .border-gray-100 { border-color: rgba(255, 255, 255, 0.06) !important; }
+.dark .border-gray-200 { border-color: rgba(255, 255, 255, 0.08) !important; }
+.dark .border-gray-300 { border-color: rgba(255, 255, 255, 0.12) !important; }
+
+/* Hover states — slightly brighter glass */
+.dark .hover\:bg-gray-50:hover { background-color: rgba(255, 255, 255, 0.06) !important; }
+.dark .hover\:bg-gray-100:hover { background-color: rgba(255, 255, 255, 0.08) !important; }
+.dark .hover\:text-gray-600:hover { color: hsl(210 30% 82%) !important; }
+.dark .hover\:text-gray-900:hover { color: hsl(210 40% 96%) !important; }
+.dark .hover\:border-gray-300:hover { border-color: rgba(255, 255, 255, 0.12) !important; }
+.dark .hover\:border-gray-400:hover { border-color: rgba(255, 255, 255, 0.15) !important; }
+
+/* Shadows — subtle glow, not heavy drop */
+.dark .shadow-xs { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important; }
+.dark .shadow-sm { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04) !important; }
+.dark .shadow-md { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04) !important; }
+.dark .shadow-lg { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04) !important; }
+
+/* Rings */
+.dark .ring-gray-200 { --tw-ring-color: rgba(255, 255, 255, 0.08) !important; }
+.dark .ring-gray-300 { --tw-ring-color: rgba(255, 255, 255, 0.12) !important; }
+.dark .ring-gray-900 { --tw-ring-color: hsl(210 40% 96%) !important; }
+
+/* Buttons — glass surface with proper contrast */
+.dark [class*="bg-gray-800"]:not(table *):not(a):not(a *):not(button):not(button *) { background-color: rgba(255, 255, 255, 0.85) !important; }
+.dark a[class*="bg-gray-900"], .dark button[class*="bg-gray-900"] {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  color: #0f172a !important;
+}
+.dark a[class*="bg-gray-900"] > *, .dark button[class*="bg-gray-900"] > * {
+  color: #0f172a !important;
+}
+.dark a[class*="hover\:bg-gray-800"]:hover, .dark button[class*="hover\:bg-gray-800"]:hover {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+}
+.dark a[class*="bg-gray-950"], .dark button[class*="bg-gray-950"] {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  color: #0f172a !important;
+}
+/* Exclude the <a>/<button> element itself — only its inner elements are exempt,
+   otherwise buttons that set text-white on the anchor get forced white-on-white */
+.dark [class*="text-white"]:not(a):not(a *):not(button):not(button *) { color: rgba(255, 255, 255, 0.9) !important; }
+
+/* ============================================
+   STATUS & COLORED ELEMENTS — Modern dark mode
+   ============================================ */
+
+/* GREEN / EMERALD — Working / Success */
+.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.12) !important; box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.2) !important; }
+.dark .bg-emerald-100 { background-color: rgba(16, 185, 129, 0.18) !important; }
+.dark .text-emerald-600 { color: #34d399 !important; }
+.dark .text-emerald-700 { color: #6ee7b7 !important; }
+.dark .border-emerald-200 { border-color: rgba(16, 185, 129, 0.25) !important; }
+
+/* AMBER — Idle / Warning */
+.dark .bg-amber-50 { background-color: rgba(245, 158, 11, 0.12) !important; box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.2) !important; }
+.dark .bg-amber-100 { background-color: rgba(245, 158, 11, 0.18) !important; }
+.dark .text-amber-600 { color: #fbbf24 !important; }
+.dark .text-amber-700 { color: #fcd34d !important; }
+.dark .border-amber-200 { border-color: rgba(245, 158, 11, 0.25) !important; }
+
+/* RED — Stopped / Error / Critical */
+.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.12) !important; box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.2) !important; }
+.dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.18) !important; }
+.dark .text-red-600 { color: #f87171 !important; }
+.dark .text-red-700 { color: #fca5a5 !important; }
+.dark .border-red-200 { border-color: rgba(239, 68, 68, 0.25) !important; }
+.dark .bg-red-500 { background-color: #ef4444 !important; }
+
+/* VIOLET — In transit */
+.dark .bg-violet-50 { background-color: rgba(139, 92, 246, 0.12) !important; box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.2) !important; }
+.dark .bg-violet-100 { background-color: rgba(139, 92, 246, 0.18) !important; }
+.dark .text-violet-600 { color: #a78bfa !important; }
+.dark .text-violet-700 { color: #c4b5fd !important; }
+.dark .border-violet-200 { border-color: rgba(139, 92, 246, 0.25) !important; }
+
+/* BLUE — Info */
+.dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.12) !important; box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.2) !important; }
+.dark .bg-blue-100 { background-color: rgba(59, 130, 246, 0.18) !important; }
+.dark .text-blue-600 { color: #60a5fa !important; }
+.dark .text-blue-700 { color: #93c5fd !important; }
+.dark .border-blue-200 { border-color: rgba(59, 130, 246, 0.25) !important; }
+
+/* GREEN — Success alt */
+.dark .bg-green-50 { background-color: rgba(34, 197, 94, 0.12) !important; box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.2) !important; }
+.dark .text-green-600 { color: #4ade80 !important; }
+.dark .text-green-700 { color: #86efac !important; }
+
+/* YELLOW */
+.dark .bg-yellow-50 { background-color: rgba(234, 179, 8, 0.12) !important; }
+.dark .bg-yellow-100 { background-color: rgba(234, 179, 8, 0.18) !important; }
+.dark .text-yellow-600 { color: #facc15 !important; }
+.dark .text-yellow-700 { color: #fde047 !important; }
+
+/* SLATE / INDIGO */
+.dark .bg-slate-50 { background-color: hsl(222 47% 13%) !important; }
+.dark .bg-slate-100 { background-color: hsl(222 47% 16%) !important; }
+.dark .text-slate-600 { color: hsl(215 20% 60%) !important; }
+.dark .text-slate-700 { color: hsl(210 30% 82%) !important; }
+.dark .text-slate-900 { color: hsl(210 40% 96%) !important; }
+.dark .border-slate-200 { border-color: hsl(220 18% 20%) !important; }
+.dark .hover\:bg-slate-50:hover { background-color: hsl(220 20% 18%) !important; }
+.dark .hover\:text-slate-700:hover { color: hsl(210 30% 82%) !important; }
+.dark .bg-indigo-50 { background-color: rgba(99, 102, 241, 0.12) !important; }
+.dark .text-indigo-600 { color: #818cf8 !important; }
+.dark .text-indigo-700 { color: #a5b4fc !important; }
+
+/* PROGRESS BAR — emerald fill in dark */
+.dark .bg-gray-800 { background-color: hsl(210 38% 88%) !important; }
+
+/* Dark mode borders for cards */
+.dark .border { border-color: hsl(220 18% 20%) !important; }
+.dark [class*="border-gray"] { border-color: hsl(220 18% 20%) !important; }
+
+/* Dark mode form elements */
+.dark input, .dark select, .dark textarea {
+  background-color: hsl(222 47% 8%) !important;
+  border-color: hsl(220 18% 20%) !important;
+  color: hsl(210 40% 96%) !important;
+}
+.dark input::placeholder, .dark select::placeholder, .dark textarea::placeholder {
+  color: hsl(215 18% 52%) !important;
+}
+.dark input:focus, .dark select:focus, .dark textarea:focus {
+  border-color: hsl(174 62% 40%) !important;
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.15) !important;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb { background: hsl(220 16% 28%) !important; }
+.dark ::-webkit-scrollbar-thumb:hover { background: hsl(220 14% 35%) !important; }
+
+/* Dark mode table rows */
+.dark tbody tr:hover { background-color: hsl(220 20% 16%) !important; }
+.dark thead th { background-color: hsl(222 47% 9%) !important; color: hsl(215 18% 52%) !important; }
+
+/* ============================================
+   Orbit Delivery hero embedded in the landing page
+   Matches Fleet OS brand: teal/emerald, Inter font, glass dark mode
+   ============================================ */
+
+/* Hide the component's own header — the Fleet OS sticky nav replaces it */
+.landing-hero .orbit-delivery .site-header { display: none; }
+
+/* On desktop, hero fills viewport minus the Fleet OS nav height (4rem) */
+@media (min-width: 760px) {
+  .landing-hero .orbit-delivery .page {
+    height: calc(100svh - 4rem);
+    min-height: auto;
+  }
+}
+
+/* On mobile, let the hero flow naturally */
+@media (max-width: 759px) {
+  .landing-hero .orbit-delivery .page {
+    min-height: 100svh;
+  }
+}
+
+/* Blend the hero's background with the Fleet OS ambient background */
+.landing-hero .orbit-delivery {
+  border-radius: 0;
+}
+
+/* Dark mode: ensure the hero picks up Fleet OS dark tokens */
+.dark .landing-hero .orbit-delivery:not([data-theme="light"]) {
+  --orbit-bg: radial-gradient(ellipse at 6% 15%, #101828 0%, #0c111d 50%, #1d2939 100%);
+  --orbit-ink: var(--fleet-gray-900, #f9fafb);
+  --orbit-muted: var(--fleet-gray-400, #98a2b3);
+  --orbit-nav: var(--fleet-gray-500, #d0d5dd);
+  --orbit-accent: var(--fleet-brand-500, #14b8a6);
+}
+
+/* Match the hero's CTA buttons to Fleet OS gradient style */
+.landing-hero .orbit-delivery .header-cta,
+.landing-hero .orbit-delivery .explore-button {
+  background: linear-gradient(135deg, var(--fleet-brand-600, #0d9488), var(--fleet-brand-500, #14b8a6)) !important;
+  box-shadow: 0 4px 12px -2px rgba(13, 148, 136, 0.3) !important;
+}
+
+.landing-hero .orbit-delivery .header-cta:hover,
+.landing-hero .orbit-delivery .explore-button:hover {
+  background: linear-gradient(135deg, var(--fleet-brand-700, #0f766e), var(--fleet-brand-600, #0d9488)) !important;
+}
+
+/* Cloud bank uses Fleet OS teal tones */
+.landing-hero .orbit-delivery .cloud-bank i {
+  background: radial-gradient(ellipse, rgba(20, 184, 166, 0.12) 0%, rgba(16, 185, 129, 0.08) 40%, transparent 70%) !important;
+}
+
+/* Match the heading accent to Fleet OS teal */
+.landing-hero .orbit-delivery h2 em {
+  color: var(--fleet-brand-500, #14b8a6) !important;
+}
+
+/* ============================================
+   Dashboard hero — Orbit Delivery on /home
+   Constrained height, glass border, blends with dashboard
+   ============================================ */
+
+.dashboard-hero {
+  height: clamp(340px, 45vh, 500px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hide the component's own header/footer inside the dashboard */
+.dashboard-hero .orbit-delivery .site-header { display: none; }
+.dashboard-hero .orbit-delivery .site-footer { display: none; }
+
+/* Fill the container, not the viewport */
+.dashboard-hero .orbit-delivery .page {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* Dark mode: Fleet OS glass tokens */
+.dark .dashboard-hero .orbit-delivery:not([data-theme="light"]) {
+  --orbit-bg: radial-gradient(ellipse at 6% 15%, #101828 0%, #0c111d 50%, #1d2939 100%);
+  --orbit-ink: var(--fleet-gray-900, #f9fafb);
+  --orbit-muted: var(--fleet-gray-400, #98a2b3);
+  --orbit-nav: var(--fleet-gray-500, #d0d5dd);
+  --orbit-accent: var(--fleet-brand-500, #14b8a6);
+}
+
+/* CTA buttons match Fleet OS gradient */
+.dashboard-hero .orbit-delivery .header-cta,
+.dashboard-hero .orbit-delivery .explore-button {
+  background: linear-gradient(135deg, var(--fleet-brand-600, #0d9488), var(--fleet-brand-500, #14b8a6)) !important;
+  box-shadow: 0 4px 12px -2px rgba(13, 148, 136, 0.3) !important;
+}
+
+/* Cloud bank uses teal tones */
+.dashboard-hero .orbit-delivery .cloud-bank i {
+  background: radial-gradient(ellipse, rgba(20, 184, 166, 0.12) 0%, rgba(16, 185, 129, 0.08) 40%, transparent 70%) !important;
+}
+
+/* Heading accent matches Fleet OS brand */
+.dashboard-hero .orbit-delivery h2 em {
+  color: var(--fleet-brand-500, #14b8a6) !important;
+}
+
+/* On mobile, reduce height and simplify */
+@media (max-width: 759px) {
+  .dashboard-hero {
+    height: clamp(280px, 50vh, 380px);
+  }
+  .dashboard-hero .orbit-delivery .planet-caption { display: none; }
+  .dashboard-hero .orbit-delivery .cloud-bank { display: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Keyboard focus
+   Layered so that any Tailwind `focus-visible:*` utility on a component still
+   wins, while every interactive element gets a visible ring by default.
+--------------------------------------------------------------------------- */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--fleet-brand-600, #0d9488);
+    outline-offset: 2px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Legal documents (privacy, terms, cookie, refund)
+--------------------------------------------------------------------------- */
+.legal-doc {
+  color: var(--fleet-gray-700, #344054);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.legal-doc h1 {
+  color: var(--fleet-gray-900, #101828);
+  font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+}
+.legal-doc .lead {
+  color: var(--fleet-gray-500, #667085);
+  font-size: 0.875rem;
+  margin-bottom: 2rem;
+}
+.legal-doc h2 {
+  color: var(--fleet-gray-900, #101828);
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  margin: 2.25rem 0 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--fleet-border, #eaecf0);
+}
+.legal-doc h3 {
+  color: var(--fleet-gray-900, #101828);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.5rem;
+}
+.legal-doc p {
+  margin: 0 0 1rem;
+}
+.legal-doc ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0 0 1rem;
+}
+.legal-doc li {
+  margin-bottom: 0.5rem;
+}
+.legal-doc li::marker {
+  color: var(--fleet-brand-600, #0d9488);
+}
+.legal-doc a {
+  color: var(--fleet-brand-700, #0f766e);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legal-doc a:hover {
+  color: var(--fleet-brand-900, #134e4a);
+}
+.legal-doc strong {
+  color: var(--fleet-gray-900, #101828);
+  font-weight: 600;
+}
+.legal-doc code {
+  background: var(--fleet-surface-muted, #f2f4f7);
+  border: 1px solid var(--fleet-border, #eaecf0);
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-size: 0.8125rem;
+  color: var(--fleet-gray-800, #1d2939);
+  overflow-wrap: anywhere;
+}
+.legal-doc table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1.25rem;
+  font-size: 0.9375rem;
+}
+.legal-doc th,
+.legal-doc td {
+  border: 1px solid var(--fleet-border, #eaecf0);
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+.legal-doc th {
+  background: var(--fleet-surface-muted, #f2f4f7);
+  color: var(--fleet-gray-700, #344054);
+  font-weight: 600;
+}
+
+/* ============================================
+   CHAT WIDGET — self-contained palette
+   The dark-mode "glass" rules above restyle .bg-white / .bg-gray-* and force
+   .text-gray-900 to near-white. That works for translucent dashboard cards,
+   but on the chat widget it produced a light panel with white text (unreadable).
+   The widget opts out below: later + !important beats those overrides, in both themes.
+   ============================================ */
+.chat-panel {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+.dark .chat-panel {
+  background-color: #111827 !important;
+  color: #f9fafb !important;
+}
+
+.chat-bot-bubble {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+.dark .chat-bot-bubble {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+}
+
+.chat-user-bubble {
+  background-color: #0f766e !important;
+  color: #ffffff !important;
+}
+
+.chat-time--bot { color: #4b5563 !important; }
+.dark .chat-time--bot { color: #d1d5db !important; }
+.chat-time--user { color: rgba(255, 255, 255, 0.92) !important; }
+
+.chat-muted { color: #6b7280 !important; }
+.dark .chat-muted { color: #9ca3af !important; }
+
+.chat-suggestion {
+  background-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+.dark .chat-suggestion {
+  background-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.chat-field {
+  background-color: #f9fafb !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+}
+.dark .chat-field {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+  border-color: #4b5563 !important;
+}
+.chat-field::placeholder { color: #6b7280 !important; }
+.dark .chat-field::placeholder { color: #cbd5e1 !important; }
+
+.chat-icon-surface {
+  background-color: #ccfbf1 !important;
+  color: #0f766e !important;
+}
+
+/* Hover states kept alive despite the !important surfaces above */
+.chat-suggestion:hover { background-color: #d1d5db !important; }
+.dark .chat-suggestion:hover { background-color: #5b6472 !important; }
+.chat-field:focus { border-color: #0f766e !important; }
+
+/* ——— GlowButton: animated glow layers (hover/focus only) ——— */
+@keyframes glow-spin {
+  0% { transform: rotate(10deg); }
+  50% { transform: rotate(190deg); }
+  100% { transform: rotate(370deg); }
+}
+@keyframes glow-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.75); }
+}
+.glow-button:hover .glow-layer,
+.glow-button:focus-visible .glow-layer {
+  animation:
+    glow-spin 8s cubic-bezier(0.56, 0.15, 0.28, 0.86) infinite,
+    glow-pulse 4s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow-button:hover .glow-layer,
+  .glow-button:focus-visible .glow-layer {
+    animation: none !important;
+  }
+}
+
+/* ——— SpinningBorderButton: rotating conic border ———
+   Transform carries the centering translate so the rotation happens around
+   the pill's centre instead of the element's top-left corner. */
+.spinning-border__ring {
+  transform: translate(-50%, -50%);
+  animation: border-spin 3s linear infinite;
+}
+.spinning-border:hover .spinning-border__ring,
+.spinning-border:focus-within .spinning-border__ring {
+  animation-duration: 1s;
+}
+@keyframes border-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinning-border__ring { animation: none; }
+}
+
+/* ── Radial orbital timeline ─────────────────────────────────────────────
+   The decorative orbit ring rotates slowly around the hub, and active link
+   paths carry a dashed flow so you can see which milestone pair is lit up.
+   transform-box: view-box keeps the px transform-origin in SVG coordinates
+   (the component sets it inline to the measured hub position). */
+.orbital-spin {
+  transform-box: view-box;
+  animation: orbital-spin 90s linear infinite;
+}
+@keyframes orbital-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.orbital-link-flow {
+  animation: orbital-link-flow 1.6s linear infinite;
+}
+@keyframes orbital-link-flow {
+  /* -34 = two periods of the "5 12" dash pattern → seamless loop. */
+  to { stroke-dashoffset: -34; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbital-spin,
+  .orbital-link-flow { animation: none; }
+}

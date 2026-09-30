@@ -1,0 +1,163 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { DatabaseService } from '../common/database/database.service';
+import { OcrWorker } from './ocr.worker';
+import { MediaWorker } from './media.worker';
+import { BillingEngine, BillingInput } from '../modules/billing/billing-engine-logic';
+import { AlertEngineService } from '../modules/alerts/alert-engine.service';
+
+export interface NightlyJob {
+  tenant_id: string;
+  type: 'ocr' | 'media' | 'billing' | 'rollup' | 'cleanup' | 'alerts';
+}
+
+@Injectable()
+export class NightlyWorker {
+  private readonly logger = new Logger(NightlyWorker.name);
+
+  constructor(
+    private db: DatabaseService,
+    private ocrWorker: OcrWorker,
+    private mediaWorker: MediaWorker,
+    private billingEngine: BillingEngine,
+    private alertEngine: AlertEngineService,
+  ) {}
+
+  async processJob(job: NightlyJob): Promise<{ success: boolean; message: string }> {
+    this.logger.log(`Running nightly job: ${job.type} for tenant ${job.tenant_id}`);
+
+    try {
+      switch (job.type) {
+        case 'ocr':
+          return await this.processOcrJobs(job.tenant_id);
+        case 'media':
+          return await this.processMediaJobs(job.tenant_id);
+        case 'billing':
+          return await this.processBilling(job.tenant_id);
+        case 'rollup':
+          return await this.processDailyRollup(job.tenant_id);
+        case 'cleanup':
+          return await this.processCleanup(job.tenant_id);
+        case 'alerts':
+          return await this.processAlerts(job.tenant_id);
+        default:
+          // ALT-04 hardening-lite: daily digest falls through to a digest write.
+          if ((job.type as string) === 'digest') return await this.processDigest(job.tenant_id);
+          return { success: false, message: `Unknown job type: ${job.type}` };
+      }
+    } catch (error) {
+      this.logger.error(`Nightly job failed: ${error}`);
+      return { success: false, message: (error as Error).message };
+    }
+  }
+
+  private async processOcrJobs(tenantId: string) {
+    // Meter photos referenced by sessions that have no OCR result yet.
+    const photos = await this.db.queryWithTenant(tenantId, 'owner',
+      `SELECT DISTINCT p.id FROM tenant.photos p
+       JOIN tenant.work_sessions ws ON ws.is_current = true
+         AND (ws.start_photo_key = p.s3_key_original OR ws.end_photo_key = p.s3_key_original)
+       WHERE p.ocr_result IS NULL
+       LIMIT 50`);
+
+    let processed = 0;
+    for (const photo of photos.rows) {
+      const result = await this.ocrWorker.processMeterReading(tenantId, photo.id);
+      if (result) processed++;
+    }
+
+    return { success: true, message: `OCR processed ${processed}/${photos.rows.length} photos` };
+  }
+
+  private async processMediaJobs(tenantId: string) {
+    // Committed photos still missing a server hash.
+    const photos = await this.db.queryWithTenant(tenantId, 'owner',
+      `SELECT id FROM tenant.photos
+       WHERE sha256_server IS NULL
+       LIMIT 50`);
+
+    let processed = 0;
+    for (const photo of photos.rows) {
+      await this.mediaWorker.processPhoto({ tenant_id: tenantId, photo_id: photo.id });
+      processed++;
+    }
+
+    return { success: true, message: `Media processed ${processed}/${photos.rows.length} photos` };
+  }
+
+  private async processBilling(tenantId: string) {
+    // Run billing for active deployments
+    const deployments = await this.db.queryWithTenant(tenantId, 'owner',
+      `SELECT id FROM tenant.deployments WHERE status = 'active'`);
+
+    let billed = 0;
+    const errors: string[] = [];
+
+    // Calculate billing period: last month
+    const now = new Date();
+    const periodEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0, 10);
+    const periodStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0, 10);
+
+    for (const dep of deployments.rows) {
+      try {
+        const input: BillingInput = {
+          deployment_id: dep.id,
+          period_start: periodStart,
+          period_end: periodEnd,
+        };
+        const result = await this.billingEngine.calculateBilling(tenantId, input);
+        if (result.entries.length > 0) {
+          await this.billingEngine.postBilling(tenantId, result);
+          billed++;
+        }
+      } catch (error) {
+        errors.push(`Deployment ${dep.id}: ${(error as Error).message}`);
+      }
+    }
+
+    const message = `Billing processed ${billed}/${deployments.rows.length} deployments`;
+    if (errors.length > 0) {
+      this.logger.warn(`Billing errors: ${errors.join('; ')}`);
+      return { success: true, message: `${message} (${errors.length} errors)` };
+    }
+    return { success: true, message };
+  }
+
+  private async processDailyRollup(tenantId: string) {
+    // Update materialized views or aggregations
+    await this.db.queryWithTenant(tenantId, 'owner',
+      `REFRESH MATERIALIZED VIEW CONCURRENTLY IF EXISTS tenant.mv_daily_kpis`);
+
+    return { success: true, message: 'Daily rollup completed' };
+  }
+
+  private async processCleanup(tenantId: string) {
+    // Clean up expired data, temp files, etc.
+    const result = await this.db.queryWithTenant(tenantId, 'owner',
+      `DELETE FROM tenant.notifications WHERE created_at < NOW() - INTERVAL '90 days'`);
+
+    return { success: true, message: `Cleaned up ${result.rowCount} old notifications` };
+  }
+
+  private async processAlerts(tenantId: string) {
+    await this.alertEngine.runAllChecks(tenantId);
+    return { success: true, message: 'Alert checks completed' };
+  }
+
+  /** Daily digest (ALT-04 hardening-lite): one in-app summary from open alerts. */
+  buildDigestText(openAlerts: { type: string; title: string }[]): string {
+    if (openAlerts.length === 0) return 'All clear — no open alerts.';
+    const byType = new Map<string, number>();
+    for (const a of openAlerts) byType.set(a.type, (byType.get(a.type) ?? 0) + 1);
+    return [...byType.entries()].map(([t, n]) => `${n}× ${t}`).join('; ');
+  }
+
+  private async processDigest(tenantId: string) {
+    const alerts = await this.db.queryWithTenant(tenantId, 'owner',
+      `SELECT type, title FROM tenant.alerts WHERE resolved_at IS NULL LIMIT 50`).catch(() => ({ rows: [] as { type: string; title: string }[] }));
+    const text = this.buildDigestText(alerts.rows as { type: string; title: string }[]);
+    await this.db.queryWithTenant(tenantId, 'owner',
+      `INSERT INTO tenant.notifications (tenant_id, channel, title, body) VALUES ($1,'in_app','Daily digest',$2)`,
+      [tenantId, text]).catch(() => null);
+    return { success: true, message: `Digest: ${text}` };
+  }
+}
