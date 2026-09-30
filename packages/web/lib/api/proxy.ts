@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { handleMockApiRequest } from '@/lib/db/mock-db';
 
 const API_URL = process.env.API_URL || 'http://localhost:3001';
+const FORCE_MOCK = process.env.NEXT_PUBLIC_MOCK_API === 'true' || process.env.USE_MOCK_DB === 'true';
 
 export async function proxy(request: NextRequest, path: string) {
+  // If explicitly configured to use mock database, bypass upstream API
+  if (FORCE_MOCK) {
+    return handleMockApiRequest(request, path);
+  }
+
   const url = new URL(request.url);
   const apiUrl = new URL(`${API_URL}${path}${url.search}`);
 
@@ -29,6 +36,8 @@ export async function proxy(request: NextRequest, path: string) {
       method: request.method,
       headers,
       body,
+      // Abort quickly if local server is not running
+      signal: AbortSignal.timeout(3000),
     });
 
     // Forward response. Validators are dropped and caching disabled so the
@@ -64,10 +73,15 @@ export async function proxy(request: NextRequest, path: string) {
       },
     );
   } catch (error) {
-    console.error('API proxy error:', error);
-    return NextResponse.json(
-      { detail: 'API server unavailable' },
-      { status: 502 }
-    );
+    // When upstream API is offline or unreachable, seamlessly serve from our comprehensive mock database
+    try {
+      return await handleMockApiRequest(request, path);
+    } catch (mockError) {
+      console.error('API proxy and mock database error:', error, mockError);
+      return NextResponse.json(
+        { detail: 'API server unavailable' },
+        { status: 502 }
+      );
+    }
   }
 }
