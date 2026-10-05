@@ -21,3 +21,6 @@ freellmapi/
 
 # stray export sitting in the repo root (82MB, not referenced by the app)
 video/
+
+# Expo
+.expo/
