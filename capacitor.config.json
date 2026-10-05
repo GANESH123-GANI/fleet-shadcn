@@ -3,7 +3,7 @@
   "appName": "FleetOS",
   "webDir": "packages/web/public",
   "server": {
-    "androidScheme": "https",
+    "url": "https://fleetos-web-six.vercel.app",
     "cleartext": true
   }
 }
