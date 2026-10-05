@@ -22,6 +22,8 @@ jobs:
   build:
     name: Build Android APK
     runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     steps:
       - name: 🏗 Checkout repository
         uses: actions/checkout@v4
@@ -37,14 +39,11 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      - name: 🏗 Setup EAS CLI
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: 🏗 Install EAS CLI
+        run: npm install -g eas-cli
 
       - name: 🚀 Run EAS Build (Android)
         run: |
