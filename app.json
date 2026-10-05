@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "FleetOS",
+    "slug": "fleet-shadcn",
+    "version": "1.0.0",
+    "android": {
+      "package": "com.fleet.shadcn"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c509db85-6334-4d76-a0c7-98a92357639f"
+      }
+    }
+  }
+}
