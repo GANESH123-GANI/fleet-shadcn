@@ -1,0 +1,9 @@
+{
+  "appId": "com.fleet.shadcn",
+  "appName": "FleetOS",
+  "webDir": "packages/web/public",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  }
+}
