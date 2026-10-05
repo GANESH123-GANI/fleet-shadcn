@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "FleetOS",
-    "slug": "fleet-shadcn",
+    "slug": "fleetos",
     "version": "1.0.0",
     "android": {
       "package": "com.fleet.shadcn"
