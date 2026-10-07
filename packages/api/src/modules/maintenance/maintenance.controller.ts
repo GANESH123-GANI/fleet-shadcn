@@ -28,6 +28,12 @@ export class MaintenanceController {
     return this.service.getStatus(req.tenant!.tenantId, machineId);
   }
 
+  @Get('visits')
+  @ApiOperation({ summary: 'List all maintenance visits across the fleet' })
+  getAllVisits(@Req() req: TenantRequest) {
+    return this.service.getAllVisits(req.tenant!.tenantId);
+  }
+
   @Get('machines/:machineId/visits')
   @ApiOperation({ summary: 'Get maintenance visits for a machine' })
   getVisits(@Req() req: TenantRequest, @Param('machineId') machineId: string) {

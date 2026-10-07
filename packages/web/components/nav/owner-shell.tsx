@@ -8,6 +8,7 @@ import {
   Bell, Building2, CircleDollarSign, LayoutDashboard, LifeBuoy, Menu,
   Receipt, Scale, ScrollText, Settings, Tractor, Users, X, BarChart3,
   MapPin, Rocket, LogOut, Truck, PanelLeft, ChevronRight, Star, Moon, Sun, Languages,
+  Wrench,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { fetchList } from '@/lib/api/fetch-list';
@@ -38,6 +39,7 @@ const NAV: NavEntry[] = [
   { href: '/operators', labelKey: 'operators', icon: Users },
   { href: '/clients', labelKey: 'clients', icon: Building2 },
   { href: '/billing', labelKey: 'billing', icon: Receipt },
+  { href: '/maintenance', labelKey: 'maintenance', icon: Wrench },
   { href: '/cash', labelKey: 'cash', icon: CircleDollarSign },
   { href: '/projections', labelKey: 'projections', icon: Scale },
   { section: 'tools' },
@@ -50,6 +52,20 @@ const NAV: NavEntry[] = [
 function isActive(pathname: string, href: string) {
   if (href === '/home') return pathname === '/home';
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function getNavLabel(t: (key: string) => string, key?: string): string {
+  if (!key) return '';
+  if (key === 'maintenance') return 'Maintenance';
+  try {
+    const val = t(key);
+    if (!val || val.includes(`sidebar.${key}`)) {
+      return key.charAt(0).toUpperCase() + key.slice(1);
+    }
+    return val;
+  } catch {
+    return key.charAt(0).toUpperCase() + key.slice(1);
+  }
 }
 
 function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
@@ -90,7 +106,7 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
             <Link
               key={entry.href}
               href={entry.href!}
-              title={t(entry.labelKey!)}
+              title={getNavLabel(t, entry.labelKey)}
               onClick={onNavigate}
               className={cn(
                 'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150',
@@ -101,7 +117,11 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
               )}
             >
               <entry.icon className="h-[18px] w-[18px] shrink-0 text-black dark:text-white" />
-              {!collapsed && <span className="flex-1 text-black dark:text-white">{t(entry.labelKey!)}</span>}
+              {!collapsed && (
+                <span className="flex-1 text-black dark:text-white">
+                  {getNavLabel(t, entry.labelKey)}
+                </span>
+              )}
               {!collapsed && entry.badge && entry.badge > 0 && (
                 <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
                   {entry.badge > 9 ? '9+' : entry.badge}

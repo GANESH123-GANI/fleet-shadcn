@@ -10,7 +10,8 @@ import {
   Download, RefreshCw, TrendingUp, AlertTriangle,
   ArrowUpRight, MoreHorizontal, ChevronRight, ChevronUp, ChevronDown,
   Tractor, MapPin, Building2, Users, Play,
-  Ticket, ShoppingCart, DollarSign, Bookmark,
+  DollarSign, Receipt, Fuel,
+  Radio, Gauge, FileText,
 } from 'lucide-react';
 import { authFetch } from '@/lib/api/auth-fetch';
 import { fetchListStrict, ApiError } from '@/lib/api/fetch-list';
@@ -23,6 +24,11 @@ import { Reveal } from '@/components/fx/reveal';
 import { RadialOrbitalTimeline, type TimelineItem } from '@/components/ui/radial-orbital-timeline';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { LiveOperationsPanel } from '@/components/dashboard/live-operations-panel';
+import { FleetHealthMetrics } from '@/components/dashboard/fleet-health-metrics';
+import { FinancialGRNInsights } from '@/components/dashboard/financial-grn-insights';
+import { DriverScorecardPanel } from '@/components/dashboard/driver-scorecard-panel';
+
 
 // Orbit hero — WebGL canvas, skip SSR
 const OrbitDeliveryHero = dynamic(
@@ -157,6 +163,7 @@ function DashboardInner() {
   const [alerts, setAlerts] = useState<Row[]>([]);
   const [heroOpacity, setHeroOpacity] = useState(1);
   const [heroScale, setHeroScale] = useState(1);
+  const [metricTab, setMetricTab] = useState<'live' | 'health' | 'finance' | 'drivers' | 'activity'>('live');
 
   // Onboarding steps — a step counts as "done" only when a real record exists.
   const onboardingSteps = [
@@ -322,11 +329,7 @@ function DashboardInner() {
     return (
       <div className="space-y-6">
         <div className="h-24 rounded-2xl bg-white/60 dark:bg-white/5 backdrop-blur-xl animate-pulse" />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-36 rounded-2xl bg-white/60 dark:bg-white/5 backdrop-blur-xl animate-pulse" />
-          ))}
-        </div>
+        <div className="h-28 rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-white/5 backdrop-blur-xl animate-pulse" />
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="h-80 rounded-2xl bg-white/60 dark:bg-white/5 backdrop-blur-xl animate-pulse lg:col-span-2" />
           <div className="h-80 rounded-2xl bg-white/60 dark:bg-white/5 backdrop-blur-xl animate-pulse" />
@@ -406,146 +409,205 @@ function DashboardInner() {
       </Reveal>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Sales / Working now */}
-        <Reveal delay={0}>
-          <div className="flex h-full flex-col justify-between rounded-2xl border border-solid border-slate-300 bg-white p-5 shadow-none transition-colors hover:border-slate-400 dark:border-slate-700 dark:bg-card">
-            <div>
-              <div className="flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#FFF7ED] text-[#EA580C] dark:bg-orange-500/15 dark:text-orange-400">
-                  <Ticket className="h-5 w-5" />
+      <Reveal delay={0}>
+        <div className="overflow-hidden rounded-2xl border border-solid border-slate-300 bg-white shadow-none dark:border-slate-700 dark:bg-card">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Active Fleet / Working now */}
+            <div className="flex flex-col justify-between p-3.5 sm:p-4 border-b sm:border-r lg:border-b-0 border-solid border-slate-300 dark:border-slate-700 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFF7ED] text-[#EA580C] dark:bg-orange-500/15 dark:text-orange-400">
+                    <Tractor className="h-4 w-4" />
+                  </div>
+                  <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                    <span>+38%</span>
+                    <ChevronUp className="h-3 w-3 stroke-[2.5]" />
+                  </div>
                 </div>
-                <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
-                  <span>+38%</span>
-                  <ChevronUp className="h-3.5 w-3.5 stroke-[2.5]" />
+
+                <div className="mt-2.5">
+                  <p className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                    {loading ? '—' : `${workingNow} `}
+                    <span className="text-sm font-normal text-slate-400">/ {totalMachines}</span>
+                  </p>
+                  <p className="mt-0.5 text-xs font-medium text-black dark:text-white">
+                    Active Fleet
+                  </p>
                 </div>
               </div>
 
-              <div className="mt-4">
-                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-                  {loading ? '—' : `${workingNow} `}
-                  <span className="text-base font-normal text-slate-400">/ {totalMachines}</span>
-                </p>
-                <p className="mt-1 text-sm font-medium text-black dark:text-white">
-                  Total Sales
-                </p>
+              <div className="mt-3">
+                <span className="inline-flex items-center rounded-md border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2 py-0.5 text-[11px] font-medium text-black dark:text-white">
+                  Live on site
+                </span>
               </div>
             </div>
 
-            <div className="mt-4">
-              <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
-                Last 6 months
-              </span>
+            {/* Total Billed / Revenue */}
+            <div className="flex flex-col justify-between p-3.5 sm:p-4 border-b sm:border-r-0 lg:border-r lg:border-b-0 border-solid border-slate-300 dark:border-slate-700 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F0FDFA] text-[#0D9488] dark:bg-teal-500/15 dark:text-teal-400">
+                    <Receipt className="h-4 w-4" />
+                  </div>
+                  <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                    <span>+22%</span>
+                    <ChevronUp className="h-3 w-3 stroke-[2.5]" />
+                  </div>
+                </div>
+
+                <div className="mt-2.5">
+                  <p className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                    {loading ? '—' : minorToMoney(totalBilled)}
+                  </p>
+                  <p className="mt-0.5 text-xs font-medium text-black dark:text-white">
+                    Total Billed
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3">
+                <span className="inline-flex items-center rounded-md border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2 py-0.5 text-[11px] font-medium text-black dark:text-white">
+                  Billed to clients
+                </span>
+              </div>
+            </div>
+
+            {/* Operating Expenses */}
+            <div className="flex flex-col justify-between p-3.5 sm:p-4 border-b sm:border-b-0 sm:border-r lg:border-r border-solid border-slate-300 dark:border-slate-700 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F0F9FF] text-[#0284C7] dark:bg-sky-500/15 dark:text-sky-400">
+                    <Fuel className="h-4 w-4" />
+                  </div>
+                  <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                    <span>-16%</span>
+                    <ChevronDown className="h-3 w-3 stroke-[2.5]" />
+                  </div>
+                </div>
+
+                <div className="mt-2.5">
+                  <p className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                    {loading ? '—' : minorToMoney(totalExpenses)}
+                  </p>
+                  <p className="mt-0.5 text-xs font-medium text-black dark:text-white">
+                    Operating Expenses
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3">
+                <span className="inline-flex items-center rounded-md border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2 py-0.5 text-[11px] font-medium text-black dark:text-white">
+                  Fuel & maintenance
+                </span>
+              </div>
+            </div>
+
+            {/* Outstanding Receivables */}
+            <div className="flex flex-col justify-between p-3.5 sm:p-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FEFCE8] text-[#CA8A04] dark:bg-amber-500/15 dark:text-amber-400">
+                    <FileText className="h-4 w-4" />
+                  </div>
+                  <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                    <span>+38%</span>
+                    <ChevronUp className="h-3 w-3 stroke-[2.5]" />
+                  </div>
+                </div>
+
+                <div className="mt-2.5">
+                  <p className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                    {loading ? '—' : minorToMoney(receivables.reduce((a, r) => a + num(r.amount_minor), 0))}
+                  </p>
+                  <p className="mt-0.5 text-xs font-medium text-black dark:text-white">
+                    Outstanding Receivables
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3">
+                <span className="inline-flex items-center rounded-md border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2 py-0.5 text-[11px] font-medium text-black dark:text-white">
+                  Unpaid invoices
+                </span>
+              </div>
             </div>
           </div>
-        </Reveal>
+        </div>
+      </Reveal>
 
-        {/* Total Orders / Revenue */}
+      {/* Fleet Operations & Command Metric Tabs */}
+      <Reveal delay={0}>
+        <div className="flex flex-wrap items-center justify-between gap-3 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-md">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[
+              { id: 'live', label: 'Live Operations & GPS', icon: Radio },
+              { id: 'health', label: 'Fleet Health & Telematics', icon: Gauge },
+              { id: 'finance', label: 'Financial & GRN Insights', icon: FileText },
+              { id: 'drivers', label: 'Driver Scorecards & Dispatch', icon: Users },
+              { id: 'activity', label: 'Activity Ledger & Trends', icon: TrendingUp },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = metricTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setMetricTab(tab.id as typeof metricTab)}
+                  className={cn(
+                    'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200',
+                    isActive
+                      ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 shadow-sm border border-slate-200/80 dark:border-slate-700'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/40 dark:hover:bg-slate-800/40'
+                  )}
+                >
+                  <Icon className={cn('h-3.5 w-3.5', isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400')} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="hidden sm:flex items-center gap-2 px-3 text-[11px] text-slate-500 font-medium">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Telemetry Engine Active</span>
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Render Active Metric Domain View */}
+      {metricTab === 'live' && (
         <Reveal delay={1}>
-          <div className="flex h-full flex-col justify-between rounded-2xl border border-solid border-slate-300 bg-white p-5 shadow-none transition-colors hover:border-slate-400 dark:border-slate-700 dark:bg-card">
-            <div>
-              <div className="flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F0FDFA] text-[#0D9488] dark:bg-teal-500/15 dark:text-teal-400">
-                  <ShoppingCart className="h-5 w-5" />
-                </div>
-                <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
-                  <span>+22%</span>
-                  <ChevronUp className="h-3.5 w-3.5 stroke-[2.5]" />
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-                  {loading ? '—' : minorToMoney(totalBilled)}
-                </p>
-                <p className="mt-1 text-sm font-medium text-black dark:text-white">
-                  Total Orders
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
-                Last 4 months
-              </span>
-            </div>
-          </div>
+          <LiveOperationsPanel />
         </Reveal>
+      )}
 
-        {/* Total Profit / Expenses */}
-        <Reveal delay={2}>
-          <div className="flex h-full flex-col justify-between rounded-2xl border border-solid border-slate-300 bg-white p-5 shadow-none transition-colors hover:border-slate-400 dark:border-slate-700 dark:bg-card">
-            <div>
-              <div className="flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F0F9FF] text-[#0284C7] dark:bg-sky-500/15 dark:text-sky-400">
-                  <DollarSign className="h-5 w-5" />
-                </div>
-                <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
-                  <span>-16%</span>
-                  <ChevronDown className="h-3.5 w-3.5 stroke-[2.5]" />
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-                  {loading ? '—' : minorToMoney(totalExpenses)}
-                </p>
-                <p className="mt-1 text-sm font-medium text-black dark:text-white">
-                  Total Profit
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
-                Last One year
-              </span>
-            </div>
-          </div>
+      {metricTab === 'health' && (
+        <Reveal delay={1}>
+          <FleetHealthMetrics />
         </Reveal>
+      )}
 
-        {/* Bookmarks / Outstanding */}
-        <Reveal delay={2}>
-          <div className="flex h-full flex-col justify-between rounded-2xl border border-solid border-slate-300 bg-white p-5 shadow-none transition-colors hover:border-slate-400 dark:border-slate-700 dark:bg-card">
-            <div>
-              <div className="flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#FEFCE8] text-[#CA8A04] dark:bg-amber-500/15 dark:text-amber-400">
-                  <Bookmark className="h-5 w-5" />
-                </div>
-                <div className="flex items-center gap-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
-                  <span>+38%</span>
-                  <ChevronUp className="h-3.5 w-3.5 stroke-[2.5]" />
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-                  {loading ? '—' : minorToMoney(receivables.reduce((a, r) => a + num(r.amount_minor), 0))}
-                </p>
-                <p className="mt-1 text-sm font-medium text-black dark:text-white">
-                  Bookmarks
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <span className="inline-flex items-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 bg-transparent px-2.5 py-1 text-xs font-medium text-black dark:text-white">
-                Last 6 months
-              </span>
-            </div>
-          </div>
+      {metricTab === 'finance' && (
+        <Reveal delay={1}>
+          <FinancialGRNInsights />
         </Reveal>
-      </div>
+      )}
 
-      
-      
-      {/* Main content grid */}
+      {metricTab === 'drivers' && (
+        <Reveal delay={1}>
+          <DriverScorecardPanel />
+        </Reveal>
+      )}
+
+      {/* Main content grid (Activity & Ledger) */}
+      {(metricTab === 'activity' || metricTab === 'live') && (
       <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left column — chart + table */}
         <div className="min-w-0 space-y-6 lg:col-span-2">
           {/* Revenue chart */}
           <Reveal delay={0}>
             <GlassCard hover={false}>
+
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h3 className="text-base font-semibold text-gray-900 dark:text-gray-50">Revenue vs Operating Cost</h3>
@@ -808,6 +870,8 @@ function DashboardInner() {
           </Reveal>
         </div>
       </div>
+      )}
+
 
       {/* Onboarding milestones — every status comes from real records */}
       {!apiError && (

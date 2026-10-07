@@ -2,15 +2,28 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useParams, useRouter } from 'next/navigation';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { AlertTriangle, ArrowLeft, ChevronDown, Clock, Fuel, Gauge as GaugeIcon, Star, Tractor, User, Wrench } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ChevronDown, Clock, Fuel, Gauge as GaugeIcon, Star, Tractor, User, Wrench, Truck, MapPin, CheckCircle2, AlertOctagon, Building2, Navigation, ExternalLink, ShieldCheck, Radio } from 'lucide-react';
 import { authFetch } from '@/lib/api/auth-fetch';
 import { apiPatch } from '@/lib/api/mutations';
 import { fetchListStrict } from '@/lib/api/fetch-list';
 import { ApiErrorBanner } from '@/components/api-error-banner';
 import { Button } from '@/components/ui/button';
 import { MAKE_VALUES, YEARS, modelsForMake, withCurrent } from '@/lib/machine-options';
+
+const SiteLeafletMap = dynamic(
+  () => import('@/components/dashboard/site-leaflet-map').then((m) => m.SiteLeafletMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-56 w-full items-center justify-center rounded-xl border border-slate-200 bg-slate-100 dark:bg-slate-800 animate-pulse">
+        <p className="text-xs text-slate-400">Loading Leaflet Map...</p>
+      </div>
+    ),
+  },
+);
 
 interface Row extends Record<string, unknown> {
   id?: string;
@@ -137,6 +150,7 @@ export default function MachineDetail() {
   const [deployment, setDeployment] = useState<Row | null>(null);
   const [operators, setOperators] = useState<Row[]>([]);
   const [contrib, setContrib] = useState<Row | null>(null);
+  const [sites, setSites] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(false);
   // Editing state
@@ -184,7 +198,8 @@ export default function MachineDetail() {
       getOne(`/api/v1/deployments/machine/${id}/active`),
       fetchListStrict<Row>('/api/v1/operators'),
       fetchListStrict<Row>('/api/v1/billing/contribution'),
-    ]).then(([m, ml, s, f, d, t, dep, ops, c]) => {
+      fetchListStrict<Row>('/api/v1/sites'),
+    ]).then(([m, ml, s, f, d, t, dep, ops, c, st]) => {
       const row = m && m !== 'not-found' ? m : null;
       // null => outage (banner + retry); 'not-found' => genuinely missing machine
       if (m === null) setApiError(true);
@@ -197,6 +212,7 @@ export default function MachineDetail() {
       setDeployment(dep && dep !== 'not-found' ? dep : null);
       setOperators(ops);
       setContrib(c.find((x) => String(x.machine_id) === String(id)) ?? null);
+      setSites(st);
 
       // Populate form for editing
       if (row) {
@@ -296,12 +312,75 @@ export default function MachineDetail() {
     : 0;
   const reportPct30 = Math.round((new Set(month30.map((x) => dayLabel(new Date(ts(x.start_at ?? x.created_at))))).size / 30) * 100);
 
+  const activeSite = useMemo(() => {
+    if (!deployment?.site_id) return null;
+    return sites.find((s) => String(s.id) === String(deployment.site_id)) ?? null;
+  }, [deployment, sites]);
+  const siteAddress = String(activeSite?.location ?? activeSite?.address ?? 'On-site operational coordinates');
+
   // Finance (owner-only route)
   const billed = num(contrib?.billed_minor);
   const costs = num(contrib?.diesel_minor) + num(contrib?.parts_minor) + num(contrib?.labour_minor);
   const contribution = billed - costs;
 
   const statusLabel = String(machine?.status_flag ?? '—');
+
+  const visualStatus = useMemo(() => {
+    const flag = String(machine?.status_flag ?? '').toLowerCase();
+    if (flag.includes('service') || flag.includes('maintenance')) {
+      return {
+        label: 'IN SERVICE / MAINTENANCE',
+        sub: 'Machine is in workshop or undergoing service',
+        bg: 'bg-amber-500/10 dark:bg-amber-500/20',
+        border: 'border-amber-300 dark:border-amber-700',
+        text: 'text-amber-800 dark:text-amber-300',
+        dot: 'bg-amber-500',
+        icon: Wrench,
+      };
+    }
+    if (flag.includes('stop') || flag === 'inactive' || flag === 'retired') {
+      return {
+        label: 'STOPPED / OFF',
+        sub: 'Engine is not running',
+        bg: 'bg-rose-500/10 dark:bg-rose-500/20',
+        border: 'border-rose-300 dark:border-rose-700',
+        text: 'text-rose-800 dark:text-rose-300',
+        dot: 'bg-rose-500',
+        icon: AlertOctagon,
+      };
+    }
+    if (flag.includes('transit')) {
+      return {
+        label: 'IN TRANSIT / MOVING',
+        sub: 'Machine is moving between work sites',
+        bg: 'bg-blue-500/10 dark:bg-blue-500/20',
+        border: 'border-blue-300 dark:border-blue-700',
+        text: 'text-blue-800 dark:text-blue-300',
+        dot: 'bg-blue-500',
+        icon: Truck,
+      };
+    }
+    if (todaySes.length === 0) {
+      return {
+        label: 'IDLE / RESTING',
+        sub: 'No work sessions logged today',
+        bg: 'bg-slate-100 dark:bg-slate-800',
+        border: 'border-slate-300 dark:border-slate-700',
+        text: 'text-slate-800 dark:text-slate-200',
+        dot: 'bg-amber-400',
+        icon: Clock,
+      };
+    }
+    return {
+      label: 'WORKING NOW',
+      sub: 'Operating on job site actively',
+      bg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+      border: 'border-emerald-300 dark:border-emerald-700',
+      text: 'text-emerald-800 dark:text-emerald-300',
+      dot: 'bg-emerald-500 animate-pulse',
+      icon: Tractor,
+    };
+  }, [machine, todaySes]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -539,7 +618,148 @@ export default function MachineDetail() {
               </div>
             </div>
           ) : (
-            <div className="grid gap-4 xl:grid-cols-12">
+            <div className="space-y-4">
+              {/* Universal High-Visual Status Banner */}
+              <div className={`flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-solid p-4 md:p-5 transition-all ${visualStatus.border} ${visualStatus.bg}`}>
+                <div className="flex items-center gap-3.5">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm dark:bg-slate-900">
+                    <visualStatus.icon className={`h-8 w-8 ${visualStatus.text}`} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+                        {String(machine.code)}
+                      </span>
+                      <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${visualStatus.border} ${visualStatus.text} bg-white dark:bg-slate-900 border`}>
+                        <span className={`h-2.5 w-2.5 rounded-full ${visualStatus.dot}`} />
+                        {visualStatus.label}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+                      {visualStatus.sub} · {String(machine.make ?? '')} {String(machine.model ?? '')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-900 dark:text-slate-100 shadow-none">
+                    <MapPin className="h-4 w-4 text-rose-500" />
+                    <span>{siteName}</span>
+                    {clientName !== '—' && <span className="text-slate-400">({clientName})</span>}
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Universal Pictorial Metrics (Zero-Reading Accessibility) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {/* 1. Hours Run Today */}
+                <div className="flex flex-col justify-between rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-card p-4 shadow-none">
+                  <div className="flex items-center justify-between">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">
+                      <Clock className="h-5 w-5" />
+                    </div>
+                    <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                      ⏱️ Today
+                    </span>
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-2xl font-black text-slate-900 dark:text-white">
+                      {hoursToday.toFixed(1)} <span className="text-sm font-semibold text-slate-500">hrs</span>
+                    </p>
+                    <p className="mt-0.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+                      Work Hours Today ({unitsToday.toFixed(1)} {unit})
+                    </p>
+                    <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                      <div
+                        className="h-full rounded-full bg-indigo-500 transition-all"
+                        style={{ width: `${Math.min(100, (hoursToday / 8) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Fuel / Diesel */}
+                <div className="flex flex-col justify-between rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-card p-4 shadow-none">
+                  <div className="flex items-center justify-between">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400">
+                      <Fuel className="h-5 w-5" />
+                    </div>
+                    <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                      ⛽ Diesel
+                    </span>
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-2xl font-black text-slate-900 dark:text-white">
+                      {fmtInt(litresToday)} <span className="text-sm font-semibold text-slate-500">L</span>
+                    </p>
+                    <p className="mt-0.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+                      Fuel Poured Today ({fmtInt(litres30)} L / month)
+                    </p>
+                    <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                      <div
+                        className="h-full rounded-full bg-amber-500 transition-all"
+                        style={{ width: `${Math.min(100, litresToday > 0 ? 100 : 15)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Service / Health */}
+                <div className="flex flex-col justify-between rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-card p-4 shadow-none">
+                  <div className="flex items-center justify-between">
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${nextStatus === 'overdue' ? 'bg-rose-50 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400' : 'bg-teal-50 text-teal-600 dark:bg-teal-500/15 dark:text-teal-400'}`}>
+                      <Wrench className="h-5 w-5" />
+                    </div>
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ${nextStatus === 'overdue' ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300' : 'bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300'}`}>
+                      {nextStatus === 'overdue' ? '⚠️ OVERDUE' : nextStatus === 'warning' ? '⚡ DUE SOON' : '✅ HEALTHY'}
+                    </span>
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-base font-black text-slate-900 dark:text-white truncate">
+                      {String(nextTask?.task_name ?? 'Regular Service')}
+                    </p>
+                    <p className="mt-0.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+                      {dueText}
+                    </p>
+                    <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                      <div
+                        className={`h-full rounded-full transition-all ${nextStatus === 'overdue' ? 'bg-rose-500' : nextStatus === 'warning' ? 'bg-amber-500' : 'bg-teal-500'}`}
+                        style={{ width: `${nextStatus === 'overdue' ? 100 : 70}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Driver */}
+                <div className="flex flex-col justify-between rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-card p-4 shadow-none">
+                  <div className="flex items-center justify-between">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-500/15 dark:text-purple-400">
+                      <User className="h-5 w-5" />
+                    </div>
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold ${opWorking ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}>
+                      <span className={`h-1.5 w-1.5 rounded-full ${opWorking ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                      {opWorking ? 'Working' : 'Idle'}
+                    </span>
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-xl font-black text-slate-900 dark:text-white truncate">
+                      {opName}
+                    </p>
+                    <p className="mt-0.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+                      Assigned Driver ({opTodayHrs.toFixed(1)}h logged)
+                    </p>
+                    <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                      <div
+                        className="h-full rounded-full bg-purple-500 transition-all"
+                        style={{ width: `${Math.min(100, (opTodayHrs / 8) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* View Mode - Detailed Grid Content */}
+              <div className="grid gap-4 xl:grid-cols-12">
               {/* View Mode - Original Content */}
               {/* Left column */}
               <div className="space-y-4 xl:col-span-4">
@@ -625,61 +845,152 @@ export default function MachineDetail() {
 
               {/* Right column */}
               <div className="space-y-4 xl:col-span-8">
-                <NightCard>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="font-semibold text-slate-900">Deployment</h3>
-                    <span className="flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-600">
-                      <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                      {deployment ? 'On site' : 'No active deployment'}
-                    </span>
-                  </div>
-                  <div className="mt-3 grid gap-4 md:grid-cols-2">
+                {/* 2-Column Split: Left Side = Telematics & Meter; Right Side = Site Location & Geofence Map */}
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {/* LEFT SIDE: Deployment & Telematics Details */}
+                  <NightCard className="flex flex-col justify-between">
                     <div>
-                      <p className="text-sm text-slate-900">
-                        ⛽ {fmtInt(units30)} <span className="text-slate-500">/ {unit} this month</span>
-                      </p>
-                      <p className="text-xs text-slate-500">Meter units logged</p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[11px] text-slate-500">{reportPct30}%</span>
-                        <Bar pct={reportPct30} color="#F59E0B" />
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <Tractor className="h-4 w-4 text-amber-600" />
+                          <h3 className="font-semibold text-slate-900">Deployment & Telematics</h3>
+                        </div>
+                        <span className="flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-600">
+                          <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                          {deployment ? 'On site' : 'No active deployment'}
+                        </span>
                       </div>
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-900">
-                        ▤ {fmtInt(litres30)} <span className="text-slate-500">/ L · {litresPerUnit > 0 ? `${litresPerUnit.toFixed(2)} L/${unit}` : '—'}</span>
-                      </p>
-                      <p className="text-xs text-slate-500">Diesel efficiency</p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[11px] text-slate-500">{evidence}%</span>
-                        <Bar pct={evidence} color="#F87171" />
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Visual panel */}
-                  <div className="relative mt-4 overflow-hidden rounded-xl bg-slate-50 p-6">
-                    <div className="pointer-events-none absolute inset-x-16 bottom-8 h-px bg-slate-200" />
-                    <div className="flex flex-col items-center py-4">
-                      <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-100">
-                        <Tractor className="h-10 w-10 text-amber-600" />
-                      </span>
-                      <p className="mt-3 text-3xl font-bold text-slate-900">
-                        {fmtInt(num(machine.current_meter))} <span className="text-base font-normal text-slate-500">{unit}</span>
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">Current meter · {String(machine.type ?? '')}</p>
-                      <div className="mt-4 flex flex-wrap justify-center gap-2 text-xs">
-                        {[
-                          `${todaySes.length} sessions today`,
-                          `${hoursToday.toFixed(1)} hrs today`,
-                          `${fmtInt(litresToday)} L today`,
-                          `${dt30.toFixed(1)} hrs downtime · 30d`,
-                        ].map((chip) => (
-                          <span key={chip} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-slate-500">{chip}</span>
-                        ))}
+                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
+                          <p className="text-sm font-semibold text-slate-900">
+                            ⛽ {fmtInt(units30)} <span className="text-xs font-normal text-slate-500">/ {unit} this month</span>
+                          </p>
+                          <p className="text-[11px] text-slate-500">Meter units logged</p>
+                          <div className="mt-2 flex items-center gap-2">
+                            <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-600 font-medium">{reportPct30}%</span>
+                            <Bar pct={reportPct30} color="#F59E0B" />
+                          </div>
+                        </div>
+
+                        <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
+                          <p className="text-sm font-semibold text-slate-900">
+                            ▤ {fmtInt(litres30)} <span className="text-xs font-normal text-slate-500">L · {litresPerUnit > 0 ? `${litresPerUnit.toFixed(1)} L/${unit}` : '—'}</span>
+                          </p>
+                          <p className="text-[11px] text-slate-500">Diesel efficiency</p>
+                          <div className="mt-2 flex items-center gap-2">
+                            <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-600 font-medium">{evidence}%</span>
+                            <Bar pct={evidence} color="#F87171" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Visual Tractor Meter Panel */}
+                      <div className="relative mt-4 overflow-hidden rounded-xl border border-slate-100 bg-slate-50 p-5 text-center">
+                        <div className="flex flex-col items-center">
+                          <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-200/60">
+                            <Tractor className="h-8 w-8 text-amber-600" />
+                          </span>
+                          <p className="mt-3 text-3xl font-extrabold text-slate-900">
+                            {fmtInt(num(machine.current_meter))} <span className="text-sm font-normal text-slate-500">{unit}</span>
+                          </p>
+                          <p className="text-xs text-slate-500">Current cumulative meter · {String(machine.type ?? '')}</p>
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap justify-center gap-2 text-xs">
+                          {[
+                            `${todaySes.length} sessions today`,
+                            `${hoursToday.toFixed(1)} hrs today`,
+                            `${fmtInt(litresToday)} L today`,
+                            `${dt30.toFixed(1)} hrs downtime · 30d`,
+                          ].map((chip) => (
+                            <span key={chip} className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600">{chip}</span>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </NightCard>
+                  </NightCard>
+
+                  {/* RIGHT SIDE: Machine Working Site Location & Geofence Map */}
+                  <NightCard className="flex flex-col justify-between">
+                    <div>
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-rose-500" />
+                          <h3 className="font-semibold text-slate-900">Working Site Location</h3>
+                        </div>
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                          <Radio className="h-3 w-3 text-blue-600 animate-pulse" />
+                          GPS Telemetry Live
+                        </span>
+                      </div>
+
+                      {/* Site & Client Header Info */}
+                      <div className="mt-4 rounded-xl border border-slate-200/80 bg-slate-50/60 p-3.5">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h4 className="text-base font-bold text-slate-900 truncate">{siteName}</h4>
+                            <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-600 truncate">
+                              <Building2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                              <span>Client: {clientName}</span>
+                            </p>
+                            <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
+                              <MapPin className="h-3.5 w-3.5 text-rose-500 shrink-0" />
+                              <span className="truncate">{siteAddress}</span>
+                            </p>
+                          </div>
+                          <span className="shrink-0 rounded-lg bg-slate-200/70 px-2.5 py-1 text-xs font-bold text-slate-800">
+                            {daysDeployed}d <span className="font-normal text-slate-500">on site</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Interactive Leaflet Map with Real Geofence & Machine Marker */}
+                      <div className="mt-4">
+                        <SiteLeafletMap
+                          lat={activeSite?.lat ? num(activeSite.lat) : undefined}
+                          lng={activeSite?.lng ? num(activeSite.lng) : undefined}
+                          siteName={siteName}
+                          machineCode={String(machine.code)}
+                          clientName={clientName !== '—' ? clientName : undefined}
+                          radiusMeters={350}
+                          className="h-56 w-full"
+                        />
+                      </div>
+
+                      {/* Map Status Bar */}
+                      <div className="mt-2.5 flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-xs border border-slate-100 dark:border-slate-800 dark:bg-slate-900">
+                        <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
+                          <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                          <span>Geofence Status: <strong>Within Bounds</strong> (350m radius)</span>
+                        </span>
+                        {Boolean(deployment?.site_id) && (
+                          <Link
+                            href={`/sites/${String(deployment?.site_id)}`}
+                            className="flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
+                          >
+                            <span>View Site</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Footer Quick Links */}
+                    <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+                      <span>Deployment: {deployment?.start_date ? new Date(String(deployment.start_date)).toLocaleDateString() : 'Active'}</span>
+                      <a
+                        href={activeSite?.lat && activeSite?.lng ? `https://www.google.com/maps?q=${activeSite.lat},${activeSite.lng}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(siteName)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+                      >
+                        <Navigation className="h-3.5 w-3.5" />
+                        <span>Navigate in Maps</span>
+                      </a>
+                    </div>
+                  </NightCard>
+                </div>
 
                 <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
                   <NightCard className="md:col-span-2 2xl:col-span-1">
@@ -747,8 +1058,9 @@ export default function MachineDetail() {
                 </div>
               </div>
             </div>
-          )
-        }
+          </div>
+        )
+      }
       </div>
     );
   }

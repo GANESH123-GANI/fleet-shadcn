@@ -18,9 +18,33 @@ export class MaintenanceService {
     return result.rows;
   }
 
+  async getAllVisits(tenantId: string) {
+    const result = await this.db.queryWithTenant(tenantId, 'ops',
+      `SELECT mv.*, m.code AS machine_code, m.model AS machine_model,
+              COALESCE((SELECT SUM(mp.unit_cost_txn * mp.qty) FROM tenant.maintenance_parts mp WHERE mp.visit_id = mv.id), 0) AS parts_cost_txn,
+              COALESCE((
+                SELECT json_agg(json_build_object('item', mp.item, 'qty', mp.qty, 'unit_cost_txn', mp.unit_cost_txn, 'is_consumable', mp.is_consumable))
+                FROM tenant.maintenance_parts mp WHERE mp.visit_id = mv.id
+              ), '[]'::json) AS parts,
+              COALESCE(ARRAY_AGG(mvt.task_id) FILTER (WHERE mvt.task_id IS NOT NULL), '{}') AS task_ids
+       FROM tenant.maintenance_visits mv
+       JOIN tenant.machines m ON m.id = mv.machine_id
+       LEFT JOIN tenant.maintenance_visit_tasks mvt ON mvt.visit_id = mv.id
+       WHERE mv.tenant_id = $1 AND mv.is_current = true
+       GROUP BY mv.id, m.code, m.model
+       ORDER BY mv.visit_date DESC`);
+    return result.rows;
+  }
+
   async getVisits(tenantId: string, machineId: string) {
     const result = await this.db.queryWithTenant(tenantId, 'ops',
-      `SELECT mv.*, ARRAY_AGG(mvt.task_id) AS task_ids
+      `SELECT mv.*,
+              COALESCE((SELECT SUM(mp.unit_cost_txn * mp.qty) FROM tenant.maintenance_parts mp WHERE mp.visit_id = mv.id), 0) AS parts_cost_txn,
+              COALESCE((
+                SELECT json_agg(json_build_object('item', mp.item, 'qty', mp.qty, 'unit_cost_txn', mp.unit_cost_txn, 'is_consumable', mp.is_consumable))
+                FROM tenant.maintenance_parts mp WHERE mp.visit_id = mv.id
+              ), '[]'::json) AS parts,
+              COALESCE(ARRAY_AGG(mvt.task_id) FILTER (WHERE mvt.task_id IS NOT NULL), '{}') AS task_ids
        FROM tenant.maintenance_visits mv
        LEFT JOIN tenant.maintenance_visit_tasks mvt ON mvt.visit_id = mv.id
        WHERE mv.machine_id = $1 AND mv.is_current = true

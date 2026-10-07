@@ -10,6 +10,7 @@ import {
   Banknote, Calculator, Wrench, History, Truck, Menu, X, Bell,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { OwnerShell } from '@/components/nav/owner-shell';
 
 const OPS_NAV = [
   { href: '/today', label: 'Today', icon: LayoutDashboard },
@@ -30,12 +31,14 @@ export default function OpsLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    if (!loading && user && user.role === 'owner') {
-      router.push('/home');
+    if (!loading && user && (user.role === 'owner' || user.role === 'admin')) {
+      if (pathname !== '/maintenance') {
+        router.push('/home');
+      }
     } else if (!loading && !user) {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, pathname]);
 
   if (loading) {
     return (
@@ -45,7 +48,14 @@ export default function OpsLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user || user.role === 'owner') return null;
+  if (!user) return null;
+
+  if (user.role === 'owner' || user.role === 'admin') {
+    if (pathname === '/maintenance') {
+      return <OwnerShell>{children}</OwnerShell>;
+    }
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
