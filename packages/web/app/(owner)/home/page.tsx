@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import {
   Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
@@ -29,12 +28,6 @@ import { FleetHealthMetrics } from '@/components/dashboard/fleet-health-metrics'
 import { FinancialGRNInsights } from '@/components/dashboard/financial-grn-insights';
 import { DriverScorecardPanel } from '@/components/dashboard/driver-scorecard-panel';
 
-
-// Orbit hero — WebGL canvas, skip SSR
-const OrbitDeliveryHero = dynamic(
-  () => import('@/components/ui/orbit-delivery-hero'),
-  { ssr: false },
-);
 
 interface Row extends Record<string, unknown> {
   id?: string;
@@ -161,8 +154,6 @@ function DashboardInner() {
   const [receivables, setReceivables] = useState<Row[]>([]);
   const [advances, setAdvances] = useState<Row[]>([]);
   const [alerts, setAlerts] = useState<Row[]>([]);
-  const [heroOpacity, setHeroOpacity] = useState(1);
-  const [heroScale, setHeroScale] = useState(1);
   const [metricTab, setMetricTab] = useState<'live' | 'health' | 'finance' | 'drivers' | 'activity'>('live');
 
   // Onboarding steps — a step counts as "done" only when a real record exists.
@@ -186,19 +177,7 @@ function DashboardInner() {
     statusLabel: step.done ? 'Done' : index === firstPendingStep ? 'Next up' : 'Not started',
   }));
 
-  useEffect(() => {
-    const onScroll = () => {
-      const scrollY = window.scrollY;
-      const fadeStart = 100;
-      const fadeEnd = 400;
-      const opacity = 1 - Math.min(Math.max((scrollY - fadeStart) / (fadeEnd - fadeStart), 0), 1);
-      const scale = 1 - Math.min(Math.max((scrollY - fadeStart) / (fadeEnd - fadeStart), 0), 1) * 0.03;
-      setHeroOpacity(opacity);
-      setHeroScale(scale);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+
 
   useEffect(() => {
     setLoading(true);
@@ -350,20 +329,8 @@ function DashboardInner() {
           onSignIn={logout}
         />
       )}
-      {/* Orbit Delivery Hero — fades on scroll */}
-      <Reveal delay={0}>
-        <div
-          className="relative overflow-hidden rounded-2xl border border-white/18 bg-white/72 dark:bg-white/5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] transition-opacity duration-300 ease-out"
-          style={{ opacity: heroOpacity, transform: `scale(${heroScale})`, transformOrigin: 'top center' }}
-        >
-          <div className="dashboard-hero">
-            <OrbitDeliveryHero theme="auto" />
-          </div>
-        </div>
-      </Reveal>
-
       {/* Header */}
-      <Reveal delay={1}>
+      <Reveal delay={0}>
         <GlassCard hover={false}>
           <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
