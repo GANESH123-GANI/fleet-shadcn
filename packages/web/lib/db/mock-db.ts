@@ -387,19 +387,34 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
     if (segments.length === 1) {
       if (method === 'GET') return NextResponse.json(mockDb.operators);
       if (method === 'POST') {
+        const monthlySalary = Number(body.monthly_salary || 42000);
+        const hourlyWage = Number(body.hourly_wage || Math.round(monthlySalary / 120));
         const newOp: Operator = {
           id: `op-${Date.now().toString(36)}`,
           name: String(body.name || 'Operator'),
-          phone: String(body.phone || ''),
-          email: String(body.email || ''),
-          license: String(body.license || body.license_number || `LIC-${Date.now().toString(36)}`),
-          license_number: String(body.license_number || body.license || `LIC-${Date.now().toString(36)}`),
+          phone: String(body.phone || '+91 98451 11223'),
+          email: String(body.email || body.gmail || ''),
+          gmail: String(body.gmail || body.email || ''),
+          age: body.age ? Number(body.age) : 35,
+          marital_status: String(body.marital_status || 'Married'),
+          native_place: String(body.native_place || 'Karnataka'),
+          languages: String(body.languages || 'Kannada, Hindi'),
+          monthly_salary: monthlySalary,
+          hourly_wage: hourlyWage,
           experience_years: Number(body.experience_years || 5),
-          specialization: String(body.specialization || 'Heavy Equipment'),
-          hourly_wage: Number(body.hourly_wage || 300),
+          employment_type: String(body.employment_type || 'Full Time (Permanent)'),
+          address: String(body.address || '#42 Industrial Area, Bengaluru, Karnataka'),
+          license: String(body.license || body.license_number || `KA-05-${Date.now().toString().slice(-4)}-HE`),
+          license_number: String(body.license_number || body.license || `KA-05-${Date.now().toString().slice(-4)}-HE`),
+          specialization: String(body.specialization || 'Heavy Equipment Specialist'),
+          grade: String(body.grade || 'Grade A'),
+          photo_url: body.photo_url ? String(body.photo_url) : undefined,
+          assigned_machine_id: body.assigned_machine_id ? String(body.assigned_machine_id) : undefined,
+          assigned_machine_code: body.assigned_machine_code ? String(body.assigned_machine_code) : undefined,
+          site: body.site ? String(body.site) : undefined,
           rating: 4.8,
-          is_active: true,
-          status: 'available',
+          is_active: body.is_active !== false,
+          status: body.is_active !== false ? 'on_shift' : 'available',
           created_at: new Date().toISOString(),
         };
         mockDb.operators.unshift(newOp);

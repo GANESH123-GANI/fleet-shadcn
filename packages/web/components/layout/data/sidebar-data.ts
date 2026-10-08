@@ -13,6 +13,7 @@ import {
   Tractor,
   Truck,
   Users,
+  Boxes,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 
@@ -67,6 +68,11 @@ export const sidebarData: SidebarData = {
           title: 'Operators',
           url: '/operators',
           icon: Users,
+        },
+        {
+          title: 'Inventory',
+          url: '/inventory',
+          icon: Boxes,
         },
         {
           title: 'Clients',

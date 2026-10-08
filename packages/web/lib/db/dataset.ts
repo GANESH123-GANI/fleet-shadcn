@@ -76,11 +76,23 @@ export interface Operator {
   name: string;
   phone: string;
   email?: string;
+  gmail?: string;
+  age?: number;
+  marital_status?: 'Married' | 'Single' | string;
+  native_place?: string;
+  languages?: string;
+  monthly_salary?: number;
+  hourly_wage: number;
+  experience_years: number;
+  employment_type?: 'Full Time' | 'Contract' | string;
+  address?: string;
+  emergency_contact?: string;
   license?: string;
   license_number: string;
-  experience_years: number;
   specialization?: string;
-  hourly_wage: number;
+  grade?: string;
+  photo_url?: string;
+  site?: string;
   rating: number;
   assigned_machine_id?: string;
   assigned_machine_code?: string;
@@ -587,13 +599,22 @@ export const INITIAL_OPERATORS: Operator[] = [
   {
     id: 'op-001',
     name: 'Ramesh Kumar',
+    age: 38,
     phone: '+91 98451 11223',
     email: 'ramesh.k@fleetteam.in',
+    gmail: 'ramesh.kumar.fleet@gmail.com',
+    marital_status: 'Married',
+    native_place: 'Hassan, Karnataka',
+    languages: 'Kannada, Hindi, English',
+    monthly_salary: 42000,
+    hourly_wage: 350,
+    experience_years: 9,
+    employment_type: 'Full Time (Permanent)',
+    address: '#42, 2nd Cross, Industrial Area, Peenya, Bengaluru, Karnataka 560058',
+    emergency_contact: '+91 98451 99882 (Sunita - Wife)',
     license: 'KA-05-2016-HE-00841',
     license_number: 'KA-05-2016-HE-00841',
-    experience_years: 9,
     specialization: 'Excavator & Deep Trenching',
-    hourly_wage: 350,
     rating: 4.9,
     assigned_machine_id: 'mch-001',
     assigned_machine_code: 'EX-01',
@@ -604,13 +625,22 @@ export const INITIAL_OPERATORS: Operator[] = [
   {
     id: 'op-002',
     name: 'Suresh Yadav',
+    age: 35,
     phone: '+91 98210 22334',
     email: 'suresh.y@fleetteam.in',
+    gmail: 'suresh.yadav.heavy@gmail.com',
+    marital_status: 'Married',
+    native_place: 'Varanasi, Uttar Pradesh',
+    languages: 'Hindi, Bhojpuri, Basic English',
+    monthly_salary: 38000,
+    hourly_wage: 320,
+    experience_years: 7,
+    employment_type: 'Full Time (Permanent)',
+    address: 'Flat 204, Shanti Nagar, Bommasandra Industrial Zone, Bengaluru, Karnataka 560099',
+    emergency_contact: '+91 98210 44551 (Rajesh - Brother)',
     license: 'MH-03-2018-HE-00192',
     license_number: 'MH-03-2018-HE-00192',
-    experience_years: 7,
     specialization: 'Hydraulic Breaker Attachment',
-    hourly_wage: 320,
     rating: 4.8,
     assigned_machine_id: 'mch-002',
     assigned_machine_code: 'EX-02',
@@ -621,13 +651,22 @@ export const INITIAL_OPERATORS: Operator[] = [
   {
     id: 'op-003',
     name: 'Abdul Karim',
+    age: 44,
     phone: '+91 97420 33445',
     email: 'abdul.k@fleetteam.in',
+    gmail: 'abdul.karim.ops@gmail.com',
+    marital_status: 'Married',
+    native_place: 'Kalaburagi (Gulbarga), Karnataka',
+    languages: 'Kannada, Urdu, Hindi',
+    monthly_salary: 48000,
+    hourly_wage: 380,
+    experience_years: 11,
+    employment_type: 'Full Time (Permanent)',
+    address: '#15/3, Bismillah Nagar, Bannerghatta Main Road, Bengaluru, Karnataka 560029',
+    emergency_contact: '+91 97420 88771 (Fatima - Wife)',
     license: 'KA-01-2015-HE-00912',
     license_number: 'KA-01-2015-HE-00912',
-    experience_years: 11,
     specialization: 'Crawler Dozers & Leveling',
-    hourly_wage: 380,
     rating: 5.0,
     assigned_machine_id: 'mch-003',
     assigned_machine_code: 'DZ-01',
@@ -638,13 +677,22 @@ export const INITIAL_OPERATORS: Operator[] = [
   {
     id: 'op-004',
     name: 'Vikram Singh',
+    age: 31,
     phone: '+91 99110 44556',
     email: 'vikram.s@fleetteam.in',
+    gmail: 'vikram.singh.jcb@gmail.com',
+    marital_status: 'Single',
+    native_place: 'Jaipur, Rajasthan',
+    languages: 'Hindi, Marwari, English',
+    monthly_salary: 34000,
+    hourly_wage: 300,
+    experience_years: 6,
+    employment_type: 'Contract (Annual Term)',
+    address: 'Staff Quarters Room 12, Devanahalli, Airport Road, Bengaluru, Karnataka 562110',
+    emergency_contact: '+91 99110 22338 (Mohan - Father)',
     license: 'DL-04-2019-HE-00311',
     license_number: 'DL-04-2019-HE-00311',
-    experience_years: 6,
     specialization: 'Backhoe & Utility Lines',
-    hourly_wage: 300,
     rating: 4.7,
     assigned_machine_id: 'mch-004',
     assigned_machine_code: 'BL-01',
@@ -655,13 +703,22 @@ export const INITIAL_OPERATORS: Operator[] = [
   {
     id: 'op-005',
     name: 'Pradeep Sharma',
+    age: 37,
     phone: '+91 98260 55667',
     email: 'pradeep.s@fleetteam.in',
+    gmail: 'pradeep.sharma.loader@gmail.com',
+    marital_status: 'Married',
+    native_place: 'Indore, Madhya Pradesh',
+    languages: 'Hindi, Malvi, English',
+    monthly_salary: 39000,
+    hourly_wage: 330,
+    experience_years: 8,
+    employment_type: 'Full Time (Permanent)',
+    address: '#88, Green Glen Layout, Outer Ring Road, Bellandur, Bengaluru, Karnataka 560103',
+    emergency_contact: '+91 98260 33119 (Kavita - Wife)',
     license: 'MP-09-2017-HE-00420',
     license_number: 'MP-09-2017-HE-00420',
-    experience_years: 8,
     specialization: 'Wheel Loader & Batching Hopper',
-    hourly_wage: 330,
     rating: 4.8,
     assigned_machine_id: 'mch-005',
     assigned_machine_code: 'WL-01',
@@ -672,13 +729,22 @@ export const INITIAL_OPERATORS: Operator[] = [
   {
     id: 'op-006',
     name: 'Manoj Gowda',
+    age: 29,
     phone: '+91 99450 66778',
     email: 'manoj.g@fleetteam.in',
+    gmail: 'manoj.gowda.fleet@gmail.com',
+    marital_status: 'Single',
+    native_place: 'Mandya, Karnataka',
+    languages: 'Kannada, Telugu, Basic English',
+    monthly_salary: 32000,
+    hourly_wage: 280,
+    experience_years: 5,
+    employment_type: 'Contract (Annual Term)',
+    address: '#22, 5th Stage, Kengeri Satellite Town, Bengaluru, Karnataka 560060',
+    emergency_contact: '+91 99450 11224 (Gowramma - Mother)',
     license: 'KA-51-2020-HMV-00124',
     license_number: 'KA-51-2020-HMV-00124',
-    experience_years: 5,
     specialization: 'Heavy Tipper Haulage',
-    hourly_wage: 280,
     rating: 4.6,
     assigned_machine_id: 'mch-006',
     assigned_machine_code: 'DT-01',

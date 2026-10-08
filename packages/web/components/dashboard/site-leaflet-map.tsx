@@ -57,27 +57,26 @@ export function SiteLeafletMap({
       // Add zoom control to top-right
       L.control.zoom({ position: 'topright' }).addTo(map);
 
-      // Clean OpenStreetMap tiles (CartoDB Voyager/Positron style)
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      // OpenStreetMap tiles without watermark
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        subdomains: 'abcd',
       }).addTo(map);
 
       // Add Geofence circular perimeter
       const geofenceCircle = L.circle([validLat, validLng], {
-        color: '#10B981',
-        fillColor: '#10B981',
-        fillOpacity: 0.15,
-        weight: 2,
-        dashArray: '6, 6',
+        color: '#27272a',
+        fillColor: '#71717a',
+        fillOpacity: 0.12,
+        weight: 1.5,
+        dashArray: '5, 5',
         radius: radiusMeters,
       }).addTo(map);
 
       geofenceCircle.bindPopup(`
         <div style="font-family: inherit; font-size: 12px; padding: 2px;">
-          <strong style="color: #065F46;">🛡️ Geofence Boundary</strong><br/>
+          <strong style="color: #18181b;">🛡️ Geofence Boundary</strong><br/>
           <span>${siteName}</span><br/>
-          <span style="color: #6B7280;">Radius: ${radiusMeters}m</span>
+          <span style="color: #71717a;">Radius: ${radiusMeters}m</span>
         </div>
       `);
 
@@ -86,8 +85,8 @@ export function SiteLeafletMap({
         className: 'custom-leaflet-machine-pin',
         html: `
           <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;">
-            <div style="position: absolute; width: 36px; height: 36px; border-radius: 9999px; background-color: rgba(16, 185, 129, 0.35); animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-            <div style="position: relative; width: 28px; height: 28px; border-radius: 9999px; background-color: #059669; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); border: 2px solid white; font-size: 14px;">
+            <div style="position: absolute; width: 36px; height: 36px; border-radius: 9999px; background-color: rgba(39, 39, 42, 0.2); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+            <div style="position: relative; width: 28px; height: 28px; border-radius: 9999px; background-color: #18181b; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); border: 2px solid white; font-size: 13px;">
               🚜
             </div>
           </div>

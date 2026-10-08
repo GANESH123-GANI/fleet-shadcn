@@ -9,6 +9,7 @@ const ownerNav = [
   { href: '/machines', label: 'Machines' },
   { href: '/operators', label: 'Operators' },
   { href: '/billing', label: 'Billing' },
+  { href: '/inventory', label: 'Inventory' },
   { href: '/clients', label: 'Clients' },
   { href: '/cash', label: 'Cash' },
   { href: '/projections', label: 'Projections' },

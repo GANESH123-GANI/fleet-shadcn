@@ -40,6 +40,13 @@ export async function proxy(request: NextRequest, path: string) {
       signal: AbortSignal.timeout(3000),
     });
 
+    const contentType = response.headers.get('content-type') || '';
+    // If upstream is not a valid JSON API (e.g. another local dev server on port 3001 returning HTML),
+    // or if the upstream returns 404 or 5xx, fall back to our mock database.
+    if (contentType.includes('text/html') || response.status === 404 || response.status >= 500) {
+      return await handleMockApiRequest(request, path);
+    }
+
     // Forward response. Validators are dropped and caching disabled so the
     // browser never stores/revalidates API responses (fresh data only).
     const responseHeaders = new Headers();

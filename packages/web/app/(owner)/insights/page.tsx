@@ -208,101 +208,108 @@ export default function Insights() {
     <div className="space-y-6">
       {apiError && <ApiErrorBanner />}
       <div>
-        <h1 className="text-3xl font-bold">Fleet Insights</h1>
-        <p className="text-muted-foreground mt-1">
-          Performance overview computed from driver work sessions, fuel logs, and downtime records
+        <h1 className="text-3xl font-normal tracking-tight text-black">Fleet Insights</h1>
+        <p className="text-sm font-normal text-black mt-1">
+          Performance overview computed from driver work sessions, fuel telemetry, and equipment downtime
         </p>
       </div>
 
-      {/* ── Fleet Overview ── */}
+      {/* ── Fleet Overview: Small Boxes with Images Inside & Unbolded Black Font ── */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+        {/* Box 1: Total Machines */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 shadow-sm hover:border-black transition-colors flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-black dark:text-white">Total Machines</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <Gauge className="h-4 w-4" />
+            <span className="text-[11px] font-normal uppercase tracking-wider text-black">Total Machines</span>
+            <div className="relative w-7 h-7 rounded-lg overflow-hidden border border-zinc-300 shrink-0 bg-zinc-100">
+              <img src="/fleet/exc-01.jpg" alt="Machines" className="w-full h-full object-cover" />
             </div>
           </div>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{machines.length}</p>
+          <p className="mt-2 text-xl font-normal tracking-tight text-black">{machines.length}</p>
         </div>
 
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+        {/* Box 2: Active Machines */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 shadow-sm hover:border-black transition-colors flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-black dark:text-white">Active Machines</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <Power className="h-4 w-4" />
+            <span className="text-[11px] font-normal uppercase tracking-wider text-black">Active Machines</span>
+            <div className="relative w-7 h-7 rounded-lg overflow-hidden border border-zinc-300 shrink-0 bg-zinc-100">
+              <img src="/fleet/exc-02.jpg" alt="Active" className="w-full h-full object-cover" />
+              <span className="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />
             </div>
           </div>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{activeMachines.length}</p>
+          <p className="mt-2 text-xl font-normal tracking-tight text-black">{activeMachines.length}</p>
         </div>
 
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+        {/* Box 3: Total Hours Run */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 shadow-sm hover:border-black transition-colors flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-black dark:text-white">Total Hours Run</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <Clock className="h-4 w-4" />
+            <span className="text-[11px] font-normal uppercase tracking-wider text-black">Hours Run</span>
+            <div className="relative w-7 h-7 rounded-lg overflow-hidden border border-zinc-300 shrink-0 bg-zinc-100">
+              <img src="/fleet/dzr-01.jpg" alt="Hours" className="w-full h-full object-cover" />
             </div>
           </div>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{fmtHours(totalHours)}</p>
+          <p className="mt-2 text-xl font-normal tracking-tight text-black">{fmtHours(totalHours)}</p>
         </div>
 
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+        {/* Box 4: Downtime Hours */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 shadow-sm hover:border-black transition-colors flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-black dark:text-white">Downtime Hours</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <Wrench className="h-4 w-4" />
+            <span className="text-[11px] font-normal uppercase tracking-wider text-black">Downtime</span>
+            <div className="relative w-7 h-7 rounded-lg overflow-hidden border border-zinc-300 shrink-0 bg-zinc-100">
+              <img src="/fleet/dtr-01.jpg" alt="Downtime" className="w-full h-full object-cover" />
             </div>
           </div>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{fmtHours(totalDowntime)}</p>
+          <p className="mt-2 text-xl font-normal tracking-tight text-black">{fmtHours(totalDowntime)}</p>
         </div>
 
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+        {/* Box 5: Est. Monthly Revenue */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 shadow-sm hover:border-black transition-colors flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-black dark:text-white">Est. Monthly Revenue</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <Coins className="h-4 w-4" />
+            <span className="text-[11px] font-normal uppercase tracking-wider text-black">Est. Revenue</span>
+            <div className="relative w-7 h-7 rounded-lg overflow-hidden border border-zinc-300 shrink-0 bg-zinc-100">
+              <img src="/fleet/dtr-02.jpg" alt="Revenue" className="w-full h-full object-cover" />
             </div>
           </div>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white truncate">{fmtMoney(fleetMonthlyEarnings)}</p>
+          <p className="mt-2 text-xl font-normal tracking-tight text-black truncate">{fmtMoney(fleetMonthlyEarnings)}</p>
         </div>
 
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-none">
+        {/* Box 6: Fleet Health Score */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 shadow-sm hover:border-black transition-colors flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-black dark:text-white">Fleet Health Score</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <Brain className="h-4 w-4" />
+            <span className="text-[11px] font-normal uppercase tracking-wider text-black">Fleet Health</span>
+            <div className="relative w-7 h-7 rounded-lg overflow-hidden border border-zinc-300 shrink-0 bg-zinc-100">
+              <img src="/operators/op-001.jpg" alt="Health" className="w-full h-full object-cover object-top" />
             </div>
           </div>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-black dark:text-white">{avgHealth}%</p>
+          <p className="mt-2 text-xl font-normal tracking-tight text-black">{avgHealth}%</p>
         </div>
       </div>
 
       {/* ── Charts Row ── */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2 overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
-          <div className="flex flex-col gap-1 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
+        <Card className="lg:col-span-2 overflow-hidden rounded-2xl border border-solid border-zinc-300 bg-white p-0 shadow-none">
+          <div className="flex flex-col gap-1 border-b border-solid border-zinc-200 px-6 py-4">
             <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-black dark:text-white" />
-              <CardTitle className="text-base font-bold text-black dark:text-white">Hours per Machine</CardTitle>
+              <Clock className="h-5 w-5 text-black" />
+              <CardTitle className="text-base font-normal text-black">Hours per Machine</CardTitle>
             </div>
-            <p className="text-xs text-black/70 dark:text-white/70">
+            <p className="text-xs font-normal text-black">
               Total operating hours vs billable hours for each machine.
             </p>
           </div>
           <CardContent className="pt-6">
             {hoursChartData.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No sessions recorded yet</p>
+              <p className="text-black text-center py-8 font-normal">No sessions recorded yet</p>
             ) : (
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={hoursChartData} layout="vertical" margin={{ left: 10 }}>
                   <defs>
                     <linearGradient id="totalGradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#8B5CF6" />
-                      <stop offset="100%" stopColor="#A78BFA" />
+                      <stop offset="0%" stopColor="#18181B" />
+                      <stop offset="100%" stopColor="#3F3F46" />
                     </linearGradient>
                     <linearGradient id="billableGradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#10B981" />
-                      <stop offset="100%" stopColor="#34D399" />
+                      <stop offset="0%" stopColor="#71717A" />
+                      <stop offset="100%" stopColor="#A1A1AA" />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
@@ -338,14 +345,14 @@ export default function Insights() {
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
-          <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
-            <Power className="h-5 w-5 text-black dark:text-white" />
-            <CardTitle className="text-base font-bold text-black dark:text-white">Machine Status Today</CardTitle>
+        <Card className="overflow-hidden rounded-xl border border-zinc-300 bg-white shadow-none">
+          <div className="flex items-center gap-2 border-b border-zinc-200 px-5 py-3">
+            <Power className="h-4 w-4 text-black" />
+            <CardTitle className="text-sm font-normal text-black">Machine Status Today</CardTitle>
           </div>
           <CardContent className="pt-6">
             {utilPieData.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No machines</p>
+              <p className="text-black text-center py-8 text-sm font-normal">No machines</p>
             ) : (
               <div className="flex flex-col items-center space-y-5">
                 <DonutChart
@@ -354,8 +361,8 @@ export default function Insights() {
                     color: d.color,
                     label: d.name,
                   }))}
-                  size={230}
-                  strokeWidth={28}
+                  size={220}
+                  strokeWidth={26}
                   animationDuration={1.1}
                   animationDelayPerSegment={0.12}
                   highlightOnHover
@@ -370,12 +377,12 @@ export default function Insights() {
                         transition={{ duration: 0.2, ease: 'circOut' }}
                         className="flex flex-col items-center justify-center text-center"
                       >
-                        <p className="text-muted-foreground text-xs font-medium truncate max-w-[150px]">
+                        <p className="text-black text-xs font-normal truncate max-w-[150px]">
                           {activeStatus ? activeStatus.name : 'Total Machines'}
                         </p>
-                        <p className="text-4xl font-bold">{displayedValue}</p>
+                        <p className="text-4xl font-normal text-black">{displayedValue}</p>
                         {activeStatus && (
-                          <p className="text-sm font-medium text-muted-foreground">
+                          <p className="text-xs font-normal text-black">
                             {displayedPct}% of fleet
                           </p>
                         )}
@@ -385,15 +392,14 @@ export default function Insights() {
                 />
 
                 {/* Legend rows mirror the chart and stay keyboard-reachable. */}
-                <div className="w-full space-y-1 border-t pt-3">
+                <div className="w-full space-y-1 border-t border-zinc-200 pt-3">
                   {utilPieData.map((entry) => (
                     <button
                       key={entry.name}
                       type="button"
                       className={cn(
-                        'flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left transition-colors',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                        hoveredStatus === entry.name ? 'bg-muted' : 'hover:bg-muted/60',
+                        'flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left transition-colors border border-transparent',
+                        hoveredStatus === entry.name ? 'bg-zinc-100 border-zinc-300' : 'hover:bg-zinc-50',
                       )}
                       onMouseEnter={() => setHoveredStatus(entry.name)}
                       onMouseLeave={() => setHoveredStatus(null)}
@@ -402,12 +408,12 @@ export default function Insights() {
                     >
                       <span className="flex items-center gap-2.5">
                         <span
-                          className="h-3 w-3 shrink-0 rounded-full"
+                          className="h-2.5 w-2.5 shrink-0 rounded-full"
                           style={{ backgroundColor: entry.color }}
                         />
-                        <span className="text-sm font-medium">{entry.name}</span>
+                        <span className="text-xs font-normal text-black">{entry.name}</span>
                       </span>
-                      <span className="text-sm font-semibold text-muted-foreground">
+                      <span className="text-xs font-normal text-black">
                         {entry.value}
                       </span>
                     </button>
@@ -417,7 +423,7 @@ export default function Insights() {
                       {activeStatus.machines.map((code) => (
                         <span
                           key={code}
-                          className="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
+                          className="rounded border border-zinc-300 bg-zinc-50 px-1.5 py-0.5 text-xs font-normal text-black"
                         >
                           {code}
                         </span>
@@ -433,16 +439,16 @@ export default function Insights() {
 
       {/* ── Maintenance timeline ── */}
       {!loading && !apiError && (visitsLoading ? (
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm font-normal text-black">
           Loading maintenance history…
         </p>
       ) : maintenanceVisits.length > 0 ? (
-        <div>
-          <div className="mb-2 flex items-center gap-2">
-            <Wrench className="h-5 w-5 text-amber-500" />
-            <h2 className="text-xl font-bold">Maintenance timeline</h2>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Wrench className="h-4 w-4 text-black" />
+            <h2 className="text-lg font-normal text-black">Maintenance timeline</h2>
           </div>
-          <p className="mb-3 text-sm text-muted-foreground">
+          <p className="text-xs font-normal text-black">
             The most recent service visits across the fleet — select a node for the visit details.
           </p>
           <RadialOrbitalTimeline
@@ -473,104 +479,123 @@ export default function Insights() {
       ) : null)}
 
       {/* ── Per-Vehicle Report ── */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <Brain className="h-5 w-5 text-violet-500" />
-          <h2 className="text-xl font-bold">Per-Vehicle Report</h2>
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Brain className="h-4 w-4 text-black" />
+          <h2 className="text-lg font-normal text-black">Per-Vehicle Report</h2>
         </div>
 
         {insightsLoading && (
-          <Card>
+          <Card className="border border-zinc-300 bg-white">
             <CardContent className="py-12">
               <div className="flex flex-col items-center gap-3">
-                <div className="rounded-full bg-violet-100 p-3 dark:bg-violet-900/30">
-                  <Spinner className="h-8 w-8 text-violet-500" />
-                </div>
-                <p className="text-muted-foreground">Computing vehicle insights...</p>
+                <Spinner className="h-6 w-6 text-black" />
+                <p className="text-sm font-normal text-black">Computing vehicle insights...</p>
               </div>
             </CardContent>
           </Card>
         )}
 
         {!insightsLoading && insights.length > 0 && (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {insights.map((ins) => (
-              <Card key={ins.machine_code} className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none hover:border-slate-400 dark:hover:border-slate-500 transition-colors">
-                <CardContent className="p-5">
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <h3 className="font-bold text-lg text-black dark:text-white">{ins.machine_code}</h3>
-                      <p className="text-xs text-black/60 dark:text-white/60">
-                        {ins.type.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
-                      </p>
-                    </div>
-                    <span className={`rounded-lg px-2.5 py-1 text-xs font-bold border border-solid border-slate-300 dark:border-slate-700 ${healthColor(ins.health_score)}`}>
-                      {ins.health_score}%
-                    </span>
-                  </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {insights.map((ins) => {
+              const machineImg = ins.machine_code.toLowerCase().includes('exc-02')
+                ? '/fleet/exc-02.jpg'
+                : ins.machine_code.toLowerCase().includes('dzr')
+                ? '/fleet/dzr-01.jpg'
+                : ins.machine_code.toLowerCase().includes('dtr-02')
+                ? '/fleet/dtr-02.jpg'
+                : ins.machine_code.toLowerCase().includes('dtr')
+                ? '/fleet/dtr-01.jpg'
+                : '/fleet/exc-01.jpg';
 
-                  {/* Key Stats - One Line */}
-                  <div className="flex items-center gap-3 text-sm mb-3 border-b border-solid border-slate-300 dark:border-slate-700 pb-3">
-                    <span className="flex items-center gap-1 text-black/80 dark:text-white/80">
-                      <Clock className="h-3.5 w-3.5 text-black dark:text-white" />
-                      {ins.stats.total_hours}h
-                    </span>
-                    <span className="flex items-center gap-1 text-black/80 dark:text-white/80">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-black dark:text-white" />
-                      {ins.stats.billable_ratio}%
-                    </span>
-                    {ins.stats.downtime_hours > 0 && (
-                      <span className="flex items-center gap-1 text-black/80 dark:text-white/80">
-                        <Wrench className="h-3.5 w-3.5 text-black dark:text-white" />
-                        {ins.stats.downtime_hours}h down
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Earnings - Compact */}
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="text-xs text-black/60 dark:text-white/60">Monthly Est.</p>
-                      <p className="text-lg font-bold text-black dark:text-white">
-                        {fmtMoney(ins.earnings_total.monthly_estimate)}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-black/60 dark:text-white/60">Daily Avg</p>
-                      <p className="font-semibold text-black dark:text-white">{fmtMoney(ins.earnings_total.daily_average)}</p>
-                    </div>
-                  </div>
-
-                  {/* Issues - Only if any */}
-                  {ins.issues.length > 0 && (
-                    <div className="rounded-lg border border-solid border-slate-300 dark:border-slate-700 p-2 mb-3 bg-slate-50 dark:bg-slate-800">
-                      {ins.issues.map((issue, i) => (
-                        <p key={i} className="text-xs text-black dark:text-white flex items-center gap-1">
-                          <AlertTriangle className="h-3 w-3" />
-                          {issue}
+              return (
+                <Card key={ins.machine_code} className="overflow-hidden rounded-xl border border-zinc-300 bg-white p-0 shadow-none hover:border-black transition-colors">
+                  <CardContent className="p-4 space-y-3">
+                    {/* Header with image */}
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 rounded-lg border border-zinc-300 overflow-hidden bg-zinc-100 shrink-0">
+                        <img
+                          src={machineImg}
+                          alt={ins.machine_code}
+                          className="h-full w-full object-cover grayscale contrast-125"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-normal text-black truncate">{ins.machine_code}</h3>
+                          <span className="rounded border border-zinc-300 bg-zinc-50 px-2 py-0.5 text-xs font-normal text-black">
+                            {ins.health_score}%
+                          </span>
+                        </div>
+                        <p className="text-xs font-normal text-black truncate">
+                          {ins.type.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                         </p>
-                      ))}
+                      </div>
                     </div>
-                  )}
 
-                  {/* Action */}
-                  <a
-                    href={`/machines/${ins.machine_id}`}
-                    className="block text-center text-xs font-medium text-black dark:text-white hover:underline py-2 border-t border-solid border-slate-300 dark:border-slate-700"
-                  >
-                    View Details →
-                  </a>
-                </CardContent>
-              </Card>
-            ))}
+                    {/* Key Stats - One Line */}
+                    <div className="flex items-center gap-3 text-xs font-normal text-black border-y border-zinc-200 py-2">
+                      <span className="flex items-center gap-1 text-black font-normal">
+                        <Clock className="h-3 w-3 text-black" />
+                        {ins.stats.total_hours}h
+                      </span>
+                      <span className="flex items-center gap-1 text-black font-normal">
+                        <CheckCircle2 className="h-3 w-3 text-black" />
+                        {ins.stats.billable_ratio}%
+                      </span>
+                      {ins.stats.downtime_hours > 0 && (
+                        <span className="flex items-center gap-1 text-black font-normal">
+                          <Wrench className="h-3 w-3 text-black" />
+                          {ins.stats.downtime_hours}h down
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Earnings - Compact */}
+                    <div className="flex items-center justify-between text-xs">
+                      <div>
+                        <p className="text-[11px] font-normal text-black">Monthly Est.</p>
+                        <p className="text-sm font-normal text-black">
+                          {fmtMoney(ins.earnings_total.monthly_estimate)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[11px] font-normal text-black">Daily Avg</p>
+                        <p className="text-sm font-normal text-black">{fmtMoney(ins.earnings_total.daily_average)}</p>
+                      </div>
+                    </div>
+
+                    {/* Issues - Only if any */}
+                    {ins.issues.length > 0 && (
+                      <div className="rounded border border-zinc-300 p-2 bg-zinc-50 space-y-1">
+                        {ins.issues.map((issue, i) => (
+                          <p key={i} className="text-xs font-normal text-black flex items-center gap-1.5">
+                            <AlertTriangle className="h-3 w-3 text-black shrink-0" />
+                            <span className="truncate">{issue}</span>
+                          </p>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Action */}
+                    <a
+                      href={`/machines/${ins.machine_id}`}
+                      className="block text-center text-xs font-normal text-black hover:bg-zinc-100 py-1.5 border border-zinc-300 rounded-lg transition-colors"
+                    >
+                      View Machine Details →
+                    </a>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
 
         {!insightsLoading && insights.length === 0 && (
-          <Card>
+          <Card className="border border-zinc-300 bg-white">
             <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground">No machine data available.</p>
+              <p className="text-sm font-normal text-black">No machine data available.</p>
             </CardContent>
           </Card>
         )}

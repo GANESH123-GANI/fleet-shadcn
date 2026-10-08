@@ -347,15 +347,15 @@ export default function MaintenancePage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-black dark:text-white shadow-none">
-              <Wrench className="h-5 w-5 text-black dark:text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-300 bg-white text-black shadow-sm">
+              <Wrench className="h-5 w-5 text-black" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-2xl font-normal tracking-tight text-black">
                 Maintenance
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Machine revenue, maintenance deductions, spare parts, labour costs & service ledger.
+              <p className="text-xs font-normal text-black mt-0.5">
+                Machine revenue, maintenance deductions, spare parts, labour costs & service ledger
               </p>
             </div>
           </div>
@@ -367,9 +367,9 @@ export default function MaintenancePage() {
             size="sm"
             onClick={() => void loadData()}
             disabled={loading}
-            className="border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800"
+            className="border-zinc-300 font-normal text-black hover:bg-zinc-100 text-xs"
           >
-            <RefreshCw className={`h-4 w-4 mr-1.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
 
@@ -377,135 +377,142 @@ export default function MaintenancePage() {
             <Button
               size="sm"
               onClick={() => setIsFormOpen(true)}
-              className="bg-black hover:bg-slate-800 text-white dark:bg-white dark:text-black dark:hover:bg-slate-200"
+              className="bg-black hover:bg-zinc-800 text-white font-normal text-xs shadow-sm"
             >
-              <Plus className="h-4 w-4 mr-1.5" />
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
               Log Maintenance
             </Button>
           )}
         </div>
       </div>
 
-      {/* Unified 4-Column KPI Strip (Bordered Container with Dividers) */}
-      <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-none overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-300 dark:divide-slate-700">
-          {/* 1. Total Fleet Revenue */}
-          <div className="p-5 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Fleet Revenue
-              </span>
-              <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/40 p-2 text-emerald-600 dark:text-emerald-400">
-                <TrendingUp className="h-4 w-4" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+      {/* Unified 4-Column Small KPI Boxes with Images Inside */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {/* 1. Total Fleet Revenue */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-4 flex items-center justify-between hover:border-black transition-colors shadow-sm">
+          <div>
+            <span className="text-xs font-normal uppercase tracking-wider text-black">
+              Fleet Revenue
+            </span>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-normal text-black">
                 {minorToMoney(summaryMetrics.totalRevenue)}
-              </p>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Gross billing from active deployments
-              </p>
-            </div>
-          </div>
-
-          {/* 2. Total Maintenance Deductions */}
-          <div className="p-5 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Maintenance Deductions
               </span>
-              <div className="rounded-lg bg-rose-50 dark:bg-rose-950/40 p-2 text-rose-600 dark:text-rose-400">
-                <ArrowDownRight className="h-4 w-4" />
-              </div>
             </div>
-            <div className="mt-3">
-              <p className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
+            <p className="mt-0.5 text-xs font-normal text-black">
+              Gross billing from fleet
+            </p>
+          </div>
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-zinc-300 shrink-0 shadow-sm bg-zinc-100">
+            <img src="/fleet/exc-01.jpg" alt="Fleet Revenue" className="w-full h-full object-cover" />
+            <span className="absolute bottom-0 inset-x-0 bg-black/80 text-white text-[9px] text-center font-normal py-0.5">
+              Gross
+            </span>
+          </div>
+        </div>
+
+        {/* 2. Total Maintenance Deductions */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-4 flex items-center justify-between hover:border-black transition-colors shadow-sm">
+          <div>
+            <span className="text-xs font-normal uppercase tracking-wider text-black">
+              Maintenance Deductions
+            </span>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-normal text-black">
                 -{minorToMoney(summaryMetrics.totalMaintenance)}
-              </p>
-              <div className="mt-1 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                <span>Parts: {minorToMoney(summaryMetrics.totalParts)}</span>
-                <span>Labour: {minorToMoney(summaryMetrics.totalLabour)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Net Operating Contribution */}
-          <div className="p-5 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Net Operating Margin
               </span>
-              <div className="rounded-lg bg-sky-50 dark:bg-sky-950/40 p-2 text-sky-600 dark:text-sky-400">
-                <DollarSign className="h-4 w-4" />
-              </div>
             </div>
-            <div className="mt-3">
-              <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+            <p className="mt-0.5 text-xs font-normal text-black">
+              Parts: {minorToMoney(summaryMetrics.totalParts)} · Labour: {minorToMoney(summaryMetrics.totalLabour)}
+            </p>
+          </div>
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-zinc-300 shrink-0 shadow-sm bg-zinc-100">
+            <img src="/fleet/dzr-01.jpg" alt="Maintenance Deductions" className="w-full h-full object-cover" />
+            <span className="absolute bottom-0 inset-x-0 bg-black/80 text-white text-[9px] text-center font-normal py-0.5">
+              Parts
+            </span>
+          </div>
+        </div>
+
+        {/* 3. Net Operating Contribution */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-4 flex items-center justify-between hover:border-black transition-colors shadow-sm">
+          <div>
+            <span className="text-xs font-normal uppercase tracking-wider text-black">
+              Net Operating Margin
+            </span>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-normal text-black">
                 {minorToMoney(summaryMetrics.netProfit)}
-              </p>
-              <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                  {summaryMetrics.retentionRate}%
-                </span>
-                <span>margin retained after maintenance & fuel</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 4. Fleet Service Activity */}
-          <div className="p-5 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Service Events Logged
               </span>
-              <div className="rounded-lg bg-violet-50 dark:bg-violet-950/40 p-2 text-violet-600 dark:text-violet-400">
-                <History className="h-4 w-4" />
-              </div>
             </div>
-            <div className="mt-3">
-              <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
-                {summaryMetrics.visitsCount} <span className="text-sm font-normal text-slate-500">visits</span>
-              </p>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Across {machines.length} fleet machines · {tasks.length} active tasks
-              </p>
+            <p className="mt-0.5 text-xs font-normal text-black">
+              {summaryMetrics.retentionRate}% net retained margin
+            </p>
+          </div>
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-zinc-300 shrink-0 shadow-sm bg-zinc-100">
+            <img src="/fleet/dtr-01.jpg" alt="Net Margin" className="w-full h-full object-cover" />
+            <span className="absolute bottom-0 inset-x-0 bg-black/80 text-white text-[9px] text-center font-normal py-0.5">
+              Net
+            </span>
+          </div>
+        </div>
+
+        {/* 4. Fleet Service Activity */}
+        <div className="rounded-xl border border-zinc-300 bg-white p-4 flex items-center justify-between hover:border-black transition-colors shadow-sm">
+          <div>
+            <span className="text-xs font-normal uppercase tracking-wider text-black">
+              Service Events Logged
+            </span>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-normal text-black">
+                {summaryMetrics.visitsCount}
+              </span>
+              <span className="text-xs font-normal text-black">visits</span>
             </div>
+            <p className="mt-0.5 text-xs font-normal text-black">
+              Across {machines.length} fleet machines · {tasks.length} tasks
+            </p>
+          </div>
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-zinc-300 shrink-0 shadow-sm bg-zinc-100">
+            <img src="/operators/op-002.jpg" alt="Service Events" className="w-full h-full object-cover object-top" />
+            <span className="absolute bottom-0 inset-x-0 bg-black/80 text-white text-[9px] text-center font-normal py-0.5">
+              Crew
+            </span>
           </div>
         </div>
       </div>
 
       {/* Tabs Navigation Bar */}
-      <div className="flex items-center justify-between border-b border-solid border-slate-300 dark:border-slate-700 pb-2">
+      <div className="flex items-center justify-between border-b border-zinc-200 pb-2">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setActiveTab('ledger')}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-normal rounded-lg transition-colors border ${
               activeTab === 'ledger'
-                ? 'bg-slate-900 text-white dark:bg-white dark:text-black'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                ? 'bg-black text-white border-black'
+                : 'text-black border-zinc-300 bg-white hover:bg-zinc-100'
             }`}
           >
-            <History className="h-4 w-4" />
+            <History className="h-3.5 w-3.5" />
             <span>Maintenance Deductions Ledger ({allVisits.length})</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('overview')}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-normal rounded-lg transition-colors border ${
               activeTab === 'overview'
-                ? 'bg-slate-900 text-white dark:bg-white dark:text-black'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                ? 'bg-black text-white border-black'
+                : 'text-black border-zinc-300 bg-white hover:bg-zinc-100'
             }`}
           >
-            <TrendingUp className="h-4 w-4" />
+            <TrendingUp className="h-3.5 w-3.5" />
             <span>Machine Revenue vs. Deductions ({machines.length})</span>
           </button>
         </div>
 
-        <span className="hidden sm:inline-block text-xs text-slate-500">
+        <span className="hidden sm:inline-block text-xs font-normal text-black">
           Showing {activeTab === 'ledger' ? filteredVisits.length : machineContributions.length} records
         </span>
       </div>
@@ -580,33 +587,33 @@ export default function MaintenancePage() {
           </div>
 
           {/* Table Container */}
-          <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-none overflow-hidden">
-            <div className="px-5 py-4 border-b border-solid border-slate-300 dark:border-slate-700 flex items-center justify-between">
+          <div className="rounded-2xl border border-solid border-zinc-300 bg-white shadow-none overflow-hidden">
+            <div className="px-5 py-4 border-b border-solid border-zinc-200 flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white">
+                <h3 className="font-normal text-sm text-black">
                   Itemized Maintenance Deductions History
                 </h3>
-                <p className="text-xs text-slate-500">
-                  Every service event with exact parts used, labour cost, and total amount deducted from machine earnings.
+                <p className="text-xs font-normal text-black mt-0.5">
+                  Every service event with exact parts used, labour cost, and total amount deducted from machine earnings
                 </p>
               </div>
-              <Badge variant="outline" className="border-slate-300 text-xs">
+              <Badge variant="outline" className="border-zinc-300 text-xs font-normal text-black">
                 {filteredVisits.length} Records
               </Badge>
             </div>
 
             {loading ? (
-              <div className="p-12 text-center text-slate-500">
-                <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-slate-400" />
-                <p className="text-sm">Loading maintenance deduction ledger…</p>
+              <div className="p-12 text-center text-black">
+                <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-black" />
+                <p className="text-sm font-normal text-black">Loading maintenance deduction ledger…</p>
               </div>
             ) : filteredVisits.length === 0 ? (
-              <div className="p-12 text-center text-slate-500">
-                <Wrench className="h-8 w-8 mx-auto mb-2 text-slate-400" />
-                <p className="text-base font-semibold text-slate-700 dark:text-slate-300">
+              <div className="p-12 text-center text-black">
+                <Wrench className="h-8 w-8 mx-auto mb-2 text-black/60" />
+                <p className="text-base font-normal text-black">
                   No maintenance deductions found
                 </p>
-                <p className="text-xs mt-1 text-slate-400">
+                <p className="text-xs mt-1 font-normal text-black">
                   {searchQuery || selectedMachineFilter !== 'all' || visitTypeFilter !== 'all'
                     ? 'Try adjusting your filters or search keywords.'
                     : 'Click "Log Maintenance" to record the first service visit.'}
@@ -615,20 +622,20 @@ export default function MaintenancePage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 border-b border-solid border-slate-300 dark:border-slate-700">
+                  <thead className="bg-zinc-50 text-xs font-normal uppercase text-black border-b border-solid border-zinc-200">
                     <tr>
-                      <th className="px-5 py-3.5">Date</th>
-                      <th className="px-5 py-3.5">Machine</th>
-                      <th className="px-5 py-3.5">Service Type & Reason</th>
-                      <th className="px-5 py-3.5">Mechanic</th>
-                      <th className="px-5 py-3.5">Parts Replaced</th>
-                      <th className="px-5 py-3.5 text-right">Parts Cost</th>
-                      <th className="px-5 py-3.5 text-right">Labour Cost</th>
-                      <th className="px-5 py-3.5 text-right">Total Deducted</th>
-                      <th className="px-5 py-3.5 text-right">Actions</th>
+                      <th className="px-5 py-3.5 font-normal text-black">Date</th>
+                      <th className="px-5 py-3.5 font-normal text-black">Machine</th>
+                      <th className="px-5 py-3.5 font-normal text-black">Service Type & Reason</th>
+                      <th className="px-5 py-3.5 font-normal text-black">Mechanic</th>
+                      <th className="px-5 py-3.5 font-normal text-black">Parts Replaced</th>
+                      <th className="px-5 py-3.5 text-right font-normal text-black">Parts Cost</th>
+                      <th className="px-5 py-3.5 text-right font-normal text-black">Labour Cost</th>
+                      <th className="px-5 py-3.5 text-right font-normal text-black">Total Deducted</th>
+                      <th className="px-5 py-3.5 text-right font-normal text-black">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                  <tbody className="divide-y divide-zinc-200">
                     {filteredVisits.map((v) => {
                       const mid = String(v.machine_id);
                       const m = machineMap.get(mid);
@@ -646,16 +653,16 @@ export default function MaintenancePage() {
                       return (
                         <tr
                           key={String(v.id)}
-                          className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors"
+                          className="hover:bg-zinc-50/70 transition-colors"
                         >
                           {/* Date */}
-                          <td className="px-5 py-4 whitespace-nowrap font-medium text-slate-900 dark:text-white">
+                          <td className="px-5 py-4 whitespace-nowrap font-normal text-black">
                             <div className="flex items-center gap-1.5">
-                              <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                              <Calendar className="h-3.5 w-3.5 text-black" />
                               <span>{dateStr || '—'}</span>
                             </div>
                             {Boolean(v.meter_at_visit) && (
-                              <p className="text-[11px] text-slate-500 mt-0.5">
+                              <p className="text-[11px] font-normal text-black mt-0.5">
                                 at {num(v.meter_at_visit).toLocaleString()} {String(m?.primary_meter_type ?? 'hrs')}
                               </p>
                             )}
@@ -664,15 +671,15 @@ export default function MaintenancePage() {
                           {/* Machine */}
                           <td className="px-5 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-2">
-                              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs">
+                              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 text-black font-normal text-xs border border-zinc-200">
                                 {mCode.slice(0, 3)}
                               </span>
                               <div>
-                                <span className="font-bold text-slate-900 dark:text-white">
+                                <span className="font-normal text-black">
                                   {mCode}
                                 </span>
                                 {Boolean(mModel) && (
-                                  <p className="text-xs text-slate-500">{mModel}</p>
+                                  <p className="text-xs font-normal text-black">{mModel}</p>
                                 )}
                               </div>
                             </div>
@@ -681,19 +688,11 @@ export default function MaintenancePage() {
                           {/* Service Type & Reason */}
                           <td className="px-5 py-4">
                             <div className="space-y-1 max-w-xs">
-                              <span
-                                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
-                                  vType === 'breakdown'
-                                    ? 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300 border border-red-200 dark:border-red-800'
-                                    : vType === 'inspection'
-                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
-                                    : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                                }`}
-                              >
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-normal border border-zinc-300 bg-zinc-50 text-black">
                                 {vType.toUpperCase()}
                               </span>
                               {Boolean(v.notes) && (
-                                <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
+                                <p className="text-xs font-normal text-black line-clamp-2">
                                   {String(v.notes)}
                                 </p>
                               )}
@@ -701,25 +700,25 @@ export default function MaintenancePage() {
                           </td>
 
                           {/* Mechanic */}
-                          <td className="px-5 py-4 whitespace-nowrap text-slate-700 dark:text-slate-300">
+                          <td className="px-5 py-4 whitespace-nowrap font-normal text-black">
                             {mechanic}
                           </td>
 
                           {/* Parts Replaced (Itemized List) */}
                           <td className="px-5 py-4">
                             {partsList.length === 0 ? (
-                              <span className="text-xs text-slate-400 italic">None logged</span>
+                              <span className="text-xs font-normal text-black italic">None logged</span>
                             ) : (
                               <div className="space-y-1 max-w-sm">
                                 {partsList.map((p, idx) => (
                                   <div
                                     key={idx}
-                                    className="flex items-center justify-between text-xs rounded bg-slate-100 dark:bg-slate-800 px-2 py-1"
+                                    className="flex items-center justify-between text-xs rounded bg-zinc-100 px-2 py-1 border border-zinc-200"
                                   >
-                                    <span className="font-medium text-slate-800 dark:text-slate-200 truncate">
-                                      {String(p.item)} <span className="text-slate-500">×{String(p.qty)}</span>
+                                    <span className="font-normal text-black truncate">
+                                      {String(p.item)} <span className="text-black">×{String(p.qty)}</span>
                                     </span>
-                                    <span className="ml-2 font-semibold text-slate-600 dark:text-slate-400 shrink-0">
+                                    <span className="ml-2 font-normal text-black shrink-0">
                                       {minorToMoney(num(p.unit_cost_txn) * num(p.qty))}
                                     </span>
                                   </div>
@@ -729,20 +728,18 @@ export default function MaintenancePage() {
                           </td>
 
                           {/* Parts Cost */}
-                          <td className="px-5 py-4 text-right whitespace-nowrap font-medium text-slate-700 dark:text-slate-300">
+                          <td className="px-5 py-4 text-right whitespace-nowrap font-normal text-black">
                             {minorToMoney(partsMinor)}
                           </td>
 
                           {/* Labour Cost */}
-                          <td className="px-5 py-4 text-right whitespace-nowrap font-medium text-slate-700 dark:text-slate-300">
+                          <td className="px-5 py-4 text-right whitespace-nowrap font-normal text-black">
                             {minorToMoney(labourMinor)}
                           </td>
 
                           {/* Total Deducted Amount */}
-                          <td className="px-5 py-4 text-right whitespace-nowrap">
-                            <span className="font-bold text-rose-600 dark:text-rose-400 text-sm">
-                              -{minorToMoney(totalDeductedMinor)}
-                            </span>
+                          <td className="px-5 py-4 text-right whitespace-nowrap font-normal text-black">
+                            -{minorToMoney(totalDeductedMinor)}
                           </td>
 
                           {/* Actions */}

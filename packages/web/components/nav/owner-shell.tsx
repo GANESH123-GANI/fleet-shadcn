@@ -8,7 +8,7 @@ import {
   Bell, Building2, CircleDollarSign, LayoutDashboard, LifeBuoy, Menu,
   Receipt, Scale, ScrollText, Settings, Tractor, Users, X, BarChart3,
   MapPin, Rocket, LogOut, Truck, PanelLeft, ChevronRight, Star, Moon, Sun, Languages,
-  Wrench,
+  Wrench, Boxes,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { fetchList } from '@/lib/api/fetch-list';
@@ -40,6 +40,7 @@ const NAV: NavEntry[] = [
   { href: '/clients', labelKey: 'clients', icon: Building2 },
   { href: '/billing', labelKey: 'billing', icon: Receipt },
   { href: '/maintenance', labelKey: 'maintenance', icon: Wrench },
+  { href: '/inventory', labelKey: 'inventory', icon: Boxes },
   { href: '/cash', labelKey: 'cash', icon: CircleDollarSign },
   { href: '/projections', labelKey: 'projections', icon: Scale },
   { section: 'tools' },
@@ -57,6 +58,7 @@ function isActive(pathname: string, href: string) {
 function getNavLabel(t: (key: string) => string, key?: string): string {
   if (!key) return '';
   if (key === 'maintenance') return 'Maintenance';
+  if (key === 'inventory') return 'Inventory';
   try {
     const val = t(key);
     if (!val || val.includes(`sidebar.${key}`)) {
