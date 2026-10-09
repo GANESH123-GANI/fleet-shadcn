@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Param, Body, Req, Query } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Req, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { WorkSessionsService } from './work-sessions.service';
 import { CreateWorkSessionDto } from './dto/create-work-session.dto';
+import { Roles, RolesGuard } from '../../common/guards/roles.guard';
 import { TenantRequest } from '../../common/middleware/tenant-context.middleware';
 
 @ApiTags('Work Sessions')
@@ -35,6 +36,8 @@ export class WorkSessionsController {
   }
 
   @Post(':id/void')
+  @UseGuards(RolesGuard)
+  @Roles('owner')
   @ApiOperation({ summary: 'Void a work session with a reason (retires it from live data, keeps history)' })
   voidSession(@Req() req: TenantRequest, @Param('id') id: string, @Body() dto: { reason: string }) {
     return this.service.voidSession(req.tenant!.tenantId, id, dto?.reason);

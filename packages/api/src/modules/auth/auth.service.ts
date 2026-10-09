@@ -3,9 +3,13 @@ import { DatabaseService } from '../../common/database/database.service';
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'crypto';
 import { sign, verify, type JwtPayload } from 'jsonwebtoken';
 
+const isProd = process.env.NODE_ENV === 'production';
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
   throw new Error('JWT_SECRET must be set in environment variables');
+}
+if (isProd && (JWT_SECRET === 'dev-secret-change-in-production' || JWT_SECRET.length < 32)) {
+  throw new Error('SECURITY VIOLATION: JWT_SECRET must be at least 32 characters and cannot use default placeholders in production');
 }
 const REFRESH_EXPIRES = '30d';
 
@@ -146,6 +150,13 @@ export class AuthService {
   }
 
   async register(email: string, password: string, tenantName: string) {
+    if (!password || typeof password !== 'string' || password.length < 8) {
+      throw new BadRequestException('Password must be at least 8 characters');
+    }
+    if (password.length > 128) {
+      throw new BadRequestException('Password must not exceed 128 characters');
+    }
+
     // Check if user already exists in the DB
     const existingUser = await this.findStoredUser('email', email);
     if (existingUser) {

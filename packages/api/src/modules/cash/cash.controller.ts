@@ -73,6 +73,8 @@ export class CashController {
   }
 
   @Post('counts/:countId/void')
+  @UseGuards(RolesGuard)
+  @Roles('owner')
   @ApiOperation({ summary: 'Void a cash count with a reason (retires it from live data, keeps history)' })
   voidCount(@Req() req: TenantRequest, @Param('countId') countId: string, @Body() dto: { reason: string }) {
     return this.service.voidCount(req.tenant!.tenantId, countId, dto?.reason);

@@ -30,6 +30,8 @@ export class ClientMoneyController {
   }
 
   @Post('events/:id/void')
+  @UseGuards(RolesGuard)
+  @Roles('owner')
   @ApiOperation({ summary: 'Void a client money event with a reason (retires it from live data, keeps history)' })
   voidEvent(@Req() req: TenantRequest, @Param('id') id: string, @Body() dto: { reason: string }) {
     return this.service.voidEvent(req.tenant!.tenantId, id, dto?.reason);

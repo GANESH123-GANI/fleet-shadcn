@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Param, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Body, Req, UseGuards, ForbiddenException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { Roles, RolesGuard } from '../../common/guards/roles.guard';
@@ -75,6 +75,9 @@ export class UsersController {
     @Param('id') id: string,
     @Body() dto: { notification_preferences: Record<string, boolean> }
   ) {
+    if (req.tenant?.role !== 'owner' && req.user?.id !== id) {
+      throw new ForbiddenException('You can only update your own notification preferences');
+    }
     return this.service.updateNotificationPrefs(req.tenant!.tenantId, id, dto.notification_preferences);
   }
 }

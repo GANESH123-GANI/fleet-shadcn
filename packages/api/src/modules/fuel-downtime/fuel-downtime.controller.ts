@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Param, Body, Query, Req } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { FuelDowntimeService } from './fuel-downtime.service';
+import { Roles, RolesGuard } from '../../common/guards/roles.guard';
 import { TenantRequest } from '../../common/middleware/tenant-context.middleware';
 
 @ApiTags('Fuel & Downtime')
@@ -29,6 +30,8 @@ export class FuelDowntimeController {
   }
 
   @Post('fuel-logs/:id/void')
+  @UseGuards(RolesGuard)
+  @Roles('owner')
   @ApiOperation({ summary: 'Void a fuel log with a reason (retires it from live data, keeps history)' })
   voidFuelLog(@Req() req: TenantRequest, @Param('id') id: string, @Body() dto: { reason: string }) {
     return this.service.voidFuelLog(req.tenant!.tenantId, id, dto?.reason);
@@ -54,6 +57,8 @@ export class FuelDowntimeController {
   }
 
   @Post('downtime/:id/void')
+  @UseGuards(RolesGuard)
+  @Roles('owner')
   @ApiOperation({ summary: 'Void a downtime segment with a reason (retires it from live data, keeps history)' })
   voidDowntime(@Req() req: TenantRequest, @Param('id') id: string, @Body() dto: { reason: string }) {
     return this.service.voidDowntime(req.tenant!.tenantId, id, dto?.reason);

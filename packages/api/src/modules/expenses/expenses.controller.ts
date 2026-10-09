@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Req } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ExpensesService } from './expenses.service';
+import { Roles, RolesGuard } from '../../common/guards/roles.guard';
 import { TenantRequest } from '../../common/middleware/tenant-context.middleware';
 
 @ApiTags('Expenses')
@@ -36,6 +37,8 @@ export class ExpensesController {
   }
 
   @Delete('categories/:id')
+  @UseGuards(RolesGuard)
+  @Roles('owner')
   @ApiOperation({ summary: 'Delete an expense category' })
   deleteCategory(@Req() req: TenantRequest, @Param('id') id: string) {
     return this.service.deleteCategory(req.tenant!.tenantId, id);
@@ -48,6 +51,8 @@ export class ExpensesController {
   }
 
   @Post(':id/void')
+  @UseGuards(RolesGuard)
+  @Roles('owner')
   @ApiOperation({ summary: 'Void an expense with a reason (retires it from live data, keeps history)' })
   voidExpense(@Req() req: TenantRequest, @Param('id') id: string, @Body() dto: { reason: string }) {
     return this.service.voidExpense(req.tenant!.tenantId, id, dto?.reason);

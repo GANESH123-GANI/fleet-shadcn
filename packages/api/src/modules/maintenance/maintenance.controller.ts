@@ -53,6 +53,8 @@ export class MaintenanceController {
   }
 
   @Post('visits/:id/void')
+  @UseGuards(RolesGuard)
+  @Roles('owner')
   @ApiOperation({ summary: 'Void a maintenance visit with a reason (retires it from live data, keeps history)' })
   voidVisit(@Req() req: TenantRequest, @Param('id') id: string, @Body() dto: { reason: string }) {
     return this.service.voidVisit(req.tenant!.tenantId, id, dto?.reason);

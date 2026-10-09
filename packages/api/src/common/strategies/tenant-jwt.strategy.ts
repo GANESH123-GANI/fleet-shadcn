@@ -2,7 +2,18 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+const isProd = process.env.NODE_ENV === 'production';
+const rawSecret = process.env.JWT_SECRET;
+
+if (isProd) {
+  if (!rawSecret || rawSecret === 'dev-secret-change-in-production' || rawSecret.length < 32) {
+    throw new Error(
+      'SECURITY VIOLATION: JWT_SECRET must be set to a secure string with at least 32 characters in production.',
+    );
+  }
+}
+
+const JWT_SECRET = rawSecret || 'dev-secret-change-in-production';
 
 export interface JwtPayload {
   sub: string;

@@ -402,7 +402,16 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
       }
     }
     if (segments[1] === 'extra-charges') {
-      if (method === 'GET') return NextResponse.json(mockDb.extraCharges);
+      if (segments[3] === 'void' && method === 'POST') {
+        const reason = String(body.reason ?? '').trim();
+        if (!reason) return NextResponse.json({ detail: 'A reason is required to void a record' }, { status: 400 });
+        const ec = mockDb.extraCharges.find((e) => e.id === segments[2]);
+        if (!ec || (ec as any).is_current === false) return NextResponse.json({ detail: 'Extra charge not found' }, { status: 404 });
+        (ec as any).is_current = false;
+        ec.note = ec.note ? `${ec.note} | VOID: ${reason}` : `VOID: ${reason}`;
+        return NextResponse.json(ec, { status: 200 });
+      }
+      if (method === 'GET') return NextResponse.json(mockDb.extraCharges.filter((e) => (e as any).is_current !== false));
       if (method === 'POST') {
         const dep = mockDb.deployments.find((d) => d.id === body.deployment_id);
         const newExtra: ExtraCharge = {
@@ -447,6 +456,10 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
     if (segments.length === 1) {
       if (method === 'GET') return NextResponse.json(mockDb.machines);
       if (method === 'POST') {
+        const site = body.site_id ? mockDb.sites.find((s) => s.id === body.site_id) : undefined;
+        const client = body.client_id ? mockDb.clients.find((c) => c.id === body.client_id) : undefined;
+        const op = body.operator_id ? mockDb.operators.find((o) => o.id === body.operator_id) : undefined;
+
         const newMachine: Machine = {
           id: `mch-${Date.now().toString(36)}`,
           code: String(body.code || `MCH-${mockDb.machines.length + 1}`),
@@ -457,11 +470,17 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
           chassis_no: String(body.chassis_no || `CHS-${Date.now()}`),
           primary_meter_type: (body.primary_meter_type as 'hours' | 'km') || 'hours',
           meter_unit_label: String(body.meter_unit_label || 'Hours'),
-          current_meter: Number(body.current_meter || 0),
+          current_meter: Number(body.current_meter ?? 0),
           status_flag: (body.status_flag as 'active' | 'service' | 'idle' | 'stopped' | 'transit') || 'active',
-          hourly_rate: Number(body.hourly_rate || 2000),
-          fuel_capacity_litres: Number(body.fuel_capacity_litres || 300),
-          fuel_level_pct: Number(body.fuel_level_pct || 80),
+          hourly_rate: Number(body.hourly_rate ?? 2000),
+          fuel_capacity_litres: Number(body.fuel_capacity_litres ?? 300),
+          fuel_level_pct: Number(body.fuel_level_pct ?? 80),
+          site_id: body.site_id ? String(body.site_id) : undefined,
+          site_name: String(body.site_name || site?.name || 'Bangalore Metro Phase 2 — Reach 6'),
+          client_id: body.client_id ? String(body.client_id) : undefined,
+          client_name: String(body.client_name || client?.name || 'L&T Construction'),
+          operator_id: body.operator_id ? String(body.operator_id) : undefined,
+          operator_name: String(body.operator_name || op?.name || 'Assigned Operator'),
           created_at: new Date().toISOString(),
         };
         mockDb.machines.unshift(newMachine);
@@ -725,6 +744,11 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
       return NextResponse.json(mockDb.cashExpected);
     }
     if (segments[1] === 'counts') {
+      if (segments[3] === 'void' && method === 'POST') {
+        const reason = String(body.reason ?? '').trim();
+        if (!reason) return NextResponse.json({ detail: 'A reason is required to void a record' }, { status: 400 });
+        return NextResponse.json({ id: segments[2], is_current: false, note: `VOID: ${reason}` }, { status: 200 });
+      }
       return NextResponse.json([
         { id: 'cnt-1', account_id: 'cacc-001', expected_balance: 145000, counted_balance: 145000, difference: 0, counted_at: new Date().toISOString() },
       ]);
@@ -890,7 +914,7 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
       }
     }
     if (segments.length === 1) {
-      if (method === 'GET') return NextResponse.json(mockDb.expenses);
+      if (method === 'GET') return NextResponse.json(mockDb.expenses.filter((e) => (e as any).is_current !== false));
       if (method === 'POST') {
         const newExp: Expense = {
           id: `exp-${Date.now().toString(36)}`,
@@ -909,6 +933,15 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
         mockDb.expenses.unshift(newExp);
         return NextResponse.json(newExp, { status: 201 });
       }
+    }
+    if (segments[2] === 'void' && method === 'POST') {
+      const reason = String(body.reason ?? '').trim();
+      if (!reason) return NextResponse.json({ detail: 'A reason is required to void a record' }, { status: 400 });
+      const exp = mockDb.expenses.find((e) => e.id === segments[1]);
+      if (!exp || (exp as any).is_current === false) return NextResponse.json({ detail: 'Expense not found' }, { status: 404 });
+      (exp as any).is_current = false;
+      exp.notes = exp.notes ? `${exp.notes} | VOID: ${reason}` : `VOID: ${reason}`;
+      return NextResponse.json(exp, { status: 200 });
     }
   }
 
@@ -929,7 +962,16 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
       }
     }
     if (segments[1] === 'visits') {
-      return NextResponse.json(mockDb.maintenanceVisits);
+      if (segments[3] === 'void' && method === 'POST') {
+        const reason = String(body.reason ?? '').trim();
+        if (!reason) return NextResponse.json({ detail: 'A reason is required to void a record' }, { status: 400 });
+        const v = mockDb.maintenanceVisits.find((item) => item.id === segments[2]);
+        if (!v || (v as any).is_current === false) return NextResponse.json({ detail: 'Maintenance visit not found' }, { status: 404 });
+        (v as any).is_current = false;
+        v.notes = v.notes ? `${v.notes} | VOID: ${reason}` : `VOID: ${reason}`;
+        return NextResponse.json(v, { status: 200 });
+      }
+      return NextResponse.json(mockDb.maintenanceVisits.filter((v) => (v as any).is_current !== false));
     }
     if (segments[1] === 'machines') {
       const machineId = segments[2];
@@ -944,12 +986,22 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
 
   // 16. WORK SESSIONS & FUEL DOWNTIME
   if (segments[0] === 'work-sessions') {
+    if (segments[2] === 'void' && method === 'POST') {
+      const reason = String(body.reason ?? '').trim();
+      if (!reason) return NextResponse.json({ detail: 'A reason is required to void a record' }, { status: 400 });
+      const ses = mockDb.workSessions.find((s) => s.id === segments[1]);
+      if (!ses || ses.is_current === false) return NextResponse.json({ detail: 'Work session not found' }, { status: 404 });
+      ses.is_current = false;
+      ses.notes = ses.notes ? `${ses.notes} | VOID: ${reason}` : `VOID: ${reason}`;
+      return NextResponse.json(ses, { status: 200 });
+    }
     if (method === 'GET') {
       const machineId = searchParams.get('machine_id');
+      const live = mockDb.workSessions.filter((s) => s.is_current !== false);
       if (machineId) {
-        return NextResponse.json(mockDb.workSessions.filter((s) => s.machine_id === machineId));
+        return NextResponse.json(live.filter((s) => s.machine_id === machineId));
       }
-      return NextResponse.json(mockDb.workSessions);
+      return NextResponse.json(live);
     }
     if (method === 'POST') {
       const startMeter = Number(body.start_meter || 0);
@@ -986,24 +1038,51 @@ export async function handleMockApiRequest(request: NextRequest, rawPath: string
 
   if (segments[0] === 'fuel-downtime') {
     if (segments[1] === 'fuel-logs') {
-      const machineId = searchParams.get('machine_id');
-      if (machineId) {
-        return NextResponse.json(mockDb.fuelLogs.filter((f) => f.machine_id === machineId));
+      if (segments[3] === 'void' && method === 'POST') {
+        const reason = String(body.reason ?? '').trim();
+        if (!reason) return NextResponse.json({ detail: 'A reason is required to void a record' }, { status: 400 });
+        const f = mockDb.fuelLogs.find((item) => item.id === segments[2]);
+        if (!f || (f as any).is_current === false) return NextResponse.json({ detail: 'Fuel log not found' }, { status: 404 });
+        (f as any).is_current = false;
+        return NextResponse.json(f, { status: 200 });
       }
-      return NextResponse.json(mockDb.fuelLogs);
+      const machineId = searchParams.get('machine_id');
+      const live = mockDb.fuelLogs.filter((f) => (f as any).is_current !== false);
+      if (machineId) {
+        return NextResponse.json(live.filter((f) => f.machine_id === machineId));
+      }
+      return NextResponse.json(live);
     }
     if (segments[1] === 'downtime') {
-      const machineId = searchParams.get('machine_id');
-      if (machineId) {
-        return NextResponse.json(mockDb.downtimeSegments.filter((d) => d.machine_id === machineId));
+      if (segments[3] === 'void' && method === 'POST') {
+        const reason = String(body.reason ?? '').trim();
+        if (!reason) return NextResponse.json({ detail: 'A reason is required to void a record' }, { status: 400 });
+        const d = mockDb.downtimeSegments.find((item) => item.id === segments[2]);
+        if (!d || (d as any).is_current === false) return NextResponse.json({ detail: 'Downtime segment not found' }, { status: 404 });
+        (d as any).is_current = false;
+        d.notes = d.notes ? `${d.notes} | VOID: ${reason}` : `VOID: ${reason}`;
+        return NextResponse.json(d, { status: 200 });
       }
-      return NextResponse.json(mockDb.downtimeSegments);
+      const machineId = searchParams.get('machine_id');
+      const live = mockDb.downtimeSegments.filter((d) => (d as any).is_current !== false);
+      if (machineId) {
+        return NextResponse.json(live.filter((d) => d.machine_id === machineId));
+      }
+      return NextResponse.json(live);
     }
   }
 
   // 17. CLIENT MONEY EVENTS (Receipts, Advances)
   if (segments[0] === 'client-money' && segments[1] === 'events') {
-    if (method === 'GET') return NextResponse.json(mockDb.clientMoneyEvents);
+    if (segments[3] === 'void' && method === 'POST') {
+      const reason = String(body.reason ?? '').trim();
+      if (!reason) return NextResponse.json({ detail: 'A reason is required to void a record' }, { status: 400 });
+      const ev = mockDb.clientMoneyEvents.find((item) => item.id === segments[2]);
+      if (!ev || (ev as any).is_current === false) return NextResponse.json({ detail: 'Client money event not found' }, { status: 404 });
+      (ev as any).is_current = false;
+      return NextResponse.json(ev, { status: 200 });
+    }
+    if (method === 'GET') return NextResponse.json(mockDb.clientMoneyEvents.filter((e) => (e as any).is_current !== false));
     if (method === 'POST') {
       const cli = mockDb.clients.find((c) => c.id === body.client_id);
       const newEvent: ClientMoneyEvent = {

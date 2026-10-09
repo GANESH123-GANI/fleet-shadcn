@@ -5,13 +5,19 @@ const API_URL = process.env.API_URL || 'http://localhost:3001';
 const FORCE_MOCK = process.env.NEXT_PUBLIC_MOCK_API === 'true' || process.env.USE_MOCK_DB === 'true';
 
 export async function proxy(request: NextRequest, path: string) {
+  // Path traversal and SSRF protection: reject directory traversal attempts and control characters
+  const cleanPath = path.replace(/\\/g, '/');
+  if (cleanPath.includes('..') || cleanPath.includes('\0')) {
+    return NextResponse.json({ detail: 'Invalid request path' }, { status: 400 });
+  }
+
   // If explicitly configured to use mock database, bypass upstream API
   if (FORCE_MOCK) {
-    return handleMockApiRequest(request, path);
+    return handleMockApiRequest(request, cleanPath);
   }
 
   const url = new URL(request.url);
-  const apiUrl = new URL(`${API_URL}${path}${url.search}`);
+  const apiUrl = new URL(`${API_URL}${cleanPath}${url.search}`);
 
   // Forward headers (except host + conditionals). Conditional headers are
   // stripped because a 304 from upstream cannot carry a body, and the API

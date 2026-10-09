@@ -15,7 +15,35 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('v1');
-  app.enableCors();
+
+  const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
+    : [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:3001',
+        'https://fleetos-web-six.vercel.app',
+      ];
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        allowedOrigins.includes('*') ||
+        (process.env.NODE_ENV !== 'production' && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) ||
+        /\.vercel\.app$/.test(new URL(origin).hostname)
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error('Blocked by CORS policy'), false);
+    },
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset'],
+  });
   // The browser calls /v1/* directly, but the web's Next.js proxy routes
   // (/api/v1/...) and any other /api-prefixed caller would miss the `v1`
   // prefix — normalize both shapes to one before Express routes.

@@ -249,8 +249,10 @@ export async function voidRecord(
   const trimmed = String(reason ?? '').trim();
   if (!trimmed) throw new BadRequestException('A reason is required to void a record');
   if (trimmed.length > 500) throw new BadRequestException('Void reason must be 500 characters or fewer');
+  const sanitized = trimmed.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  if (!sanitized) throw new BadRequestException('A reason is required to void a record');
 
-  const stamped = `VOID: ${trimmed}`;
+  const stamped = `VOID: ${sanitized}`;
   let res;
   try {
     res = await db.queryWithTenant(
@@ -260,9 +262,9 @@ export async function voidRecord(
           SET is_current = false,
               ${quote(noteCol)} = CASE WHEN ${quote(noteCol)} IS NULL THEN $2
                                        ELSE ${quote(noteCol)} || ' | ' || $2 END
-        WHERE id = $1 AND is_current = true
+        WHERE id = $1 AND is_current = true AND tenant_id = $3
         RETURNING *`,
-      [id, stamped],
+      [id, stamped, tenantId],
     );
   } catch (e) {
     mapDbError(e, table);
