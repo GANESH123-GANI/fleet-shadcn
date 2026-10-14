@@ -11,7 +11,7 @@ import {
   Gauge, Pause, Play, Receipt, RefreshCw, Wrench,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { fetchList, fetchListStrict } from '@/lib/api/fetch-list';
+import { fetchList, fetchListStrict, getCachedList } from '@/lib/api/fetch-list';
 import { useAuth } from '@/lib/auth/context';
 import { ApiErrorBanner } from '@/components/api-error-banner';
 
@@ -132,15 +132,22 @@ export default function OpsToday() {
   const isReadOnly = user?.role === 'owner' || user?.role === 'admin';
   
   const [range, setRange] = useState<RangeKey>('1d');
-  const [loading, setLoading] = useState(true);
+  const cachedMachines = getCachedList<Row>('/api/v1/machines');
+  const cachedSessions = getCachedList<Row>('/api/v1/work-sessions');
+  const cachedFuel = getCachedList<Row>('/api/v1/fuel-downtime/fuel-logs');
+  const cachedDowntime = getCachedList<Row>('/api/v1/fuel-downtime/downtime');
+  const cachedExpenses = getCachedList<Row>('/api/v1/expenses');
+  const cachedAlerts = getCachedList<Row>('/api/v1/alerts?status=unread') ?? getCachedList<Row>('/api/v1/alerts');
+
+  const [loading, setLoading] = useState<boolean>(() => !cachedMachines || cachedMachines.length === 0);
   const [nonce, setNonce] = useState(0);
 
-  const [machines, setMachines] = useState<Row[]>([]);
-  const [sessions, setSessions] = useState<Row[]>([]);
-  const [fuelLogs, setFuelLogs] = useState<Row[]>([]);
-  const [downtime, setDowntime] = useState<Row[]>([]);
-  const [expenses, setExpenses] = useState<Row[]>([]);
-  const [alerts, setAlerts] = useState<Row[]>([]);
+  const [machines, setMachines] = useState<Row[]>(() => cachedMachines ?? []);
+  const [sessions, setSessions] = useState<Row[]>(() => cachedSessions ?? []);
+  const [fuelLogs, setFuelLogs] = useState<Row[]>(() => cachedFuel ?? []);
+  const [downtime, setDowntime] = useState<Row[]>(() => cachedDowntime ?? []);
+  const [expenses, setExpenses] = useState<Row[]>(() => cachedExpenses ?? []);
+  const [alerts, setAlerts] = useState<Row[]>(() => (cachedAlerts ?? []).slice(0, 4));
   const [maintenance, setMaintenance] = useState<Row[]>([]);
   const [myId, setMyId] = useState<string | null>(null);
   const [apiError, setApiError] = useState(false);

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OwnerShell } from '@/components/nav/owner-shell';
+import { fetchList } from '@/lib/api/fetch-list';
 
 const OPS_NAV = [
   { href: '/today', label: 'Today', icon: LayoutDashboard },
@@ -39,6 +40,22 @@ export default function OpsLayout({ children }: { children: React.ReactNode }) {
       router.push('/login');
     }
   }, [user, loading, router, pathname]);
+
+  useEffect(() => {
+    const warmList = [
+      '/api/v1/machines',
+      '/api/v1/work-sessions',
+      '/api/v1/fuel-downtime/fuel-logs',
+      '/api/v1/fuel-downtime/downtime',
+      '/api/v1/expenses',
+    ];
+    const timer = setTimeout(() => {
+      warmList.forEach((endpoint) => {
+        void fetchList(endpoint);
+      });
+    }, 60);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (loading) {
     return (
@@ -85,6 +102,7 @@ export default function OpsLayout({ children }: { children: React.ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch={true}
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-fast',
                     isActive

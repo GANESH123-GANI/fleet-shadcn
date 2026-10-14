@@ -11,25 +11,34 @@ export async function authFetch(path: string, options: RequestInit = {}): Promis
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  // When calling API directly, strip /api prefix (e.g. /api/v1/machines -> /v1/machines)
-  const apiPath = API_BASE && path.startsWith('/api') ? path.slice(4) : path;
-  const url = API_BASE ? `${API_BASE}${apiPath}` : path;
+  // If API_BASE points to the current web host, route via Next.js proxy (/api/...)
+  const isSameHost = typeof window !== 'undefined' && API_BASE ? (() => {
+    try {
+      const u = new URL(API_BASE, window.location.origin);
+      return u.host === window.location.host;
+    } catch {
+      return false;
+    }
+  })() : false;
+
+  const effectiveBase = isSameHost ? '' : API_BASE;
+  const apiPath = effectiveBase && path.startsWith('/api') ? path.slice(4) : path;
+  const url = effectiveBase ? `${effectiveBase}${apiPath}` : path;
   const doFetch = () => fetch(url, { ...options, headers });
 
   const method = (options.method ?? 'GET').toUpperCase();
   if (method !== 'GET') return doFetch();
 
-  // GETs are safe to retry: absorb transient proxy/network 5xx (e.g. cold-start
-  // 502s under parallel bursts) with a single short-delay retry.
+  // GETs are safe to retry once for transient 5xx with a fast backoff
   try {
     const res = await doFetch();
     if (res.status >= 500) {
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 150));
       return doFetch();
     }
     return res;
   } catch {
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 150));
     return doFetch();
   }
 }

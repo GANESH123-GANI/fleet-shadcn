@@ -8,12 +8,21 @@ import {
   Bell, Building2, CircleDollarSign, LayoutDashboard, LifeBuoy, Menu,
   Receipt, Scale, ScrollText, Settings, Tractor, Users, X, BarChart3,
   MapPin, Rocket, LogOut, Truck, PanelLeft, ChevronRight, Star, Moon, Sun, Languages,
-  Wrench, Boxes,
+  Wrench, Boxes, Search, Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { fetchList } from '@/lib/api/fetch-list';
 import { useAuth } from '@/lib/auth/context';
 import { useTheme } from '@/context/theme-provider';
+import { useLocale, type Locale } from '@/components/i18n-provider';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { SkipToMain } from '@/components/skip-to-main';
 import { CommandMenu } from '@/components/command-menu';
@@ -108,6 +117,7 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
             <Link
               key={entry.href}
               href={entry.href!}
+              prefetch={true}
               title={getNavLabel(t, entry.labelKey)}
               onClick={onNavigate}
               className={cn(
@@ -161,29 +171,71 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
   );
 }
 
+const LANG_LIST: [Locale, string, string][] = [
+  ['en', 'English', 'English'],
+  ['hi', 'Hindi', 'हिन्दी'],
+  ['kn', 'Kannada', 'ಕನ್ನಡ'],
+  ['ta', 'Tamil', 'தமிழ்'],
+  ['te', 'Telugu', 'తెలుగు'],
+  ['mr', 'Marathi', 'मराठी'],
+  ['bn', 'Bengali', 'বাংলা'],
+  ['gu', 'Gujarati', 'ગુજરાતી'],
+  ['ml', 'Malayalam', 'മലയാളം'],
+  ['pa', 'Punjabi', 'ਪੰਜਾਬੀ'],
+  ['fr', 'French', 'Français'],
+];
+
 export function OwnerShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations('sidebar');
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { locale, setLocale } = useLocale();
+  const { setOpen } = useSearch();
 
   const toggleTheme = () => {
     const isDark = document.documentElement.classList.contains('dark');
     setTheme(isDark ? 'light' : 'dark');
   };
 
-  // Dynamic breadcrumbs based on route
-  const getBreadcrumb = () => {
+  useEffect(() => {
+    // Background pre-warm of core module datasets so clicking any navigation item is instant
+    const warmList = [
+      '/api/v1/machines',
+      '/api/v1/sites',
+      '/api/v1/deployments',
+      '/api/v1/operators',
+      '/api/v1/clients',
+      '/api/v1/billing/receivables',
+    ];
+    const timer = setTimeout(() => {
+      warmList.forEach((endpoint) => {
+        void fetchList(endpoint);
+      });
+    }, 60);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Dynamic clickable breadcrumbs based on route
+  const getBreadcrumbs = () => {
     if (pathname === '/home' || pathname === '/') {
-      return { section: 'Dashboard', page: 'Orders' };
+      return [{ label: 'Dashboard', href: '/home', isLast: true }];
     }
     const parts = pathname.split('/').filter(Boolean);
-    const lastPart = parts[parts.length - 1] || 'Dashboard';
-    const formatted = lastPart.charAt(0).toUpperCase() + lastPart.slice(1).replace(/-/g, ' ');
-    return { section: 'Dashboard', page: formatted };
+    const crumbs: { label: string; href: string; isLast: boolean }[] = [
+      { label: 'Dashboard', href: '/home', isLast: false },
+    ];
+    let acc = '';
+    parts.forEach((p, idx) => {
+      acc += `/${p}`;
+      const isLast = idx === parts.length - 1;
+      const label = p.charAt(0).toUpperCase() + p.slice(1).replace(/-/g, ' ');
+      crumbs.push({ label, href: acc, isLast });
+    });
+    return crumbs;
   };
-  const breadcrumb = getBreadcrumb();
+  const breadcrumbs = getBreadcrumbs();
 
   return (
     <SidebarProvider>
@@ -224,8 +276,8 @@ export function OwnerShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col bg-white dark:bg-background">
         {/* Topbar matching reference */}
         <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-card px-4 sm:px-6">
-          {/* Left: Sidebar toggle + vertical line + breadcrumb */}
-          <div className="flex items-center gap-3">
+          {/* Left: Sidebar toggle + vertical line + clickable breadcrumb links */}
+          <div className="flex items-center gap-3 min-w-0">
             <button
               aria-label={collapsed ? t('expandSidebar') : t('collapseSidebar')}
               onClick={() => {
@@ -235,32 +287,69 @@ export function OwnerShell({ children }: { children: React.ReactNode }) {
                   setCollapsed((c) => !c);
                 }
               }}
-              className="rounded-md p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 transition-colors"
+              className="rounded-md p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 transition-colors shrink-0"
             >
               <PanelLeft className="h-4 w-4" />
             </button>
 
-            <div className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
+            <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 shrink-0" />
 
-            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <span className="text-slate-400 dark:text-slate-500 font-normal">
-                {breadcrumb.section}
-              </span>
-              <ChevronRight className="h-3 w-3 text-slate-400 dark:text-slate-600 shrink-0" />
-              <span className="font-normal text-slate-800 dark:text-slate-200">
-                {breadcrumb.page}
-              </span>
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs sm:text-sm truncate">
+              {breadcrumbs.map((crumb, idx) => (
+                <span key={crumb.href} className="flex items-center gap-1.5 shrink-0">
+                  {idx > 0 && <ChevronRight className="h-3 w-3 text-slate-400 dark:text-slate-600 shrink-0" />}
+                  {crumb.isLast ? (
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{crumb.label}</span>
+                  ) : (
+                    <Link
+                      href={crumb.href}
+                      className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors"
+                    >
+                      {crumb.label}
+                    </Link>
+                  )}
+                </span>
+              ))}
             </nav>
           </div>
 
-          {/* Right: Star 121 + Theme Moon/Sun + Languages + Avatar */}
-          <div className="flex items-center gap-2.5">
+          {/* Center: Global Quick Search & Command Bar (Freedom to navigate anywhere with ⌘K) */}
+          <div className="flex-1 max-w-sm mx-4 hidden md:block">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="w-full flex items-center justify-between gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 px-3 py-1.5 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-2xs"
+              title="Search modules, machines, sites or press ⌘K"
+            >
+              <span className="flex items-center gap-2 truncate text-slate-500 dark:text-slate-400">
+                <Search className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                <span>Search modules, machines, sites...</span>
+              </span>
+              <kbd className="pointer-events-none inline-flex h-4.5 select-none items-center gap-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-1.5 font-mono text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                ⌘K
+              </kbd>
+            </button>
+          </div>
+
+          {/* Right: Search mobile + Star + Theme Moon/Sun + Languages Dropdown + Avatar */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Mobile Search Button */}
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              aria-label="Quick search"
+              className="md:hidden rounded-md p-1.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              title="Search"
+            >
+              <Search className="h-4 w-4" />
+            </button>
+
             {/* GitHub Star Pill */}
             <a
               href="https://github.com"
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:inline-flex items-center rounded-md border border-solid border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors shadow-none overflow-hidden"
+              className="hidden lg:inline-flex items-center rounded-md border border-solid border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors shadow-none overflow-hidden"
             >
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1">
                 <Star className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400" />
@@ -276,18 +365,47 @@ export function OwnerShell({ children }: { children: React.ReactNode }) {
               onClick={toggleTheme}
               aria-label="Toggle theme"
               className="rounded-md p-1.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              title="Toggle Theme"
             >
               <Moon className="h-4 w-4 block dark:hidden" />
               <Sun className="h-4 w-4 hidden dark:block" />
             </button>
 
-            {/* Language Switch */}
-            <button
-              aria-label="Change language"
-              className="rounded-md p-1.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            >
-              <Languages className="h-4 w-4" />
-            </button>
+            {/* Language Switcher Dropdown (Freedom to customize UI language) */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Change language"
+                  className="flex items-center gap-1 rounded-md p-1.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  title="Customize Language"
+                >
+                  <Languages className="h-4 w-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                    {locale}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 max-h-72 overflow-y-auto">
+                <DropdownMenuLabel className="text-xs font-semibold text-slate-500">
+                  Select Language
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {LANG_LIST.map(([code, name, native]) => (
+                  <DropdownMenuItem
+                    key={code}
+                    onClick={() => setLocale(code)}
+                    className="flex items-center justify-between text-xs cursor-pointer py-1.5"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <span className="font-medium text-slate-900 dark:text-slate-100">{native}</span>
+                      <span className="text-[10px] text-slate-400">({name})</span>
+                    </span>
+                    {locale === code && <Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" />}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Profile Dropdown with online badge */}
             <ProfileDropdown />

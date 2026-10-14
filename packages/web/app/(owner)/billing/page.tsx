@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Download, CreditCard, TrendingUp, AlertCircle, Receipt, IndianRupee, Plus } from 'lucide-react';
 import { authFetch } from '@/lib/api/auth-fetch';
-import { fetchListStrict } from '@/lib/api/fetch-list';
+import { fetchListStrict, getCachedList } from '@/lib/api/fetch-list';
 import { ApiErrorBanner } from '@/components/api-error-banner';
 import { ConfigActions } from '@/components/records/config-actions';
 import { RecordActions } from '@/components/records/record-actions';
@@ -30,12 +30,18 @@ function money(minor: unknown): string {
 }
 
 export default function BillingPage() {
-  const [deployments, setDeployments] = useState<Row[]>([]);
-  const [rates, setRates] = useState<Row[]>([]);
-  const [extras, setExtras] = useState<Row[]>([]);
-  const [contrib, setContrib] = useState<Row[]>([]);
-  const [receivables, setReceivables] = useState<Row[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedDeployments = getCachedList<Row>('/api/v1/deployments');
+  const cachedRates = getCachedList<Row>('/api/v1/billing/rate-cards');
+  const cachedExtras = getCachedList<Row>('/api/v1/billing/extra-charges');
+  const cachedContrib = getCachedList<Row>('/api/v1/billing/contribution');
+  const cachedReceivables = getCachedList<Row>('/api/v1/billing/receivables');
+
+  const [deployments, setDeployments] = useState<Row[]>(() => cachedDeployments ?? []);
+  const [rates, setRates] = useState<Row[]>(() => cachedRates ?? []);
+  const [extras, setExtras] = useState<Row[]>(() => cachedExtras ?? []);
+  const [contrib, setContrib] = useState<Row[]>(() => cachedContrib ?? []);
+  const [receivables, setReceivables] = useState<Row[]>(() => cachedReceivables ?? []);
+  const [loading, setLoading] = useState<boolean>(() => !cachedDeployments && !cachedReceivables);
   const [form, setForm] = useState({
     deployment_id: '',
     strategy: 'hourly',
@@ -54,6 +60,7 @@ export default function BillingPage() {
     currency: 'INR',
     note: '',
   });
+  const [showExtraForm, setShowExtraForm] = useState(false);
 
   const [apiError, setApiError] = useState(false);
 
@@ -135,6 +142,7 @@ export default function BillingPage() {
       });
       if (res.ok) {
         setExtraForm({ ...extraForm, amount: '', note: '' });
+        setShowExtraForm(false);
         void load();
         return;
       }
@@ -217,63 +225,63 @@ export default function BillingPage() {
       {formError && <p className="text-sm text-red-600">{formError}</p>}
 
       <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-black dark:text-white">Total Billed</span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <CreditCard className="h-4 w-4" />
+        <div className="rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black dark:hover:border-white transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <span className="text-xs font-medium text-black uppercase tracking-wider dark:text-white">Total Billed</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded-md border border-zinc-300 dark:border-zinc-700 text-black dark:text-white">
+              <CreditCard className="h-3.5 w-3.5" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline justify-between">
+          <div className="flex items-baseline justify-between">
             <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{money(totalBilled)}</span>
-            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+            <span className="inline-flex items-center rounded-md border border-zinc-300 px-2 py-0.5 text-xs font-medium text-black dark:border-zinc-700 dark:text-white">
               Invoiced
             </span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-black dark:text-white">Total Received</span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <IndianRupee className="h-4 w-4" />
+        <div className="rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black dark:hover:border-white transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <span className="text-xs font-medium text-black uppercase tracking-wider dark:text-white">Total Received</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded-md border border-zinc-300 dark:border-zinc-700 text-black dark:text-white">
+              <IndianRupee className="h-3.5 w-3.5" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline justify-between">
+          <div className="flex items-baseline justify-between">
             <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{money(totalReceived)}</span>
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-zinc-300 px-2 py-0.5 text-xs font-medium text-black dark:border-zinc-700 dark:text-white">
               <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
               Collected
             </span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-black dark:text-white">Outstanding</span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <AlertCircle className="h-4 w-4" />
+        <div className="rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black dark:hover:border-white transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <span className="text-xs font-medium text-black uppercase tracking-wider dark:text-white">Outstanding</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded-md border border-zinc-300 dark:border-zinc-700 text-black dark:text-white">
+              <AlertCircle className="h-3.5 w-3.5" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline justify-between">
+          <div className="flex items-baseline justify-between">
             <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{money(totalOutstanding)}</span>
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-zinc-300 px-2 py-0.5 text-xs font-medium text-black dark:border-zinc-700 dark:text-white">
               <span className="h-1.5 w-1.5 rounded-full bg-black dark:bg-white" />
               Pending
             </span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-none">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-black dark:text-white">Extra Charges</span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-solid border-slate-300 dark:border-slate-700 text-black dark:text-white">
-              <Receipt className="h-4 w-4" />
+        <div className="rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black dark:hover:border-white transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <span className="text-xs font-medium text-black uppercase tracking-wider dark:text-white">Extra Charges</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded-md border border-zinc-300 dark:border-zinc-700 text-black dark:text-white">
+              <Receipt className="h-3.5 w-3.5" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline justify-between">
+          <div className="flex items-baseline justify-between">
             <span className="text-3xl font-bold tracking-tight text-black dark:text-white">{extras.length}</span>
-            <span className="inline-flex items-center rounded-md border border-solid border-slate-300 px-2 py-0.5 text-xs font-medium text-black dark:border-slate-700 dark:text-white">
+            <span className="inline-flex items-center rounded-md border border-zinc-300 px-2 py-0.5 text-xs font-medium text-black dark:border-zinc-700 dark:text-white">
               Incidental
             </span>
           </div>
@@ -514,26 +522,35 @@ export default function BillingPage() {
             </Card>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
-              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
-                <AlertCircle className="h-5 w-5 text-black dark:text-white" />
-                <CardTitle className="text-base font-bold text-black dark:text-white">
-                  Receivables
-                </CardTitle>
+          <div className="grid gap-6 lg:grid-cols-2 items-start">
+            {/* Receivables Card - Compact Height */}
+            <Card className="overflow-hidden rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center justify-between border-b border-solid border-slate-300 dark:border-slate-700 px-5 py-3">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 text-black dark:text-white" />
+                  <CardTitle className="text-sm font-semibold text-black dark:text-white">
+                    Receivables
+                  </CardTitle>
+                </div>
+                <span className="text-xs text-muted-foreground font-medium">
+                  {receivables.length} {receivables.length === 1 ? 'client' : 'clients'}
+                </span>
               </div>
-              <CardContent className="pt-6">
+              <CardContent className="p-3.5">
                 {receivables.length === 0 ? (
-                  <p className="text-muted-foreground">No receivables.</p>
+                  <p className="text-xs text-muted-foreground py-2 text-center">No receivables.</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {receivables.slice(0, 5).map((r) => (
-                      <div key={String(r.client_id ?? r.client_name)} className="flex items-center justify-between rounded-lg bg-gray-50 p-4 border border-gray-100">
+                      <div
+                        key={String(r.client_id ?? r.client_name)}
+                        className="flex items-center justify-between rounded-lg bg-gray-50/80 dark:bg-slate-800/50 px-3.5 py-2.5 border border-gray-100 dark:border-slate-800 transition-colors"
+                      >
                         <div>
-                          <p className="font-medium text-gray-800">{String(r.client_name)}</p>
-                          <p className="text-xs text-gray-500">Billed: {money(r.billed_minor)}</p>
+                          <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">{String(r.client_name)}</p>
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400">Billed: {money(r.billed_minor)}</p>
                         </div>
-                        <span className="font-bold text-amber-600">{money(r.balance_minor)}</span>
+                        <span className="text-xs font-bold text-amber-600 dark:text-amber-500">{money(r.balance_minor)}</span>
                       </div>
                     ))}
                   </div>
@@ -541,94 +558,144 @@ export default function BillingPage() {
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden rounded-2xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
-              <div className="flex items-center gap-2 border-b border-solid border-slate-300 dark:border-slate-700 px-6 py-4">
-                <Receipt className="h-5 w-5 text-black dark:text-white" />
-                <CardTitle className="text-base font-bold text-black dark:text-white">
-                  Extra Charges ({extras.length})
-                </CardTitle>
+            {/* Extra Charges Card - Compact Height & Toggleable Creation Form */}
+            <Card className="overflow-hidden rounded-xl border border-solid border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-0 shadow-none">
+              <div className="flex items-center justify-between border-b border-solid border-slate-300 dark:border-slate-700 px-5 py-3">
+                <div className="flex items-center gap-2">
+                  <Receipt className="h-4 w-4 text-black dark:text-white" />
+                  <CardTitle className="text-sm font-semibold text-black dark:text-white">
+                    Extra Charges ({extras.length})
+                  </CardTitle>
+                </div>
+                <Button
+                  type="button"
+                  variant={showExtraForm ? 'secondary' : 'outline'}
+                  size="sm"
+                  onClick={() => setShowExtraForm((v) => !v)}
+                  className="h-7 px-2.5 text-xs gap-1 border-slate-300 dark:border-slate-700 shadow-none"
+                >
+                  <Plus className={`h-3.5 w-3.5 transition-transform ${showExtraForm ? 'rotate-45' : ''}`} />
+                  <span>{showExtraForm ? 'Close' : 'Add Charge'}</span>
+                </Button>
               </div>
-              <CardContent className="pt-6 space-y-5">
-                <form onSubmit={(e) => void createExtra(e)} className="space-y-4 rounded-lg border border-border p-4">
-                  <Field>
-                    <FieldLabel htmlFor="extra-deployment">Deployment *</FieldLabel>
-                    <NativeSelect
-                      id="extra-deployment"
-                      className="w-full"
-                      value={extraForm.deployment_id}
-                      onChange={(e) => setExtraForm({ ...extraForm, deployment_id: e.target.value })}
-                      required
-                    >
-                      <NativeSelectOption value="">Select deployment…</NativeSelectOption>
-                      {deployments.map((d) => (
-                        <NativeSelectOption key={String(d.id)} value={String(d.id)}>
-                          {String(d.machine_code)} · {String(d.site_name)}
-                        </NativeSelectOption>
-                      ))}
-                    </NativeSelect>
-                  </Field>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Field>
-                      <FieldLabel htmlFor="extra-kind">Kind</FieldLabel>
-                      <Input
-                        id="extra-kind"
-                        value={extraForm.kind}
-                        onChange={(e) => setExtraForm({ ...extraForm, kind: e.target.value })}
-                        placeholder="other"
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="extra-date">Date *</FieldLabel>
-                      <Input
-                        id="extra-date"
-                        type="date"
-                        value={extraForm.date}
-                        onChange={(e) => setExtraForm({ ...extraForm, date: e.target.value })}
-                        required
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="extra-amount">Amount (major) *</FieldLabel>
-                      <InputGroup>
-                        <InputGroupAddon align="inline-start">
-                          <InputGroupText>₹</InputGroupText>
-                        </InputGroupAddon>
-                        <InputGroupInput
-                          id="extra-amount"
-                          inputMode="decimal"
-                          value={extraForm.amount}
-                          onChange={(e) => setExtraForm({ ...extraForm, amount: e.target.value })}
-                          placeholder="0"
+              <CardContent className="p-3.5 space-y-2.5">
+                {/* Compact Collapsible Form */}
+                {showExtraForm && (
+                  <form
+                    onSubmit={(e) => void createExtra(e)}
+                    className="space-y-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-zinc-50/80 dark:bg-slate-800/40 p-3"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <Field>
+                        <FieldLabel htmlFor="extra-deployment" className="text-xs">Deployment *</FieldLabel>
+                        <NativeSelect
+                          id="extra-deployment"
+                          className="w-full text-xs h-8"
+                          value={extraForm.deployment_id}
+                          onChange={(e) => setExtraForm({ ...extraForm, deployment_id: e.target.value })}
+                          required
+                        >
+                          <NativeSelectOption value="">Select deployment…</NativeSelectOption>
+                          {deployments.map((d) => (
+                            <NativeSelectOption key={String(d.id)} value={String(d.id)}>
+                              {String(d.machine_code)} · {String(d.site_name)}
+                            </NativeSelectOption>
+                          ))}
+                        </NativeSelect>
+                      </Field>
+                      <Field>
+                        <FieldLabel htmlFor="extra-date" className="text-xs">Date *</FieldLabel>
+                        <Input
+                          id="extra-date"
+                          type="date"
+                          value={extraForm.date}
+                          onChange={(e) => setExtraForm({ ...extraForm, date: e.target.value })}
+                          required
+                          className="text-xs h-8"
                         />
-                      </InputGroup>
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="extra-note">Note</FieldLabel>
-                      <Input
-                        id="extra-note"
-                        value={extraForm.note}
-                        onChange={(e) => setExtraForm({ ...extraForm, note: e.target.value })}
-                        placeholder="why this charge"
-                      />
-                    </Field>
-                  </div>
-                  <Button type="submit" size="sm">
-                    <Plus className="h-4 w-4" /> Add extra charge
-                  </Button>
-                </form>
+                      </Field>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      <Field>
+                        <FieldLabel htmlFor="extra-kind" className="text-xs">Kind</FieldLabel>
+                        <Input
+                          id="extra-kind"
+                          value={extraForm.kind}
+                          onChange={(e) => setExtraForm({ ...extraForm, kind: e.target.value })}
+                          placeholder="other"
+                          className="text-xs h-8"
+                        />
+                      </Field>
+                      <Field>
+                        <FieldLabel htmlFor="extra-amount" className="text-xs">Amount *</FieldLabel>
+                        <InputGroup>
+                          <InputGroupAddon align="inline-start">
+                            <span className="text-xs font-semibold">₹</span>
+                          </InputGroupAddon>
+                          <InputGroupInput
+                            id="extra-amount"
+                            inputMode="decimal"
+                            value={extraForm.amount}
+                            onChange={(e) => setExtraForm({ ...extraForm, amount: e.target.value })}
+                            placeholder="0"
+                            className="text-xs h-8"
+                          />
+                        </InputGroup>
+                      </Field>
+                      <Field>
+                        <FieldLabel htmlFor="extra-note" className="text-xs">Note</FieldLabel>
+                        <Input
+                          id="extra-note"
+                          value={extraForm.note}
+                          onChange={(e) => setExtraForm({ ...extraForm, note: e.target.value })}
+                          placeholder="why this charge"
+                          className="text-xs h-8"
+                        />
+                      </Field>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowExtraForm(false)}
+                        className="h-7 px-2.5 text-xs"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        size="sm"
+                        className="h-7 px-3 text-xs bg-black hover:bg-zinc-800 text-white font-medium shadow-none"
+                      >
+                        <Plus className="h-3 w-3" /> Save Charge
+                      </Button>
+                    </div>
+                  </form>
+                )}
 
                 {extras.length === 0 ? (
-                  <p className="text-muted-foreground">No extra charges.</p>
+                  <p className="text-xs text-muted-foreground py-2 text-center">No extra charges.</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {extras.slice(0, 5).map((e) => (
-                      <div key={String(e.id)} className="flex items-center justify-between gap-3 rounded-lg bg-gray-50 p-4 border border-gray-100">
-                        <div>
-                          <p className="font-medium text-gray-800">{String(e.kind)}</p>
-                          <p className="text-xs text-gray-500">{String(e.machine_code)} · {String(e.date).slice(0, 10)}</p>
+                      <div
+                        key={String(e.id)}
+                        className="flex items-center justify-between gap-3 rounded-lg bg-gray-50/80 dark:bg-slate-800/50 px-3.5 py-2.5 border border-gray-100 dark:border-slate-800 transition-colors"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 capitalize truncate">{String(e.kind)}</p>
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">
+                            {String(e.machine_code)} · {String(e.date).slice(0, 10)}
+                            {e.note ? ` · ${String(e.note)}` : ''}
+                          </p>
                         </div>
-                        <span className="font-bold text-violet-600">{money(e.amount_minor)}</span>
-                        <RecordActions table="extra_charges" row={e} onChanged={() => void load()} />
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs font-bold text-violet-600 dark:text-violet-400">{money(e.amount_minor)}</span>
+                          <RecordActions table="extra_charges" row={e} onChanged={() => void load()} />
+                        </div>
                       </div>
                     ))}
                   </div>

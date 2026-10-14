@@ -399,49 +399,57 @@ export default function SiteDetail() {
         </div>
       ) : (
         <>
-          {/* Top 4 KPI Metric Cards (Solid Black Font, Unbolded) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-black">
-            <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+          {/* Top 4 KPI Metric Boxes */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-black">
+            <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-normal text-black">Active Deployed Fleet</span>
-                <Truck className="h-3.5 w-3.5 text-black" />
+                <span className="text-xs font-medium text-black">Active Deployed Fleet</span>
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+                  <Truck className="h-3.5 w-3.5" />
+                </div>
               </div>
-              <div className="mt-1 flex items-baseline justify-between">
-                <span className="text-xl font-normal text-black">{deployments.length}</span>
-                <span className="text-[10px] font-normal text-black">heavy assets</span>
+              <div className="flex items-baseline justify-between pt-3">
+                <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">{deployments.length}</span>
+                <span className="text-xs font-normal text-zinc-600">heavy assets</span>
               </div>
             </div>
 
-            <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+            <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-normal text-black">Geofence Perimeter</span>
-                <ShieldCheck className="h-3.5 w-3.5 text-black" />
+                <span className="text-xs font-medium text-black">Geofence Perimeter</span>
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                </div>
               </div>
-              <div className="mt-1 flex items-baseline justify-between">
-                <span className="text-xl font-normal text-black">350m</span>
-                <span className="text-[10px] font-normal text-black">radius secure</span>
+              <div className="flex items-baseline justify-between pt-3">
+                <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">350m</span>
+                <span className="text-xs font-normal text-zinc-600">radius secure</span>
               </div>
             </div>
 
-            <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+            <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-normal text-black">Project Duration</span>
-                <Calendar className="h-3.5 w-3.5 text-black" />
+                <span className="text-xs font-medium text-black">Project Duration</span>
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+                  <Calendar className="h-3.5 w-3.5" />
+                </div>
               </div>
-              <div className="mt-1 flex items-baseline justify-between">
-                <span className="text-xl font-normal text-black">627d</span>
-                <span className="text-[10px] font-normal text-black">since Jan 2025</span>
+              <div className="flex items-baseline justify-between pt-3">
+                <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">627d</span>
+                <span className="text-xs font-normal text-zinc-600">since Jan 2025</span>
               </div>
             </div>
 
-            <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+            <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-normal text-black">Site Manager</span>
-                <User className="h-3.5 w-3.5 text-black" />
+                <span className="text-xs font-medium text-black">Site Manager</span>
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+                  <User className="h-3.5 w-3.5" />
+                </div>
               </div>
-              <div className="mt-1 flex items-baseline justify-between">
-                <span className="text-sm font-normal text-black truncate max-w-[70%]">{siteManager}</span>
-                <span className="text-[10px] font-normal text-black">lead</span>
+              <div className="flex items-baseline justify-between pt-3">
+                <span className="text-sm font-semibold text-black truncate max-w-[70%]">{siteManager}</span>
+                <span className="text-xs font-normal text-zinc-600">lead</span>
               </div>
             </div>
           </div>

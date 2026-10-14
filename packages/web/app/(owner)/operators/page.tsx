@@ -33,7 +33,7 @@ import {
   Camera,
   Check,
 } from 'lucide-react';
-import { fetchList } from '@/lib/api/fetch-list';
+import { fetchList, getCachedList } from '@/lib/api/fetch-list';
 import { apiDelete } from '@/lib/api/mutations';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { BorderButton } from '@/components/ui/border-button';
@@ -113,9 +113,11 @@ const OPERATOR_PHOTOS_BY_NAME: Record<string, string> = {
 
 export default function OwnerOperators() {
   const router = useRouter();
-  const [operators, setOperators] = useState<OperatorEntry[]>([]);
-  const [machines, setMachines] = useState<MachineEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedOps = getCachedList<OperatorEntry>('/api/v1/operators');
+  const cachedMachs = getCachedList<MachineEntry>('/api/v1/machines');
+  const [operators, setOperators] = useState<OperatorEntry[]>(() => cachedOps ?? []);
+  const [machines, setMachines] = useState<MachineEntry[]>(() => cachedMachs ?? []);
+  const [loading, setLoading] = useState<boolean>(() => !cachedOps || cachedOps.length === 0);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; label: string } | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -400,90 +402,58 @@ export default function OwnerOperators() {
         </Button>
       </div>
 
-      {/* Overview Metric Bar - All Solid Black Font & Images Inside Boxes */}
+      {/* Overview Metric Boxes - Box Shaped, Perfectly Aligned, No Right Images */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Box 1: Total Operators */}
-        <div className="rounded-xl border border-zinc-300 bg-white p-4 flex items-center justify-between hover:border-black transition-colors shadow-sm">
-          <div>
-            <p className="text-xs font-normal text-black uppercase tracking-wider">Total Operators</p>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-normal text-black">{totalOperatorsCount}</span>
-              <span className="text-xs font-normal text-black">registered</span>
-            </div>
+        <div className="rounded-2xl border border-zinc-300 bg-white p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <p className="text-xs font-medium text-black uppercase tracking-wider">Total Operators</p>
           </div>
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-zinc-300 shrink-0 shadow-sm bg-zinc-100">
-            <img
-              src="/operators/op-001.jpg"
-              alt="Total Operators Crew"
-              className="w-full h-full object-cover object-top"
-            />
-            <span className="absolute bottom-0 inset-x-0 bg-black/80 text-white text-[9px] text-center font-normal py-0.5">
-              Crew
-            </span>
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-bold tracking-tight text-black">{totalOperatorsCount}</span>
+              <span className="text-xs font-normal text-zinc-600">registered</span>
+            </div>
           </div>
         </div>
 
         {/* Box 2: Active On Shift */}
-        <div className="rounded-xl border border-zinc-300 bg-white p-4 flex items-center justify-between hover:border-black transition-colors shadow-sm">
-          <div>
-            <p className="text-xs font-normal text-black uppercase tracking-wider">Active On Shift</p>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-normal text-black">{onShiftCount}</span>
-              <span className="text-xs font-normal text-black">deployed</span>
-            </div>
+        <div className="rounded-2xl border border-zinc-300 bg-white p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <p className="text-xs font-medium text-black uppercase tracking-wider">Active On Shift</p>
+            <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-50" title="Active on site" />
           </div>
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-zinc-300 shrink-0 shadow-sm bg-zinc-100">
-            <img
-              src="/fleet/exc-01.jpg"
-              alt="Active Heavy Machinery"
-              className="w-full h-full object-cover"
-            />
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
-            <span className="absolute bottom-0 inset-x-0 bg-black/80 text-white text-[9px] text-center font-normal py-0.5">
-              Live
-            </span>
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-bold tracking-tight text-black">{onShiftCount}</span>
+              <span className="text-xs font-normal text-zinc-600">deployed</span>
+            </div>
           </div>
         </div>
 
         {/* Box 3: Avg Fleet Experience */}
-        <div className="rounded-xl border border-zinc-300 bg-white p-4 flex items-center justify-between hover:border-black transition-colors shadow-sm">
-          <div>
-            <p className="text-xs font-normal text-black uppercase tracking-wider">Avg Fleet Experience</p>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-normal text-black">{avgExp}</span>
-              <span className="text-xs font-normal text-black">years</span>
-            </div>
+        <div className="rounded-2xl border border-zinc-300 bg-white p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <p className="text-xs font-medium text-black uppercase tracking-wider">Avg Fleet Experience</p>
           </div>
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-zinc-300 shrink-0 shadow-sm bg-zinc-100">
-            <img
-              src="/operators/op-003.jpg"
-              alt="Senior Fleet Operator"
-              className="w-full h-full object-cover object-top"
-            />
-            <span className="absolute bottom-0 inset-x-0 bg-black/80 text-white text-[9px] text-center font-normal py-0.5">
-              Master
-            </span>
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-bold tracking-tight text-black">{avgExp}</span>
+              <span className="text-xs font-normal text-zinc-600">years</span>
+            </div>
           </div>
         </div>
 
         {/* Box 4: Safety & RTO Rating */}
-        <div className="rounded-xl border border-zinc-300 bg-white p-4 flex items-center justify-between hover:border-black transition-colors shadow-sm">
-          <div>
-            <p className="text-xs font-normal text-black uppercase tracking-wider">Safety & RTO Rating</p>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-normal text-black">4.8</span>
-              <span className="text-xs font-normal text-black">/ 5.0 score</span>
-            </div>
+        <div className="rounded-2xl border border-zinc-300 bg-white p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <p className="text-xs font-medium text-black uppercase tracking-wider">Safety & RTO Rating</p>
           </div>
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-zinc-300 shrink-0 shadow-sm bg-zinc-100">
-            <img
-              src="/operators/op-005.jpg"
-              alt="Safety First Certified"
-              className="w-full h-full object-cover object-top"
-            />
-            <span className="absolute bottom-0 inset-x-0 bg-black/80 text-white text-[9px] text-center font-normal py-0.5">
-              RTO
-            </span>
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-bold tracking-tight text-black">4.8</span>
+              <span className="text-xs font-normal text-zinc-600">/ 5.0 score</span>
+            </div>
           </div>
         </div>
       </div>

@@ -4,6 +4,46 @@ import { handleMockApiRequest } from '@/lib/db/mock-db';
 const API_URL = process.env.API_URL || 'http://localhost:3001';
 const FORCE_MOCK = process.env.NEXT_PUBLIC_MOCK_API === 'true' || process.env.USE_MOCK_DB === 'true';
 
+// Circuit breaker state to prevent cascading timeouts when upstream API is offline
+let upstreamAlive: boolean | null = null;
+let lastProbeTime = 0;
+const PROBE_DOWN_INTERVAL = 15000; // When offline, back off for 15s before attempting again
+const PROBE_UP_INTERVAL = 30000;   // When online, re-verify every 30s
+let probePromise: Promise<boolean> | null = null;
+
+async function checkUpstreamHealth(baseApiUrl: string): Promise<boolean> {
+  const now = Date.now();
+  if (upstreamAlive === false && now - lastProbeTime < PROBE_DOWN_INTERVAL) {
+    return false;
+  }
+  if (upstreamAlive === true && now - lastProbeTime < PROBE_UP_INTERVAL) {
+    return true;
+  }
+  if (probePromise) {
+    return probePromise;
+  }
+
+  probePromise = (async () => {
+    try {
+      const parsed = new URL(baseApiUrl);
+      const healthUrl = new URL('/v1/health', parsed);
+      const res = await fetch(healthUrl.toString(), {
+        method: 'GET',
+        signal: AbortSignal.timeout(350), // Rapid 350ms probe
+      });
+      upstreamAlive = res.ok;
+    } catch {
+      upstreamAlive = false;
+    } finally {
+      lastProbeTime = Date.now();
+      probePromise = null;
+    }
+    return upstreamAlive;
+  })();
+
+  return probePromise;
+}
+
 export async function proxy(request: NextRequest, path: string) {
   // Path traversal and SSRF protection: reject directory traversal attempts and control characters
   const cleanPath = path.replace(/\\/g, '/');
@@ -17,7 +57,35 @@ export async function proxy(request: NextRequest, path: string) {
   }
 
   const url = new URL(request.url);
-  const apiUrl = new URL(`${API_URL}${cleanPath}${url.search}`);
+  const reqHost = request.headers.get('host') || url.host;
+  const reqPort = url.port || (url.protocol === 'https:' ? '443' : '80');
+  const [reqHostname, hostPort] = reqHost.split(':');
+  const effectiveReqPort = hostPort || reqPort;
+
+  let apiUrl: URL;
+  try {
+    apiUrl = new URL(`${API_URL}${cleanPath}${url.search}`);
+  } catch {
+    return handleMockApiRequest(request, cleanPath);
+  }
+
+  // Self-loop protection: if API_URL points to this exact Next.js dev server,
+  // NEVER forward to self — serve instantly from the in-memory mock database!
+  const isLocal = (h: string) => h === 'localhost' || h === '127.0.0.1' || h === '::1';
+  const apiPort = apiUrl.port || (apiUrl.protocol === 'https:' ? '443' : '80');
+  const isSelfTarget =
+    apiUrl.host === reqHost ||
+    (isLocal(apiUrl.hostname) && isLocal(reqHostname) && apiPort === effectiveReqPort);
+
+  if (isSelfTarget) {
+    return handleMockApiRequest(request, cleanPath);
+  }
+
+  // Circuit breaker: check if upstream is reachable without blocking on every request
+  const isReachable = await checkUpstreamHealth(API_URL);
+  if (!isReachable) {
+    return handleMockApiRequest(request, cleanPath);
+  }
 
   // Forward headers (except host + conditionals). Conditional headers are
   // stripped because a 304 from upstream cannot carry a body, and the API
@@ -42,14 +110,15 @@ export async function proxy(request: NextRequest, path: string) {
       method: request.method,
       headers,
       body,
-      // Abort quickly if local server is not running
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(2000),
     });
 
     const contentType = response.headers.get('content-type') || '';
-    // If upstream is not a valid JSON API (e.g. another local dev server on port 3001 returning HTML),
+    // If upstream is not a valid JSON API (e.g. another local dev server returning HTML),
     // or if the upstream returns 404 or 5xx, fall back to our mock database.
     if (contentType.includes('text/html') || response.status === 404 || response.status >= 500) {
+      upstreamAlive = false;
+      lastProbeTime = Date.now();
       return await handleMockApiRequest(request, path);
     }
 
@@ -75,7 +144,6 @@ export async function proxy(request: NextRequest, path: string) {
     const responseBody = await response.arrayBuffer();
 
     // 204/205/304 are null-body statuses — passing a body throws a TypeError
-    // (which previously got caught below and reported as a bogus 502).
     const NULL_BODY = new Set([204, 205, 304]);
     return new NextResponse(
       NULL_BODY.has(response.status) ? null : responseBody,
@@ -86,7 +154,8 @@ export async function proxy(request: NextRequest, path: string) {
       },
     );
   } catch (error) {
-    // When upstream API is offline or unreachable, seamlessly serve from our comprehensive mock database
+    upstreamAlive = false;
+    lastProbeTime = Date.now();
     try {
       return await handleMockApiRequest(request, path);
     } catch (mockError) {

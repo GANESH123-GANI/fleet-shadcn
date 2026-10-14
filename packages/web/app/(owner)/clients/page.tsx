@@ -19,7 +19,7 @@ import {
   ShieldCheck,
   CheckCircle2,
 } from 'lucide-react';
-import { fetchList } from '@/lib/api/fetch-list';
+import { fetchList, getCachedList } from '@/lib/api/fetch-list';
 import { apiDelete } from '@/lib/api/mutations';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { BorderButton } from '@/components/ui/border-button';
@@ -148,8 +148,9 @@ function ClientLogo({ name, className = 'h-8 w-8' }: { name: string; className?:
 
 export default function OwnerClients() {
   const router = useRouter();
-  const [clients, setClients] = useState<ClientEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedClients = getCachedList<ClientEntry>('/api/v1/clients');
+  const [clients, setClients] = useState<ClientEntry[]>(() => cachedClients ?? []);
+  const [loading, setLoading] = useState<boolean>(() => !cachedClients || cachedClients.length === 0);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; label: string } | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -244,55 +245,67 @@ export default function OwnerClients() {
         </Link>
       </div>
 
-      {/* Compact Overview Metric Boxes - Small Boxes, All Solid Black Font, Unbolded */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 flex items-center justify-between hover:border-black transition-colors shadow-sm">
+      {/* Overview Metric Boxes - Box Shaped, Perfectly Aligned */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Box 1: Total Clients */}
+        <div className="rounded-2xl border border-zinc-300 bg-white p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <span className="text-xs font-medium text-black uppercase tracking-wider">Total Clients</span>
+            <LTLogo className="h-6 w-6 shrink-0 rounded-md" />
+          </div>
           <div>
-            <span className="text-xs font-normal text-black uppercase tracking-wider">Total Clients</span>
-            <div className="mt-1 flex items-baseline gap-1.5">
-              <span className="text-xl font-normal text-black">{uniqueClients.length}</span>
-              <span className="text-xs font-normal text-black">registered</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-bold tracking-tight text-black">{uniqueClients.length}</span>
+              <span className="text-xs font-normal text-zinc-600">registered</span>
             </div>
           </div>
-          <LTLogo className="h-9 w-9 shrink-0 shadow-sm" />
         </div>
 
-        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 flex items-center justify-between hover:border-black transition-colors shadow-sm">
+        {/* Box 2: Active Clients */}
+        <div className="rounded-2xl border border-zinc-300 bg-white p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <span className="text-xs font-medium text-black uppercase tracking-wider">Active Clients</span>
+            <TataLogo className="h-6 w-6 shrink-0 rounded-md" />
+          </div>
           <div>
-            <span className="text-xs font-normal text-black uppercase tracking-wider">Active Clients</span>
-            <div className="mt-1 flex items-baseline gap-1.5">
-              <span className="text-xl font-normal text-black">{activeClients}</span>
-              <span className="text-xs font-normal text-black">contracts</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-bold tracking-tight text-black">{activeClients}</span>
+              <span className="text-xs font-normal text-zinc-600">contracts</span>
             </div>
           </div>
-          <TataLogo className="h-9 w-9 shrink-0 shadow-sm" />
         </div>
 
-        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 flex items-center justify-between hover:border-black transition-colors shadow-sm">
+        {/* Box 3: Cumulative Revenue */}
+        <div className="rounded-2xl border border-zinc-300 bg-white p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <span className="text-xs font-medium text-black uppercase tracking-wider">Cumulative Revenue</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-black text-white shrink-0">
+              <IndianRupee className="h-3.5 w-3.5 text-white" />
+            </div>
+          </div>
           <div>
-            <span className="text-xs font-normal text-black uppercase tracking-wider">Cumulative Revenue</span>
-            <div className="mt-1 flex items-baseline gap-1.5">
-              <span className="text-xl font-normal text-black">
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-bold tracking-tight text-black">
                 ₹{(totalRevenue / 10000000).toFixed(1)} Cr
               </span>
-              <span className="text-xs font-normal text-black">lifetime</span>
+              <span className="text-xs font-normal text-zinc-600">lifetime</span>
             </div>
-          </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black text-white shrink-0 shadow-sm">
-            <IndianRupee className="h-5 w-5 text-white" />
           </div>
         </div>
 
-        <div className="rounded-xl border border-zinc-300 bg-white p-3.5 flex items-center justify-between hover:border-black transition-colors shadow-sm">
-          <div>
-            <span className="text-xs font-normal text-black uppercase tracking-wider">Avg Payment Terms</span>
-            <div className="mt-1 flex items-baseline gap-1.5">
-              <span className="text-xl font-normal text-black">{avgTerms}</span>
-              <span className="text-xs font-normal text-black">days net</span>
+        {/* Box 4: Avg Payment Terms */}
+        <div className="rounded-2xl border border-zinc-300 bg-white p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-[160px] hover:border-black transition-all shadow-xs">
+          <div className="flex items-center justify-between h-5">
+            <span className="text-xs font-medium text-black uppercase tracking-wider">Avg Payment Terms</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-black text-white shrink-0">
+              <Clock className="h-3.5 w-3.5 text-white" />
             </div>
           </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black text-white shrink-0 shadow-sm">
-            <Clock className="h-5 w-5 text-white" />
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-bold tracking-tight text-black">{avgTerms}</span>
+              <span className="text-xs font-normal text-zinc-600">days net</span>
+            </div>
           </div>
         </div>
       </div>

@@ -20,7 +20,7 @@ import {
   Compass,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { fetchList } from '@/lib/api/fetch-list';
+import { fetchList, getCachedList } from '@/lib/api/fetch-list';
 import { apiDelete } from '@/lib/api/mutations';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 
@@ -181,9 +181,11 @@ interface MachineItem {
 
 export default function SitesList() {
   const router = useRouter();
-  const [sites, setSites] = useState<SiteEntry[]>([]);
-  const [machines, setMachines] = useState<MachineItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedSites = getCachedList<SiteEntry>('/api/v1/sites');
+  const cachedMachines = getCachedList<MachineItem>('/api/v1/machines');
+  const [sites, setSites] = useState<SiteEntry[]>(() => cachedSites ?? []);
+  const [machines, setMachines] = useState<MachineItem[]>(() => cachedMachines ?? []);
+  const [loading, setLoading] = useState<boolean>(() => !cachedSites || cachedSites.length === 0);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; label: string } | null>(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -292,51 +294,59 @@ export default function SitesList() {
         </Link>
       </div>
 
-      {/* Top 4 Creative Sites KPI Overview Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-        <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+      {/* Top 4 Creative Sites KPI Overview Boxes */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-normal text-black">Active Work Sites</span>
-            <MapPin className="h-3.5 w-3.5 text-black" />
+            <span className="text-xs font-medium text-black">Active Work Sites</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+              <MapPin className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xl font-normal text-black">{uniqueSites.length}</span>
-            <span className="text-[10px] font-normal text-black">projects</span>
+          <div className="flex items-baseline justify-between pt-3">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">{uniqueSites.length}</span>
+            <span className="text-xs font-normal text-zinc-600">projects</span>
           </div>
         </div>
 
-        <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-normal text-black">Deployed Equipment</span>
-            <Tractor className="h-3.5 w-3.5 text-black" />
+            <span className="text-xs font-medium text-black">Deployed Equipment</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+              <Tractor className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xl font-normal text-black">{totalFleetDeployed}</span>
-            <span className="inline-flex items-center gap-1 text-[10px] font-normal text-black">
+          <div className="flex items-baseline justify-between pt-3">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">{totalFleetDeployed}</span>
+            <span className="inline-flex items-center gap-1.5 text-xs font-normal text-zinc-600">
               <span className="h-1.5 w-1.5 rounded-full bg-black animate-pulse" /> operational
             </span>
           </div>
         </div>
 
-        <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-normal text-black">Geofence Status</span>
-            <ShieldCheck className="h-3.5 w-3.5 text-black" />
+            <span className="text-xs font-medium text-black">Geofence Status</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+              <ShieldCheck className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xl font-normal text-black">100%</span>
-            <span className="text-[10px] font-normal text-black">perimeter active</span>
+          <div className="flex items-baseline justify-between pt-3">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">100%</span>
+            <span className="text-xs font-normal text-zinc-600">perimeter active</span>
           </div>
         </div>
 
-        <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-normal text-black">Partner Clients</span>
-            <User className="h-3.5 w-3.5 text-black" />
+            <span className="text-xs font-medium text-black">Partner Clients</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+              <User className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xl font-normal text-black">5</span>
-            <span className="text-[10px] font-normal text-black">contractors</span>
+          <div className="flex items-baseline justify-between pt-3">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">5</span>
+            <span className="text-xs font-normal text-zinc-600">contractors</span>
           </div>
         </div>
       </div>

@@ -21,7 +21,7 @@ import {
   Building2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { fetchList } from '@/lib/api/fetch-list';
+import { fetchList, getCachedList } from '@/lib/api/fetch-list';
 import { apiDelete } from '@/lib/api/mutations';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 
@@ -245,10 +245,14 @@ interface DeploymentEntry {
 
 export default function DeploymentsList() {
   const router = useRouter();
-  const [deployments, setDeployments] = useState<DeploymentEntry[]>([]);
-  const [machines, setMachines] = useState<Record<string, unknown>[]>([]);
-  const [sites, setSites] = useState<Record<string, unknown>[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedDeps = getCachedList<DeploymentEntry>('/api/v1/deployments');
+  const cachedMachs = getCachedList<Record<string, unknown>>('/api/v1/machines');
+  const cachedSites = getCachedList<Record<string, unknown>>('/api/v1/sites');
+
+  const [deployments, setDeployments] = useState<DeploymentEntry[]>(() => cachedDeps ?? []);
+  const [machines, setMachines] = useState<Record<string, unknown>[]>(() => cachedMachs ?? []);
+  const [sites, setSites] = useState<Record<string, unknown>[]>(() => cachedSites ?? []);
+  const [loading, setLoading] = useState<boolean>(() => !cachedDeps || cachedDeps.length === 0);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; label: string } | null>(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -353,51 +357,59 @@ export default function DeploymentsList() {
         </Link>
       </div>
 
-      {/* Top 4 Deployments KPI Overview Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-black">
-        <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+      {/* Top 4 Deployments KPI Overview Boxes */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-black">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-normal text-black">Total Deployed Assets</span>
-            <Truck className="h-3.5 w-3.5 text-black" />
+            <span className="text-xs font-medium text-black">Total Deployed Assets</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+              <Truck className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xl font-normal text-black">{deployments.length}</span>
-            <span className="text-[10px] font-normal text-black">machines</span>
+          <div className="flex items-baseline justify-between pt-3">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">{deployments.length}</span>
+            <span className="text-xs font-normal text-zinc-600">machines</span>
           </div>
         </div>
 
-        <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-normal text-black">Operational on Site</span>
-            <ShieldCheck className="h-3.5 w-3.5 text-black" />
+            <span className="text-xs font-medium text-black">Operational on Site</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+              <ShieldCheck className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xl font-normal text-black">{activeCount}</span>
-            <span className="inline-flex items-center gap-1 text-[10px] font-normal text-black">
+          <div className="flex items-baseline justify-between pt-3">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">{activeCount}</span>
+            <span className="inline-flex items-center gap-1.5 text-xs font-normal text-zinc-600">
               <span className="h-1.5 w-1.5 rounded-full bg-black animate-pulse" /> active
             </span>
           </div>
         </div>
 
-        <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-normal text-black">Review / On Hold</span>
-            <Clock className="h-3.5 w-3.5 text-black" />
+            <span className="text-xs font-medium text-black">Review / On Hold</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+              <Clock className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xl font-normal text-black">{holdCount}</span>
-            <span className="text-[10px] font-normal text-black">payment review</span>
+          <div className="flex items-baseline justify-between pt-3">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">{holdCount}</span>
+            <span className="text-xs font-normal text-zinc-600">payment review</span>
           </div>
         </div>
 
-        <div className="rounded-lg border border-zinc-300 bg-white p-3 shadow-sm">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between min-h-[115px] sm:min-h-[125px] hover:border-zinc-400 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-normal text-black">Active Project Sites</span>
-            <MapPin className="h-3.5 w-3.5 text-black" />
+            <span className="text-xs font-medium text-black">Active Project Sites</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 text-black">
+              <MapPin className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xl font-normal text-black">{sites.length > 0 ? sites.length : 5}</span>
-            <span className="text-[10px] font-normal text-black">work zones</span>
+          <div className="flex items-baseline justify-between pt-3">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-black">{sites.length > 0 ? sites.length : 5}</span>
+            <span className="text-xs font-normal text-zinc-600">work zones</span>
           </div>
         </div>
       </div>

@@ -498,8 +498,8 @@ function DashboardBentoContent() {
       {/* =====================================================================
           TOP BAR — MODULE OVERVIEW OPTIONS
           ===================================================================== */}
-      <div className="rounded-2xl border border-zinc-200/90 bg-white p-2.5 sm:p-3 shadow-xs overflow-x-auto">
-        <div className="flex items-center gap-2 min-w-max">
+      <div className="rounded-2xl border border-zinc-200/90 bg-white p-2 sm:p-2.5 shadow-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 w-full">
           {OVERVIEW_TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -509,18 +509,18 @@ function DashboardBentoContent() {
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-medium transition-all border cursor-pointer',
+                  'flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all border cursor-pointer w-full text-center',
                   isActive
                     ? 'border-zinc-900 bg-zinc-900 text-white shadow-xs'
                     : 'border-zinc-200/80 bg-zinc-50/60 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 hover:border-zinc-300',
                 )}
               >
-                <Icon className={cn('h-3.5 w-3.5', isActive ? 'text-white' : 'text-zinc-500')} />
-                <span>{tab.label}</span>
+                <Icon className={cn('h-3.5 w-3.5 shrink-0', isActive ? 'text-white' : 'text-zinc-500')} />
+                <span className="truncate">{tab.label}</span>
                 {tab.badge !== undefined && (
                   <span
                     className={cn(
-                      'rounded-full px-2 py-0.5 text-[10px] font-normal border',
+                      'rounded-full px-2 py-0.5 text-[10px] font-normal border shrink-0',
                       isActive
                         ? 'bg-white/20 text-white border-white/30'
                         : 'bg-white text-zinc-700 border-zinc-200',

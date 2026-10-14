@@ -1,6 +1,15 @@
 'use client';
 
 import { authFetch } from './auth-fetch';
+import { invalidateListCache } from './fetch-list';
+
+/**
+ * Extract a resource prefix from a path (e.g. '/api/v1/machines/123' -> 'machines')
+ */
+function extractPrefix(path: string): string {
+  const clean = path.replace(/^\/api\/v1\//, '').replace(/^\/v1\//, '').replace(/^\//, '');
+  return clean.split('/')[0] || '';
+}
 
 /**
  * Nest and Fastify both answer with a JSON error body, but the shape differs
@@ -27,6 +36,7 @@ export async function apiDelete(path: string): Promise<boolean> {
     const body = await res.json().catch(() => null);
     throw new Error(errorMessage(body, `Delete failed (${res.status})`));
   }
+  invalidateListCache(extractPrefix(path));
   return true;
 }
 
@@ -43,6 +53,7 @@ export async function apiPatch<T = Record<string, unknown>>(path: string, data: 
     const body = await res.json().catch(() => null);
     throw new Error(errorMessage(body, `Update failed (${res.status})`));
   }
+  invalidateListCache(extractPrefix(path));
   return res.json() as Promise<T>;
 }
 
@@ -56,6 +67,7 @@ export async function apiPost<T = Record<string, unknown>>(path: string, data: R
     const body = await res.json().catch(() => null);
     throw new Error(errorMessage(body, `Request failed (${res.status})`));
   }
+  invalidateListCache(extractPrefix(path));
   return res.json() as Promise<T>;
 }
 
@@ -72,6 +84,7 @@ export async function apiPut<T = Record<string, unknown>>(path: string, data: Re
     const body = await res.json().catch(() => null);
     throw new Error(errorMessage(body, `Update failed (${res.status})`));
   }
+  invalidateListCache(extractPrefix(path));
   return res.json() as Promise<T>;
 }
 
