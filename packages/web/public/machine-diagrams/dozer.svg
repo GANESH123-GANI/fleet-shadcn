@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 130" width="220" height="130">
+  <line x1="10" y1="118" x2="210" y2="118" stroke="#D4D4D8" stroke-width="1" stroke-dasharray="3,3" />
+  <circle cx="58" cy="78" r="11" fill="#52525B" stroke="#000000" stroke-width="1.5" />
+  <circle cx="44" cy="106" r="9" fill="#52525B" stroke="#000000" stroke-width="1.5" />
+  <circle cx="130" cy="106" r="9" fill="#52525B" stroke="#000000" stroke-width="1.5" />
+  <path
+    d="M 44 97 L 54 69 A 11 11 0 0 1 66 71 L 126 99 A 9 9 0 0 1 130 115 L 44 115 A 9 9 0 0 1 44 97 Z"
+    fill="#E4E4E7"
+    stroke="#000000"
+    stroke-width="1.8"
+  />
+  <circle cx="68" cy="108" r="4.5" fill="#000000" />
+  <circle cx="86" cy="108" r="4.5" fill="#000000" />
+  <circle cx="104" cy="108" r="4.5" fill="#000000" />
+
+  <path d="M 52 86 L 52 66 L 70 66 L 80 48 L 118 48 L 128 72 L 128 92 Z" fill="#F4F4F5" stroke="#000000" stroke-width="1.8" />
+  <polygon points="74,66 78,40 108,40 114,66" fill="#FFFFFF" stroke="#000000" stroke-width="1.8" />
+  <polygon points="78,62 82,44 104,44 108,62" fill="#E4E4E7" stroke="#000000" stroke-width="1.2" />
+  <line x1="116" y1="48" x2="116" y2="34" stroke="#000000" stroke-width="3" />
+
+  <line x1="68" y1="96" x2="148" y2="94" stroke="#000000" stroke-width="4.5" stroke-linecap="round" />
+  <line x1="110" y1="72" x2="146" y2="88" stroke="#52525B" stroke-width="2.8" />
+  <path d="M 148 72 Q 160 92 154 114 L 144 114 Q 148 94 140 72 Z" fill="#D4D4D8" stroke="#000000" stroke-width="1.8" />
+  <rect x="138" y="68" width="9" height="4" fill="#000000" />
+
+  <line x1="48" y1="88" x2="32" y2="98" stroke="#000000" stroke-width="3.2" />
+  <path d="M 32 98 L 26 114 L 30 114 L 36 102 Z" fill="#000000" />
+</svg>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 130" width="220" height="130">
+  <line x1="10" y1="118" x2="210" y2="118" stroke="#D4D4D8" stroke-width="1" stroke-dasharray="3,3" />
+  <rect x="28" y="96" width="104" height="20" rx="8" fill="#E4E4E7" stroke="#000000" stroke-width="1.8" />
+  <circle cx="40" cy="106" r="7" fill="#52525B" />
+  <circle cx="120" cy="106" r="7" fill="#52525B" />
+  <circle cx="62" cy="108" r="4.5" fill="#000000" />
+  <circle cx="80" cy="108" r="4.5" fill="#000000" />
+  <circle cx="98" cy="108" r="4.5" fill="#000000" />
+  <line x1="28" y1="106" x2="132" y2="106" stroke="#000000" stroke-width="1" stroke-dasharray="4,3" />
+
+  <path d="M 36 96 L 36 68 Q 38 56 48 56 L 94 56 L 94 96 Z" fill="#F4F4F5" stroke="#000000" stroke-width="1.8" />
+  <line x1="42" y1="64" x2="42" y2="84" stroke="#71717A" stroke-width="1.5" />
+  <line x1="47" y1="64" x2="47" y2="84" stroke="#71717A" stroke-width="1.5" />
+  <rect x="58" y="44" width="3" height="12" fill="#000000" />
+
+  <path d="M 76 96 L 76 46 L 108 46 L 114 68 L 114 96 Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.8" />
+  <polygon points="82,50 105,50 110,68 82,68" fill="#E4E4E7" stroke="#000000" stroke-width="1.2" />
+
+  <path d="M 96 78 Q 120 28 148 40 L 152 46 Q 124 38 102 84 Z" fill="#E4E4E7" stroke="#000000" stroke-width="1.8" />
+  <line x1="88" y1="84" x2="122" y2="46" stroke="#000000" stroke-width="2.8" stroke-linecap="round" />
+
+  <path d="M 148 40 L 180 82 L 174 86 L 144 46 Z" fill="#F4F4F5" stroke="#000000" stroke-width="1.8" />
+  <line x1="126" y1="36" x2="162" y2="60" stroke="#52525B" stroke-width="2" stroke-linecap="round" />
+
+  <path d="M 180 82 Q 198 88 194 104 L 176 104 Q 172 90 174 86 Z" fill="#D4D4D8" stroke="#000000" stroke-width="1.8" />
+  <polygon points="194,104 199,107 192,107" fill="#000000" />
+  <polygon points="188,104 193,107 186,107" fill="#000000" />
+
+  <circle cx="96" cy="78" r="2.5" fill="#000000" />
+  <circle cx="148" cy="40" r="2.5" fill="#000000" />
+  <circle cx="180" cy="82" r="2.5" fill="#000000" />
+</svg>

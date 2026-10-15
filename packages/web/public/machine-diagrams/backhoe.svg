@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 130" width="220" height="130">
+  <line x1="10" y1="118" x2="210" y2="118" stroke="#D4D4D8" stroke-width="1" stroke-dasharray="3,3" />
+  <circle cx="82" cy="94" r="22" fill="#000000" stroke="#000000" stroke-width="1.8" />
+  <circle cx="82" cy="94" r="10" fill="#E4E4E7" />
+  <circle cx="142" cy="102" r="14" fill="#000000" stroke="#000000" stroke-width="1.8" />
+  <circle cx="142" cy="102" r="6" fill="#E4E4E7" />
+
+  <path d="M 68 84 L 72 44 L 106 44 L 110 84 Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.8" />
+  <polygon points="76,80 78,48 102,48 104,80" fill="#E4E4E7" stroke="#000000" stroke-width="1.2" />
+  <path d="M 110 84 L 110 68 L 148 68 L 148 88 Z" fill="#F4F4F5" stroke="#000000" stroke-width="1.8" />
+
+  <line x1="108" y1="78" x2="174" y2="92" stroke="#000000" stroke-width="3.5" />
+  <path d="M 174 92 Q 192 94 190 76 L 180 76 Q 180 88 170 90 Z" fill="#E4E4E7" stroke="#000000" stroke-width="1.8" />
+
+  <rect x="58" y="74" width="10" height="20" fill="#000000" />
+  <path d="M 60 78 Q 44 48 30 62 L 26 66 Q 38 54 56 82 Z" fill="#E4E4E7" stroke="#000000" stroke-width="1.8" />
+  <line x1="30" y1="62" x2="20" y2="92" stroke="#000000" stroke-width="2.8" />
+  <path d="M 20 92 Q 12 98 16 106 L 24 102 Z" fill="#D4D4D8" stroke="#000000" stroke-width="1.5" />
+</svg>
